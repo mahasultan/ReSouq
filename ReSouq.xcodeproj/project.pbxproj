@@ -1,0 +1,557 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXContainerItemProxy section */
+		10244ABB2D5E0FAB00CFD286 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 10244AA22D5E0FA900CFD286 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 10244AA92D5E0FA900CFD286;
+			remoteInfo = ReSouq;
+		};
+		10244AC52D5E0FAB00CFD286 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 10244AA22D5E0FA900CFD286 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 10244AA92D5E0FA900CFD286;
+			remoteInfo = ReSouq;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		10244AAA2D5E0FA900CFD286 /* ReSouq.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ReSouq.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		10244ABA2D5E0FAB00CFD286 /* ReSouqTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ReSouqTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		10244AC42D5E0FAB00CFD286 /* ReSouqUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ReSouqUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		10244AAC2D5E0FA900CFD286 /* ReSouq */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ReSouq;
+			sourceTree = "<group>";
+		};
+		10244ABD2D5E0FAB00CFD286 /* ReSouqTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ReSouqTests;
+			sourceTree = "<group>";
+		};
+		10244AC72D5E0FAB00CFD286 /* ReSouqUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ReSouqUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		10244AA72D5E0FA900CFD286 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		10244AB72D5E0FAB00CFD286 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		10244AC12D5E0FAB00CFD286 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		10244AA12D5E0FA900CFD286 = {
+			isa = PBXGroup;
+			children = (
+				10244AAC2D5E0FA900CFD286 /* ReSouq */,
+				10244ABD2D5E0FAB00CFD286 /* ReSouqTests */,
+				10244AC72D5E0FAB00CFD286 /* ReSouqUITests */,
+				10244AAB2D5E0FA900CFD286 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		10244AAB2D5E0FA900CFD286 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				10244AAA2D5E0FA900CFD286 /* ReSouq.app */,
+				10244ABA2D5E0FAB00CFD286 /* ReSouqTests.xctest */,
+				10244AC42D5E0FAB00CFD286 /* ReSouqUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		10244AA92D5E0FA900CFD286 /* ReSouq */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 10244ACE2D5E0FAB00CFD286 /* Build configuration list for PBXNativeTarget "ReSouq" */;
+			buildPhases = (
+				10244AA62D5E0FA900CFD286 /* Sources */,
+				10244AA72D5E0FA900CFD286 /* Frameworks */,
+				10244AA82D5E0FA900CFD286 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				10244AAC2D5E0FA900CFD286 /* ReSouq */,
+			);
+			name = ReSouq;
+			packageProductDependencies = (
+			);
+			productName = ReSouq;
+			productReference = 10244AAA2D5E0FA900CFD286 /* ReSouq.app */;
+			productType = "com.apple.product-type.application";
+		};
+		10244AB92D5E0FAB00CFD286 /* ReSouqTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 10244AD12D5E0FAB00CFD286 /* Build configuration list for PBXNativeTarget "ReSouqTests" */;
+			buildPhases = (
+				10244AB62D5E0FAB00CFD286 /* Sources */,
+				10244AB72D5E0FAB00CFD286 /* Frameworks */,
+				10244AB82D5E0FAB00CFD286 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				10244ABC2D5E0FAB00CFD286 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				10244ABD2D5E0FAB00CFD286 /* ReSouqTests */,
+			);
+			name = ReSouqTests;
+			packageProductDependencies = (
+			);
+			productName = ReSouqTests;
+			productReference = 10244ABA2D5E0FAB00CFD286 /* ReSouqTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		10244AC32D5E0FAB00CFD286 /* ReSouqUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 10244AD42D5E0FAB00CFD286 /* Build configuration list for PBXNativeTarget "ReSouqUITests" */;
+			buildPhases = (
+				10244AC02D5E0FAB00CFD286 /* Sources */,
+				10244AC12D5E0FAB00CFD286 /* Frameworks */,
+				10244AC22D5E0FAB00CFD286 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				10244AC62D5E0FAB00CFD286 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				10244AC72D5E0FAB00CFD286 /* ReSouqUITests */,
+			);
+			name = ReSouqUITests;
+			packageProductDependencies = (
+			);
+			productName = ReSouqUITests;
+			productReference = 10244AC42D5E0FAB00CFD286 /* ReSouqUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		10244AA22D5E0FA900CFD286 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1620;
+				LastUpgradeCheck = 1620;
+				TargetAttributes = {
+					10244AA92D5E0FA900CFD286 = {
+						CreatedOnToolsVersion = 16.2;
+					};
+					10244AB92D5E0FAB00CFD286 = {
+						CreatedOnToolsVersion = 16.2;
+						TestTargetID = 10244AA92D5E0FA900CFD286;
+					};
+					10244AC32D5E0FAB00CFD286 = {
+						CreatedOnToolsVersion = 16.2;
+						TestTargetID = 10244AA92D5E0FA900CFD286;
+					};
+				};
+			};
+			buildConfigurationList = 10244AA52D5E0FA900CFD286 /* Build configuration list for PBXProject "ReSouq" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 10244AA12D5E0FA900CFD286;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 10244AAB2D5E0FA900CFD286 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				10244AA92D5E0FA900CFD286 /* ReSouq */,
+				10244AB92D5E0FAB00CFD286 /* ReSouqTests */,
+				10244AC32D5E0FAB00CFD286 /* ReSouqUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		10244AA82D5E0FA900CFD286 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		10244AB82D5E0FAB00CFD286 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		10244AC22D5E0FAB00CFD286 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		10244AA62D5E0FA900CFD286 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		10244AB62D5E0FAB00CFD286 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		10244AC02D5E0FAB00CFD286 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		10244ABC2D5E0FAB00CFD286 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 10244AA92D5E0FA900CFD286 /* ReSouq */;
+			targetProxy = 10244ABB2D5E0FAB00CFD286 /* PBXContainerItemProxy */;
+		};
+		10244AC62D5E0FAB00CFD286 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 10244AA92D5E0FA900CFD286 /* ReSouq */;
+			targetProxy = 10244AC52D5E0FAB00CFD286 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		10244ACC2D5E0FAB00CFD286 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		10244ACD2D5E0FAB00CFD286 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		10244ACF2D5E0FAB00CFD286 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"ReSouq/Preview Content\"";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = cmu.ReSouq;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		10244AD02D5E0FAB00CFD286 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"ReSouq/Preview Content\"";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = cmu.ReSouq;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		10244AD22D5E0FAB00CFD286 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = cmu.ReSouqTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ReSouq.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ReSouq";
+			};
+			name = Debug;
+		};
+		10244AD32D5E0FAB00CFD286 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = cmu.ReSouqTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ReSouq.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ReSouq";
+			};
+			name = Release;
+		};
+		10244AD52D5E0FAB00CFD286 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = cmu.ReSouqUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = ReSouq;
+			};
+			name = Debug;
+		};
+		10244AD62D5E0FAB00CFD286 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = cmu.ReSouqUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = ReSouq;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		10244AA52D5E0FA900CFD286 /* Build configuration list for PBXProject "ReSouq" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				10244ACC2D5E0FAB00CFD286 /* Debug */,
+				10244ACD2D5E0FAB00CFD286 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		10244ACE2D5E0FAB00CFD286 /* Build configuration list for PBXNativeTarget "ReSouq" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				10244ACF2D5E0FAB00CFD286 /* Debug */,
+				10244AD02D5E0FAB00CFD286 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		10244AD12D5E0FAB00CFD286 /* Build configuration list for PBXNativeTarget "ReSouqTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				10244AD22D5E0FAB00CFD286 /* Debug */,
+				10244AD32D5E0FAB00CFD286 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		10244AD42D5E0FAB00CFD286 /* Build configuration list for PBXNativeTarget "ReSouqUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				10244AD52D5E0FAB00CFD286 /* Debug */,
+				10244AD62D5E0FAB00CFD286 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 10244AA22D5E0FA900CFD286 /* Project object */;
+}
