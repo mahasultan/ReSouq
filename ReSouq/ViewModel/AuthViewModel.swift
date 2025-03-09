@@ -37,7 +37,7 @@ class AuthViewModel: ObservableObject {
     func signUp(fullName: String, email: String, password: String, phoneNumber: String?) {
         Auth.auth().createUser(withEmail: email, password: password) { result, error in
             if let error = error {
-                print("❌ Sign-Up Failed: \(error.localizedDescription)")
+                print("Sign-Up Failed: \(error.localizedDescription)")
             } else if let user = result?.user {
                 let userData: [String: Any] = [
                     "id": user.uid,
@@ -49,12 +49,12 @@ class AuthViewModel: ObservableObject {
                     "createdAt": Timestamp(date: Date())
                 ]
 
-                print("📌 Writing to Firestore: \(userData)")
+                print("Writing to Firestore: \(userData)")
                 Firestore.firestore().collection("users").document(user.uid).setData(userData) { error in
                     if let error = error {
-                        print("❌ Firestore Save Error: \(error.localizedDescription)")
+                        print("Firestore Save Error: \(error.localizedDescription)")
                     } else {
-                        print("✅ User Successfully Saved in Firestore: \(userData)")
+                        print("User Successfully Saved in Firestore: \(userData)")
                     }
                 }
             }
@@ -63,13 +63,13 @@ class AuthViewModel: ObservableObject {
 
 
     func fetchUserDetails(uid: String) {
-        print("🔍 Fetching user data from Firestore...")
+        print("Fetching user data from Firestore...")
 
         db.collection("users").document(uid).getDocument { snapshot, error in
-            print("📌 Firestore callback triggered.") // Debugging Log
+            print("Firestore callback triggered.")
 
             if let error = error {
-                print("❌ Firestore fetch error: \(error.localizedDescription)")
+                print("Firestore fetch error: \(error.localizedDescription)")
                 DispatchQueue.main.async {
                     self.user = nil
                 }
@@ -77,7 +77,7 @@ class AuthViewModel: ObservableObject {
             }
 
             guard let snapshot = snapshot, snapshot.exists else {
-                print("⚠️ No user data found in Firestore for UID: \(uid)")
+                print("No user data found in Firestore for UID: \(uid)")
                 DispatchQueue.main.async {
                     self.user = nil
                 }
@@ -86,12 +86,12 @@ class AuthViewModel: ObservableObject {
 
             do {
                 let userData = try snapshot.data(as: User.self)
-                print("✅ Firestore Data Retrieved: \(userData)")
+                print("Firestore Data Retrieved: \(userData)")
                 DispatchQueue.main.async {
                     self.user = userData
                 }
             } catch {
-                print("❌ Firestore Decoding Error: \(error.localizedDescription)")
+                print("Firestore Decoding Error: \(error.localizedDescription)")
                 DispatchQueue.main.async {
                     self.user = nil
                 }
@@ -111,7 +111,7 @@ class AuthViewModel: ObservableObject {
                     self.isLoggedIn = true
                     self.userID = user.uid
                     self.fetchUserDetails(uid: user.uid)
-                    print("✅ Login successful for: \(user.email ?? "")")
+                    print("Login successful for: \(user.email ?? "")")
                 }
             }
         }
@@ -127,9 +127,9 @@ class AuthViewModel: ObservableObject {
                 self.userID = nil
                 self.user = nil
             }
-            print("✅ User logged out successfully.")
+            print("User logged out successfully.")
         } catch let signOutError {
-            print("❌ Error signing out: \(signOutError.localizedDescription)")
+            print("Error signing out: \(signOutError.localizedDescription)")
         }
     }
 }

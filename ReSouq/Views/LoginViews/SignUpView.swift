@@ -4,18 +4,17 @@
 //
 //  Created by Al Maha Al Jabor on 09/03/2025.
 //
+
 import SwiftUI
 import Firebase
 import FirebaseAuth
 import UIKit
-
 
 struct SignUpView: View {
     @State private var fullName: String = ""
     @State private var email: String = ""
     @State private var password: String = ""
     @State private var phoneNumber: String = ""
-    @State private var selectedCountry: String = "🇶🇦"
     @State private var isPasswordVisible = false
     @State private var errorMessage: String?
     @State private var profileImage: UIImage?
@@ -87,8 +86,8 @@ struct SignUpView: View {
                     .background(Color.white)
                     .cornerRadius(20)
                     .shadow(radius: 1)
-                
-            }.padding(.horizontal, 30)
+            }
+            .padding(.horizontal, 30)
             
             // Email Input Field
             VStack(alignment: .leading) {
@@ -124,28 +123,13 @@ struct SignUpView: View {
             }
             .padding(.horizontal, 30)
             
-            // Phone Number Input with Country Flag Picker
             HStack {
-                Menu {
-                    Button(action: { selectedCountry = "🇶🇦" }) { Text("🇶🇦 Qatar") }
-                    Button(action: { selectedCountry = "🇸🇦" }) { Text("🇸🇦 Saudi Arabia") }
-                    Button(action: { selectedCountry = "🇦🇪" }) { Text("🇦🇪 UAE") }
-                    Button(action: { selectedCountry = "🇰🇼" }) { Text("🇰🇼 Kuwait") }
-                    Button(action: { selectedCountry = "🇧🇭" }) { Text("🇧🇭 Bahrain") }
-                    Button(action: { selectedCountry = "🇴🇲" }) { Text("🇴🇲 Oman") }
-                } label: {
-                    HStack {
-                        Text(selectedCountry)
-                        Image(systemName: "chevron.down")
-                            .font(.system(size: 12))
-                            .foregroundColor(.gray)
-                    }
-                    .padding(.leading, 10)
-                }
-                .frame(width: 65, height: 50)
-                .background(Color.white)
-                .cornerRadius(20)
-                
+                Text("🇶🇦")
+                    .frame(width: 80, height: 50)
+                    .background(Color.white)
+                    .cornerRadius(20)
+                    .shadow(radius: 1)
+
                 TextField("Your number", text: $phoneNumber)
                     .padding()
                     .frame(height: 50)
@@ -205,7 +189,7 @@ struct SignUpView: View {
         
         func makeUIViewController(context: Context) -> UIImagePickerController {
             let picker = UIImagePickerController()
-            picker.sourceType = .photoLibrary // Opens photo gallery
+            picker.sourceType = .photoLibrary 
             picker.delegate = context.coordinator
             return picker
         }
@@ -221,7 +205,7 @@ struct SignUpView: View {
             
             func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
                 if let image = info[.originalImage] as? UIImage {
-                    parent.selectedImage = image // Assign selected image
+                    parent.selectedImage = image
                 }
                 picker.dismiss(animated: true)
             }
@@ -239,11 +223,11 @@ struct SignUpView: View {
             }
             
             guard let user = result?.user else {
-                print("⚠️ User is nil after sign-up.")
+                print("User is nil after sign-up.")
                 return
             }
             
-            print("✅ User signed up successfully: \(user.email ?? "")")
+            print("User signed up successfully: \(user.email ?? "")")
             
             // Store user data in Firestore
             let userData: [String: Any] = [
@@ -259,21 +243,14 @@ struct SignUpView: View {
             let db = Firestore.firestore()
             db.collection("users").document(user.uid).setData(userData) { error in
                 if let error = error {
-                    print("❌ Firestore Save Failed: \(error.localizedDescription)")
+                    print("Firestore Save Failed: \(error.localizedDescription)")
                 } else {
-                    print("✅ User data saved in Firestore - User ID: \(user.uid)")
+                    print("User data saved in Firestore - User ID: \(user.uid)")
                     DispatchQueue.main.async {
                         authViewModel.isLoggedIn = true // Automatically log in
                     }
                 }
             }
         }
-    }
-}
-
-
-struct SignUpView_Previews: PreviewProvider {
-    static var previews: some View {
-        SignUpView()
     }
 }

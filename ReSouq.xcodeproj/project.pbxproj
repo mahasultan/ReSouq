@@ -56,9 +56,22 @@
 		10244AC42D5E0FAB00CFD286 /* ReSouqUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ReSouqUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		105B75F42D7D981D00765F0E /* Exceptions for "ReSouq" folder in "ReSouq" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 10244AA92D5E0FA900CFD286 /* ReSouq */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		10244AAC2D5E0FA900CFD286 /* ReSouq */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				105B75F42D7D981D00765F0E /* Exceptions for "ReSouq" folder in "ReSouq" target */,
+			);
 			path = ReSouq;
 			sourceTree = "<group>";
 		};
@@ -476,6 +489,9 @@
 				DEVELOPMENT_ASSET_PATHS = "\"ReSouq/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ReSouq/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "";
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -504,6 +520,9 @@
 				DEVELOPMENT_ASSET_PATHS = "\"ReSouq/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ReSouq/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "";
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
