@@ -2,11 +2,11 @@
 //  ReSouqApp.swift
 //  ReSouq
 //
-//  Created by Al Maha Al Jabor on 13/02/2025.
-//
+
 
 import SwiftUI
 import FirebaseCore
+import Firebase
 
 
 class AppDelegate: NSObject, UIApplicationDelegate {
@@ -20,12 +20,17 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
 @main
 struct ReSouqApp: App {
-    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    @StateObject var authViewModel = AuthViewModel()
+
+    init() {
+        FirebaseApp.configure()
+    }
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            SplashView()
+                .environmentObject(authViewModel)
         }
+
     }
 }
-
-

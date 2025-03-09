@@ -2,9 +2,7 @@
 //  HomeView.swift
 //  ReSouq
 //
-//  Created by Al Maha Al Jabor on 09/03/2025.
 //
-
 import SwiftUI
 
 struct HomeView: View {
@@ -14,14 +12,17 @@ struct HomeView: View {
         NavigationStack {
             ZStack {
                 VStack {
+                    TopBarView(showLogoutButton: true, showAddButton: true)
+                        .environmentObject(authViewModel)
 
                     Spacer()
                 }
 
                 VStack {
                     Spacer()
+                    BottomBarView()
                 }
-                .ignoresSafeArea(.all, edges: .bottom) 
+                .ignoresSafeArea(.all, edges: .bottom)
             }
         }
     }
