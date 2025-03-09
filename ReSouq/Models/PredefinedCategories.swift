@@ -2,7 +2,6 @@
 //  PredefinedCategories.swift
 //  ReSouq
 //
-//  Created by Mohammed Al-Khalifa on 08/03/2025.
 //
 
 import Foundation

@@ -27,16 +27,6 @@ struct TopBarView: View {
 
                 Spacer()
 
-                if showAddButton {
-                    NavigationLink(destination: AddProductView()) {
-                        Image(systemName: "plus.circle.fill")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 22, height: 22)
-                            .foregroundColor(.green)
-                    }
-                }
-
                 if showLogoutButton {
                     Button(action: {
                         authViewModel.logout()
