@@ -5,6 +5,7 @@
 //
 
 import SwiftUI
+import SDWebImageSwiftUI
 
 struct ProductDetailView: View {
     var product: Product
@@ -13,13 +14,13 @@ struct ProductDetailView: View {
     var body: some View {
         VStack {
             if let imageUrl = product.imageURL, let url = URL(string: imageUrl) {
-                AsyncImage(url: url) { image in
-                    image.resizable()
-                } placeholder: {
-                    ProgressView()
-                }
-                .scaledToFit()
-                .frame(height: 300)
+                WebImage(url: url)
+                    .resizable()
+                    .indicator(.activity)
+                    .transition(.fade(duration: 0.5)) 
+                    .scaledToFit()
+                    .frame(height: 300)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
             } else {
                 Image(systemName: "photo")
                     .resizable()

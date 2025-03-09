@@ -1,4 +1,5 @@
 import SwiftUI
+import SDWebImageSwiftUI
 
 struct ProductItem: View {
     var product: Product
@@ -8,17 +9,22 @@ struct ProductItem: View {
         VStack {
             NavigationLink(destination: ProductDetailView(product: product)) {
                 VStack {
-                    AsyncImage(url: URL(string: product.imageURL ?? "")) { image in
-                        image.resizable()
-                    } placeholder: {
+                    if let urlString = product.imageURL, let url = URL(string: urlString) {
+                        WebImage(url: url)
+                            .resizable()
+                            .indicator(.activity)
+                            .transition(.fade(duration: 0.5)) 
+                            .scaledToFill()
+                            .frame(width: 120, height: 120)
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                            .clipped()
+                    } else {
                         Image(systemName: "photo")
                             .resizable()
                             .scaledToFit()
                             .frame(width: 120, height: 120)
                             .foregroundColor(.gray)
                     }
-                    .frame(width: 120, height: 120)
-                    .cornerRadius(10)
 
                     Text(product.name)
                         .font(.system(size: 14))
