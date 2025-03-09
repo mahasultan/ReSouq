@@ -2,13 +2,13 @@
 //  ProductDetailView.swift
 //  ReSouq
 //
-//  Created by Al Maha Al Jabor on 03/03/2025.
 //
 
 import SwiftUI
 
 struct ProductDetailView: View {
     var product: Product
+    @EnvironmentObject var cartViewModel: CartViewModel
 
     var body: some View {
         VStack {
@@ -40,6 +40,16 @@ struct ProductDetailView: View {
                 .padding()
 
             Spacer()
+        }
+        Button(action: {
+            cartViewModel.addProduct(product)
+        }) {
+            Text("Add to Cart")
+                .font(.system(size: 14))
+                .frame(width: 120, height: 30)
+                .background(Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1)))
+                .foregroundColor(Color(UIColor(red: 232/255, green: 225/255, blue: 210/255, alpha: 1)))
+                .cornerRadius(10)
         }
         .padding()
         .navigationTitle("Item Details")

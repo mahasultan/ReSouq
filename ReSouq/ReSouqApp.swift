@@ -21,6 +21,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 @main
 struct ReSouqApp: App {
     @StateObject var authViewModel = AuthViewModel()
+    @StateObject var cartViewModel = CartViewModel()
 
     init() {
         FirebaseApp.configure()
@@ -30,6 +31,7 @@ struct ReSouqApp: App {
         WindowGroup {
             SplashView()
                 .environmentObject(authViewModel)
+                .environmentObject(cartViewModel)
         }
 
     }
