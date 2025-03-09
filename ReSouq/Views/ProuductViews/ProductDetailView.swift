@@ -2,19 +2,47 @@
 //  ProductDetailView.swift
 //  ReSouq
 //
-//  Created by Al Maha Al Jabor on 09/03/2025.
+//  Created by Al Maha Al Jabor on 03/03/2025.
 //
-
 
 import SwiftUI
 
 struct ProductDetailView: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
-    }
-}
+    var product: Product
 
-#Preview {
-    ProfileView()
+    var body: some View {
+        VStack {
+            if let imageUrl = product.imageURL, let url = URL(string: imageUrl) {
+                AsyncImage(url: url) { image in
+                    image.resizable()
+                } placeholder: {
+                    ProgressView()
+                }
+                .scaledToFit()
+                .frame(height: 300)
+            } else {
+                Image(systemName: "photo")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(height: 300)
+                    .foregroundColor(.gray)
+            }
+
+            Text(product.name)
+                .font(.title)
+                .bold()
+
+            Text("QR \(product.price, specifier: "%.2f")")
+                .foregroundColor(.red)
+                .font(.title2)
+
+            Text(product.description)
+                .padding()
+
+            Spacer()
+        }
+        .padding()
+        .navigationTitle("Item Details")
+    }
 }
 
