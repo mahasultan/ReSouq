@@ -2,7 +2,6 @@
 //  ProductDetailView.swift
 //  ReSouq
 //
-//  Created by Al Maha Al Jabor on 03/03/2025.
 //
 
 import SwiftUI

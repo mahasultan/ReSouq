@@ -2,7 +2,6 @@
 //  ProductItem.swift
 //  ReSouq
 //
-//  Created by Mohammed Al-Khalifa on 09/03/2025.
 //
 
 

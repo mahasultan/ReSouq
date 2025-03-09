@@ -2,7 +2,6 @@
 //  CategoryViewModel.swift
 //  ReSouq
 //
-//  Created by Mohammed Al-Khalifa on 08/03/2025.
 //
 
 import FirebaseFirestore
@@ -17,12 +16,10 @@ class CategoryViewModel: ObservableObject {
     func fetchCategories() {
         db.collection("categories").getDocuments { snapshot, error in
             if let error = error {
-                print("❌ Firestore Error: \(error.localizedDescription)")
                 return
             }
 
             guard let documents = snapshot?.documents else {
-                print("❌ No categories found in Firestore.")
                 return
             }
 
@@ -32,26 +29,20 @@ class CategoryViewModel: ObservableObject {
                     return Category(
                         id: doc.documentID,
                         name: data["name"] as? String ?? "Unknown",
-                        parentCategoryID: data["parentCategoryID"] as? String // ✅ Now safely retrieves parentCategoryID
+                        parentCategoryID: data["parentCategoryID"] as? String
                     )
                 }
-                print("✅ Categories Loaded: \(self.categories.count)")
             }
         }
     }
 
     func fetchDisplayedCategories() {
-        fetchCategories()
+            fetchCategories()
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            if self.categories.isEmpty {
-                print("❌ No categories loaded!")
-            } else {
-                self.displayedCategories = self.categories.prefix(3).map { $0 }
-                print("✅ Displayed Categories: \(self.displayedCategories.count)")
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                if !self.categories.isEmpty {
+                    self.displayedCategories = self.categories.prefix(3).map { $0 }
+                }
             }
         }
     }
-}
-
-
