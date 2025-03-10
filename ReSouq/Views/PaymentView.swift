@@ -1,10 +1,14 @@
+//
+//  Payment.swift
+//  ReSouq
+//
+
 import SwiftUI
 
-struct CartView: View {
+struct PaymentView: View {
     @EnvironmentObject var cartViewModel: CartViewModel
     @State private var selectedShipping = "Standard"
     @State private var selectedPaymentMethod = "Apple Pay"
-    @State private var navigateToPayment = false
     
     let shippingOptions = [
         "Standard (7-10 days) - Free",
@@ -55,9 +59,9 @@ struct CartView: View {
                                     Text(String(format: "QR %.2f", cartItem.product.price))
                                         .foregroundColor(.gray)
                                 }
-                                
+
                                 Spacer()
-                                
+
                                 // Remove from cart button
                                 Button(action: {
                                     cartViewModel.removeProduct(cartItem.product)
@@ -74,26 +78,57 @@ struct CartView: View {
                     .listStyle(PlainListStyle())
                 }
                 
-                if !cartViewModel.cart.products.isEmpty {
-                    VStack(spacing: 10) {
-                        Text("Total: QR \(String(format: "%.2f", cartViewModel.cart.totalPrice))")
-                            .font(.headline)
-                            .foregroundColor(.black)
-                        
-                        // Navigation to PaymentView
-                        NavigationLink(destination: PaymentView()) {
-                            Text("Checkout")
-                                .frame(maxWidth: .infinity)
-                                .padding()
-                                .background(Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1)))
-                                .foregroundColor(Color(UIColor(red: 232/255, green: 225/255, blue: 210/255, alpha: 1)))
-                                .cornerRadius(10)
+                Spacer()
+                
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("Shipping Options")
+                        .font(.headline)
+                        .foregroundColor(.black)
+                    Picker("Shipping", selection: $selectedShipping) {
+                        ForEach(shippingOptions, id: \.self) { option in
+                            Text(option).foregroundColor(.black)
                         }
-                        .padding()
                     }
+                    .pickerStyle(.segmented)
+                    
+                    Text("Payment Method")
+                        .font(.headline)
+                        .foregroundColor(.black)
+                    Picker("Payment", selection: $selectedPaymentMethod) {
+                        ForEach(paymentMethods, id: \.self) { method in
+                            Text(method).foregroundColor(.black)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    
+                    VStack(spacing: 5) {
+                        Text("Subtotal: QR \(String(format: "%.2f", cartViewModel.cart.totalPrice))")
+                        Text("Shipping: \(selectedShipping.contains("Express") ? "QR 50.00" : "Free")")
+                        Text(String(format: "Total: QR %.2f", totalWithShipping))
+                            .bold()
+                    }
+                    .foregroundColor(.black)
+                    .padding()
+                    .background(Color(UIColor(red: 232/255, green: 225/255, blue: 210/255, alpha: 1)))
+                    .cornerRadius(10)
+                }
+                .padding()
+                
+                if !cartViewModel.cart.products.isEmpty {
+                    Button(action: {
+                        print("Proceeding to payment with \(selectedPaymentMethod)")
+                    }) {
+                        Text("Confirm Payment")
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1)))
+                            .foregroundColor(Color(UIColor(red: 232/255, green: 225/255, blue: 210/255, alpha: 1)))
+                            .cornerRadius(10)
+                    }
+                    .padding()
                 }
             }
-            .navigationTitle("Cart") // ✅ Properly placed here
+            .navigationTitle("Payment")
             .onAppear {
                 cartViewModel.fetchCart() // Fetch latest cart data
             }
@@ -101,10 +136,4 @@ struct CartView: View {
     }
 }
 
-// Preview
-struct CartView_Previews: PreviewProvider {
-    static var previews: some View {
-        CartView()
-            .environmentObject(CartViewModel()) // Pass environment object
-    }
-}
+
