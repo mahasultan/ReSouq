@@ -22,6 +22,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 struct ReSouqApp: App {
     @StateObject var authViewModel = AuthViewModel()
     @StateObject var cartViewModel = CartViewModel()
+    @StateObject var orderViewModel = OrderViewModel()
 
     init() {
         FirebaseApp.configure()
@@ -32,6 +33,7 @@ struct ReSouqApp: App {
             SplashView()
                 .environmentObject(authViewModel)
                 .environmentObject(cartViewModel)
+                .environmentObject(orderViewModel)
         }
 
     }
