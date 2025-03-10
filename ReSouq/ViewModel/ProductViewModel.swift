@@ -9,13 +9,17 @@ import FirebaseFirestore
 import FirebaseStorage
 import Foundation
 import SwiftUI
+import FirebaseAuth
+
 
 class ProductViewModel: ObservableObject {
     @Published var products: [Product] = []
+    @Published var likedProducts: [Product] = []
     @Published var isSubmitting = false
     @Published var errorMessage: String?
 
     private let db = Firestore.firestore()
+    private let userID = Auth.auth().currentUser?.uid
 
     // Fetch products from Firestore
     func fetchProducts() {
@@ -24,6 +28,18 @@ class ProductViewModel: ObservableObject {
 
             DispatchQueue.main.async {
                 self.products = documents.compactMap { try? $0.data(as: Product.self) }
+            }
+        }
+    }
+    
+    // Fetch liked products from Firestore
+    func fetchLikedProducts() {
+        guard let userID = userID else { return }
+        db.collection("users").document(userID).collection("likes").getDocuments { snapshot, error in
+            guard let documents = snapshot?.documents, error == nil else { return }
+
+            DispatchQueue.main.async {
+                self.likedProducts = documents.compactMap { try? $0.data(as: Product.self) }
             }
         }
     }
@@ -111,6 +127,35 @@ class ProductViewModel: ObservableObject {
         }
     }
 
+    // Toggle like/unlike a product
+    func toggleLike(product: Product) {
+        guard let userID = userID, let productID = product.id else { return }
+        let userLikesRef = db.collection("users").document(userID).collection("likes").document(productID)
+
+        if likedProducts.contains(where: { $0.id == productID }) {
+            // Unlike the product
+            userLikesRef.delete { error in
+                if error == nil {
+                    DispatchQueue.main.async {
+                        self.likedProducts.removeAll { $0.id == productID }
+                    }
+                }
+            }
+        } else {
+            // Like the product
+            do {
+                try userLikesRef.setData(from: product) { error in
+                    if error == nil {
+                        DispatchQueue.main.async {
+                            self.likedProducts.append(product)
+                        }
+                    }
+                }
+            } catch {
+                print("Error liking product: \(error.localizedDescription)")
+            }
+        }
+    }
 
     // Sort products by creation date
     var sortedProducts: [Product] {
