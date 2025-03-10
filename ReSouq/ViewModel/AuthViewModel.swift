@@ -4,9 +4,15 @@
 //
 //
 
+//
+//  AuthViewModel.swift
+//  ReSouq
+//
+
 import SwiftUI
 import FirebaseAuth
 import FirebaseFirestore
+import FirebaseStorage
 
 class AuthViewModel: ObservableObject {
     @Published var isLoggedIn = false
@@ -15,7 +21,6 @@ class AuthViewModel: ObservableObject {
     @Published var errorMessage: String?
 
     let db = Firestore.firestore()
-
 
     init() {
         Auth.auth().addStateDidChangeListener { _, user in
@@ -28,47 +33,90 @@ class AuthViewModel: ObservableObject {
             }
         }
     }
-    
+
     func getCurrentUserID() -> String? {
         return userID
     }
 
-    func signUp(fullName: String, email: String, password: String, phoneNumber: String?) {
+    func signUp(fullName: String, email: String, password: String, phoneNumber: String?, profileImage: UIImage?) {
         Auth.auth().createUser(withEmail: email, password: password) { result, error in
             if let error = error {
-                print("Sign-Up Failed: \(error.localizedDescription)")
-            } else if let user = result?.user {
-                let userData: [String: Any] = [
-                    "id": user.uid,
-                    "fullName": fullName,
-                    "email": email,
-                    "phoneNumber": phoneNumber ?? "",
-                    "profileImageURL": "",
-                    "location": "",
-                    "createdAt": Timestamp(date: Date())
-                ]
+                return
+            }
 
-                print("Writing to Firestore: \(userData)")
-                Firestore.firestore().collection("users").document(user.uid).setData(userData) { error in
-                    if let error = error {
-                        print("Firestore Save Error: \(error.localizedDescription)")
-                    } else {
-                        print("User Successfully Saved in Firestore: \(userData)")
-                    }
+            guard let user = result?.user else { return }
+            let userID = user.uid
+
+
+            if let image = profileImage {
+
+                // Upload image before saving user data
+                self.uploadProfileImage(userID: userID, image: image) { imageUrl in
+                    if let imageUrl = imageUrl {
+                        
+                    } else {                    }
+
+                    // Save user data to Firestore with the image URL
+                    self.saveUserToFirestore(userID: userID, fullName: fullName, email: email, phoneNumber: phoneNumber, profileImageURL: imageUrl ?? "")
                 }
+            } else {
+                self.saveUserToFirestore(userID: userID, fullName: fullName, email: email, phoneNumber: phoneNumber, profileImageURL: "")
             }
         }
     }
 
 
+
+    private func saveUserToFirestore(userID: String, fullName: String, email: String, phoneNumber: String?, profileImageURL: String) {
+        let userData: [String: Any] = [
+            "id": userID,
+            "fullName": fullName,
+            "email": email,
+            "phoneNumber": phoneNumber ?? "",
+            "profileImageURL": profileImageURL,
+            "createdAt": Timestamp(date: Date())
+        ]
+
+
+        db.collection("users").document(userID).setData(userData) { error in
+            if let error = error {
+            } else {
+                self.fetchUserDetails(uid: userID)
+            }
+        }
+    }
+
+    func uploadProfileImage(userID: String, image: UIImage, completion: @escaping (String?) -> Void) {
+
+        guard let imageData = image.jpegData(compressionQuality: 0.8) else {
+            completion(nil)
+            return
+        }
+
+        let storageRef = Storage.storage().reference().child("profile_images/\(userID).jpg")
+        
+
+        storageRef.putData(imageData, metadata: nil) { metadata, error in
+            if let error = error {
+                completion(nil)
+                return
+            }
+
+
+            storageRef.downloadURL { url, error in
+                if let error = error {
+                    completion(nil)
+                } else if let imageUrl = url?.absoluteString {
+                    completion(imageUrl)
+                }
+            }
+        }
+    }
+
     func fetchUserDetails(uid: String) {
-        print("Fetching user data from Firestore...")
 
         db.collection("users").document(uid).getDocument { snapshot, error in
-            print("Firestore callback triggered.")
-
             if let error = error {
-                print("Firestore fetch error: \(error.localizedDescription)")
                 DispatchQueue.main.async {
                     self.user = nil
                 }
@@ -76,7 +124,6 @@ class AuthViewModel: ObservableObject {
             }
 
             guard let snapshot = snapshot, snapshot.exists else {
-                print("No user data found in Firestore for UID: \(uid)")
                 DispatchQueue.main.async {
                     self.user = nil
                 }
@@ -85,18 +132,17 @@ class AuthViewModel: ObservableObject {
 
             do {
                 let userData = try snapshot.data(as: User.self)
-                print("Firestore Data Retrieved: \(userData)")
                 DispatchQueue.main.async {
                     self.user = userData
                 }
             } catch {
-                print("Firestore Decoding Error: \(error.localizedDescription)")
                 DispatchQueue.main.async {
                     self.user = nil
                 }
             }
         }
     }
+
 
 
     func login(email: String, password: String) {
@@ -110,7 +156,6 @@ class AuthViewModel: ObservableObject {
                     self.isLoggedIn = true
                     self.userID = user.uid
                     self.fetchUserDetails(uid: user.uid)
-                    print("Login successful for: \(user.email ?? "")")
                 }
             }
         }
@@ -126,9 +171,7 @@ class AuthViewModel: ObservableObject {
                 self.userID = nil
                 self.user = nil
             }
-            print("User logged out successfully.")
         } catch let signOutError {
-            print("Error signing out: \(signOutError.localizedDescription)")
         }
     }
 }

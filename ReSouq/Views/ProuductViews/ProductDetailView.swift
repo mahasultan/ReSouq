@@ -17,7 +17,7 @@ struct ProductDetailView: View {
                 WebImage(url: url)
                     .resizable()
                     .indicator(.activity)
-                    .transition(.fade(duration: 0.5)) 
+                    .transition(.fade(duration: 0.5))
                     .scaledToFit()
                     .frame(height: 300)
                     .clipShape(RoundedRectangle(cornerRadius: 10))
