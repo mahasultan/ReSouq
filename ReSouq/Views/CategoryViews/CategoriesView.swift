@@ -1,3 +1,10 @@
+//
+//  CategoriesView.swift
+//  ReSouq
+//
+//
+
+
 import SwiftUI
 
 struct CategoriesView: View {
