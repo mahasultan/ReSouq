@@ -3,6 +3,8 @@ import SwiftUI
 struct ProductItem: View {
     var product: Product
     @EnvironmentObject var cartViewModel: CartViewModel
+    @EnvironmentObject var productViewModel: ProductViewModel
+
 
     var body: some View {
         VStack {
