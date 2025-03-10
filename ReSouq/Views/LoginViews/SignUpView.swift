@@ -2,7 +2,6 @@
 //  SignUpView.swift
 //  ReSouq
 //
-//
 
 import SwiftUI
 import Firebase
@@ -44,6 +43,7 @@ struct SignUpView: View {
             
             Spacer(minLength: 10)
             
+            // 📌 Profile Image Picker
             HStack {
                 Button(action: {
                     isImagePickerPresented = true
@@ -77,7 +77,7 @@ struct SignUpView: View {
             }
             .padding(.horizontal, 30)
             
-            // Full Name Input
+            // 📌 Full Name Input
             VStack(alignment: .leading) {
                 TextField("Full Name", text: $fullName)
                     .padding()
@@ -88,7 +88,7 @@ struct SignUpView: View {
             }
             .padding(.horizontal, 30)
             
-            // Email Input Field
+            // 📌 Email Input Field
             VStack(alignment: .leading) {
                 TextField("Email", text: $email)
                     .padding()
@@ -99,7 +99,7 @@ struct SignUpView: View {
             }
             .padding(.horizontal, 30)
             
-            // Password Input Field
+            // 📌 Password Input Field
             VStack(alignment: .leading) {
                 HStack {
                     if isPasswordVisible {
@@ -138,7 +138,6 @@ struct SignUpView: View {
             }
             .padding(.horizontal, 30)
             
-            // Error Message Display
             if let errorMessage = errorMessage {
                 Text(errorMessage)
                     .foregroundColor(.red)
@@ -146,9 +145,14 @@ struct SignUpView: View {
                     .padding(.top, 5)
             }
             
-            // Sign-Up Button
             Button(action: {
-                signUpUser()
+                authViewModel.signUp(
+                    fullName: fullName,
+                    email: email,
+                    password: password,
+                    phoneNumber: phoneNumber,
+                    profileImage: profileImage
+                )
             }) {
                 Text("Done")
                     .font(.system(size: 20))
@@ -161,7 +165,6 @@ struct SignUpView: View {
             }
             .padding(.top, 10)
             
-            // Cancel Button
             Button(action: {
             }) {
                 NavigationLink(destination: LoginView()) {
@@ -176,80 +179,5 @@ struct SignUpView: View {
         }
         .background(Color(UIColor(red: 232/255, green: 225/255, blue: 210/255, alpha: 1)))
         .edgesIgnoringSafeArea(.all)
-    }
-    
-    // Image Picker for Profile Picture Selection
-    struct ImagePicker: UIViewControllerRepresentable {
-        @Binding var selectedImage: UIImage?
-        
-        func makeCoordinator() -> Coordinator {
-            return Coordinator(self)
-        }
-        
-        func makeUIViewController(context: Context) -> UIImagePickerController {
-            let picker = UIImagePickerController()
-            picker.sourceType = .photoLibrary 
-            picker.delegate = context.coordinator
-            return picker
-        }
-        
-        func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {}
-        
-        class Coordinator: NSObject, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
-            let parent: ImagePicker
-            
-            init(_ parent: ImagePicker) {
-                self.parent = parent
-            }
-            
-            func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
-                if let image = info[.originalImage] as? UIImage {
-                    parent.selectedImage = image
-                }
-                picker.dismiss(animated: true)
-            }
-        }
-    }
-    
-    // Firebase Sign-Up Function
-    func signUpUser() {
-        Auth.auth().createUser(withEmail: email, password: password) { result, error in
-            if let error = error {
-                DispatchQueue.main.async {
-                    self.errorMessage = "Sign-Up Failed: \(error.localizedDescription)"
-                }
-                return
-            }
-            
-            guard let user = result?.user else {
-                print("User is nil after sign-up.")
-                return
-            }
-            
-            print("User signed up successfully: \(user.email ?? "")")
-            
-            // Store user data in Firestore
-            let userData: [String: Any] = [
-                "id": user.uid,
-                "fullName": fullName,
-                "email": email,
-                "phoneNumber": phoneNumber,
-                "profileImageURL": "",
-                "location": "",
-                "createdAt": Timestamp(date: Date())
-            ]
-            
-            let db = Firestore.firestore()
-            db.collection("users").document(user.uid).setData(userData) { error in
-                if let error = error {
-                    print("Firestore Save Failed: \(error.localizedDescription)")
-                } else {
-                    print("User data saved in Firestore - User ID: \(user.uid)")
-                    DispatchQueue.main.async {
-                        authViewModel.isLoggedIn = true // Automatically log in
-                    }
-                }
-            }
-        }
     }
 }
