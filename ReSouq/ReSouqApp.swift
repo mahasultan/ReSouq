@@ -23,7 +23,7 @@ struct ReSouqApp: App {
     @StateObject var authViewModel = AuthViewModel()
     @StateObject var cartViewModel = CartViewModel()
     @StateObject var orderViewModel = OrderViewModel()
-
+    @StateObject var productViewModel = ProductViewModel()
     init() {
         FirebaseApp.configure()
     }
@@ -34,6 +34,7 @@ struct ReSouqApp: App {
                 .environmentObject(authViewModel)
                 .environmentObject(cartViewModel)
                 .environmentObject(orderViewModel)
+                .environmentObject(productViewModel)
         }
 
     }
