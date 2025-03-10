@@ -6,6 +6,7 @@
 import SwiftUI
 
 struct BottomBarView: View {
+    @EnvironmentObject var cartViewModel: CartViewModel
     var body: some View {
         VStack {
             Spacer()
@@ -51,14 +52,26 @@ struct BottomBarView: View {
                     }
                     
                     Spacer()
-                    
+                                        
                     NavigationLink(destination: CartView()) {
-                        Image(systemName: "cart.fill")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 26, height: 26)
-                            .foregroundColor(.black)
-                    }
+                        ZStack {
+                            Image(systemName: "cart.fill")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 26, height: 26)
+                                .foregroundColor(.black)
+                            
+                            
+                            if cartViewModel.cart.products.count > 0 {
+                                Text("\(cartViewModel.cart.products.count)")
+                                    .font(.caption2)
+                                    .bold()
+                                    .foregroundColor(.white)
+                                    .frame(width: 18, height: 18)
+                                    .background(Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1)))
+                                    .clipShape(Circle())
+                                    .offset(x: 12, y: -12)
+                            }}}
                     
                     Spacer()
                     

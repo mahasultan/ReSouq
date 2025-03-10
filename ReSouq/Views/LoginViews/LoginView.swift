@@ -1,7 +1,11 @@
 //
 //  LoginView.swift
 //  ReSouq
+<<<<<<< HEAD
 /
+=======
+//
+>>>>>>> main
 //
 
 import SwiftUI
