@@ -45,7 +45,7 @@ struct ProductDetailView: View {
                         .resizable()
                         .scaledToFit()
                         .frame(width: 30, height: 30)
-                        .foregroundColor(productViewModel.likedProducts.contains(where: { $0.id == product.id }) ? .red : .gray)
+                        .foregroundColor(productViewModel.likedProducts.contains(where: { $0.id == product.id }) ? Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1)) : .gray) 
                 }
                 .padding()
 

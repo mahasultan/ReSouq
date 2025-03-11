@@ -9,69 +9,103 @@ import SDWebImageSwiftUI
 
 struct LikesView: View {
     @EnvironmentObject var productViewModel: ProductViewModel
+    @EnvironmentObject var cartViewModel: CartViewModel
 
     var body: some View {
         NavigationStack {
-            VStack {
-                if productViewModel.likedProducts.isEmpty {
-                    Text("No liked products yet.")
-                        .foregroundColor(.gray)
-                } else {
-                    List {
-                        ForEach(productViewModel.likedProducts, id: \.id) { product in
-                            HStack {
-                                if let imageURL = product.imageURL, let url = URL(string: imageURL) {
-                                    WebImage(url: url)
-                                        .resizable()
-                                        .indicator(.activity)
-                                        .scaledToFill()
-                                        .frame(width: 50, height: 50)
-                                        .clipShape(RoundedRectangle(cornerRadius: 8))
-                                        .clipped()
-                                } else {
-                                    Image(systemName: "photo")
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 50, height: 50)
-                                        .foregroundColor(.gray)
-                                }
+            ZStack {
+                VStack {
+                    TopBarView(showLogoutButton: false, showAddButton: false)
 
-                                VStack(alignment: .leading) {
-                                    Text(product.name)
-                                        .font(.headline)
-                                    Text("QR \(String(format: "%.2f", product.price))")
-                                        .foregroundColor(.red)
-                                        .font(.subheadline)
-                                }
+                    Text("Wishlist")
+                        .font(.custom("ReemKufi-Bold", size: 28))
+                        .foregroundColor(.black)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal)
 
-                                Spacer()
+                    if productViewModel.likedProducts.isEmpty {
+                        Text("No liked products yet.")
+                            .foregroundColor(.gray)
+                            .padding(.top, 20)
+                    } else {
+                        ScrollView {
+                            VStack {
+                                ForEach(productViewModel.likedProducts, id: \.id) { product in
+                                    VStack {
+                                        HStack {
+                                            if let imageURL = product.imageURL, let url = URL(string: imageURL) {
+                                                WebImage(url: url)
+                                                    .resizable()
+                                                    .indicator(.activity)
+                                                    .scaledToFill()
+                                                    .frame(width: 80, height: 80) // ✅ Bigger size
+                                                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                                                    .clipped()
+                                            } else {
+                                                Image(systemName: "photo")
+                                                    .resizable()
+                                                    .scaledToFit()
+                                                    .frame(width: 80, height: 80)
+                                                    .foregroundColor(.gray)
+                                            }
 
-                                // ✅ Unlike Button (Removes Product from Likes)
-                                Button(action: {
-                                    productViewModel.toggleLike(product: product)
-                                }) {
-                                    Image(systemName: "heart.fill")
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 20, height: 20)
-                                        .foregroundColor(.red)
+                                            NavigationLink(destination: ProductDetailView(product: product)) {
+                                                VStack(alignment: .leading) {
+                                                    Text(product.name)
+                                                        .font(.system(size: 18, weight: .bold))
+                                                        .foregroundColor(.blue)
+
+                                                    Text("QR \(String(format: "%.2f", product.price))")
+                                                        .foregroundColor(.red)
+                                                        .font(.system(size: 16))
+                                                }
+                                            }
+
+                                            Spacer()
+
+                                            Button(action: {
+                                                productViewModel.toggleLike(product: product)
+                                            }) {
+                                                Image(systemName: "heart.fill")
+                                                    .resizable()
+                                                    .scaledToFit()
+                                                    .frame(width: 25, height: 25)
+                                                    .foregroundColor(Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1)))
+                                            }
+
+                                            Button(action: {
+                                                cartViewModel.addProduct(product)
+                                            }) {
+                                                Image(systemName: "cart.fill")
+                                                    .resizable()
+                                                    .scaledToFit()
+                                                    .frame(width: 25, height: 25)
+                                                    .foregroundColor(.black)
+                                            }
+                                        }
+                                        .padding(.horizontal)
+
+                                        Divider()
+                                            .padding(.horizontal)
+                                    }
                                 }
-                            }
-                        }
-                        .onDelete { indexSet in
-                            indexSet.forEach { index in
-                                let product = productViewModel.likedProducts[index]
-                                productViewModel.toggleLike(product: product)
                             }
                         }
                     }
+
+                    Spacer()
                 }
+
+                VStack {
+                    Spacer()
+                    BottomBarView()
+                }
+                .ignoresSafeArea(.all, edges: .bottom)
             }
-            .navigationTitle("Liked Products")
             .onAppear {
                 productViewModel.fetchLikedProducts()
             }
+            .navigationBarBackButtonHidden(true)
         }
     }
 }
-
