@@ -15,5 +15,7 @@ struct Product: Identifiable, Codable {
     var imageURL: String?
     var sellerID: String
     var categoryID: String
+    var gender: String
+    var condition: String
     var createdAt: Date = Date()
 }
