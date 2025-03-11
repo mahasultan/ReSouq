@@ -113,7 +113,7 @@ struct PaymentView: View {
                 .padding()
                 
                 Button(action: {
-                    if let userID = authViewModel.userID {
+                    if !cartViewModel.cart.products.isEmpty, let userID = authViewModel.userID {
                         orderViewModel.placeOrder(userID: userID, cart: cartViewModel.cart) { success in
                             if success {
                                 DispatchQueue.main.async {
@@ -124,6 +124,8 @@ struct PaymentView: View {
                                 print("Order failed to save.")
                             }
                         }
+                    } else {
+                        print("Cannot place an order. The cart is empty.")
                     }
                 }) {
                     Text("Confirm Payment")
@@ -134,6 +136,7 @@ struct PaymentView: View {
                         .cornerRadius(10)
                 }
                 .padding()
+
                 
                 
                 NavigationLink(

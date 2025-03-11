@@ -41,7 +41,7 @@ struct ProductDetailView: View {
                     .foregroundColor(buttonColor)
                     .padding(.horizontal)
 
-                // Price  
+                // Price
                 Text("QR \(product.price, specifier: "%.2f")")
                     .font(.custom("ReemKufi-Bold", size: 22))
                     .foregroundColor(buttonColor)
