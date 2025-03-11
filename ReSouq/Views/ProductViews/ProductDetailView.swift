@@ -96,28 +96,19 @@ struct ProductDetailView: View {
 
                     Spacer()
 
-                    // Add to Cart Button or Sold Out Label
-                    if cartViewModel.cart.products.contains(where: { $0.product.id == product.id }) {
-                        Text("Sold Out")
-                            .font(.custom("ReemKufi-Bold", size: 16))
+                    // Add to Cart Button
+                    Button(action: {
+                        cartViewModel.addProduct(product)
+                    }) {
+                        Text("Add to Cart")
+                            .font(.custom("ReemKufi-Bold", size: 18))
                             .frame(width: 140, height: 40)
-                            .background(Color.gray)
+                            .background(buttonColor)
                             .foregroundColor(.white)
                             .cornerRadius(10)
-                    } else {
-                        Button(action: {
-                            cartViewModel.addProduct(product)
-                        }) {
-                            Text("Add to Cart")
-                                .font(.custom("ReemKufi-Bold", size: 18))
-                                .frame(width: 140, height: 40)
-                                .background(buttonColor)
-                                .foregroundColor(.white)
-                                .cornerRadius(10)
-                                .shadow(radius: 3)
-                        }
-                        .padding()
+                            .shadow(radius: 3)
                     }
+                    .padding()
                 }
                 .padding(.horizontal)
             }
