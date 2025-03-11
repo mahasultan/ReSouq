@@ -10,6 +10,7 @@ struct HomeView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
     @StateObject var productVM = ProductViewModel()
     @StateObject var categoryVM = CategoryViewModel()
+    @StateObject var cartVM = CartViewModel()
 
     var body: some View {
         NavigationStack {
@@ -108,6 +109,7 @@ struct HomeView_Previews: PreviewProvider {
             .environmentObject(AuthViewModel())
             .environmentObject(CategoryViewModel())
             .environmentObject(ProductViewModel())
+            .environmentObject(CartViewModel())
     }
 }
 
