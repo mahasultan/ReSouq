@@ -32,6 +32,38 @@ class ProductViewModel: ObservableObject {
         }
     }
     
+    
+    func getProducts(categoryID: String? = nil, searchQuery: String? = nil, categories: [Category]) -> [Product] {
+        var filteredProducts = products
+
+        // If filtering by category (e.g., Clothing + subcategories)
+        if let categoryID = categoryID {
+            let subcategoryIDs = categories
+                .filter { $0.parentCategoryID == categoryID }
+                .map { $0.id }
+            
+            filteredProducts = filteredProducts.filter { product in
+                product.categoryID == categoryID || subcategoryIDs.contains(product.categoryID)
+            }
+        }
+
+        // If filtering by search query
+        if let query = searchQuery, !query.isEmpty {
+            filteredProducts = filteredProducts.filter { product in
+                let categoryName = categories.first(where: { $0.id == product.categoryID })?.name ?? ""
+                return product.name.localizedCaseInsensitiveContains(query) ||
+                       product.gender.localizedCaseInsensitiveContains(query) ||
+                       product.condition.localizedCaseInsensitiveContains(query) ||
+                product.description.localizedCaseInsensitiveContains(query) ||
+                       categoryName.localizedCaseInsensitiveContains(query)
+            }
+        }
+
+        return filteredProducts
+    }
+
+    
+    
     // Fetch liked products from Firestore
     func fetchLikedProducts() {
         guard let userID = userID else { return }

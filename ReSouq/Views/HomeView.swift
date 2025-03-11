@@ -2,7 +2,6 @@
 //  HomeView.swift
 //  ReSouq
 //
-//
 
 import SwiftUI
 
@@ -12,6 +11,9 @@ struct HomeView: View {
     @StateObject var categoryVM = CategoryViewModel()
     @StateObject var cartVM = CartViewModel()
 
+    @State private var searchText = ""
+    @State private var isSearching = false
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -19,6 +21,9 @@ struct HomeView: View {
                     // Top Navigation Bar
                     TopBarView(showLogoutButton: true, showAddButton: true)
                         .environmentObject(authViewModel)
+
+                    // Search Bar
+                    SearchBarView(searchText: $searchText, isSearching: $isSearching)
 
                     // Categories Section
                     VStack(alignment: .leading) {
@@ -39,29 +44,16 @@ struct HomeView: View {
                                 }
                             }
 
-                            // "See All" Button
+                            // "See All" Button 
                             NavigationLink(destination: CategoriesView()) {
-                                VStack {
-                                    Image(systemName: "ellipsis.circle.fill")
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 60, height: 60)
-                                        .foregroundColor(.gray)
-                                    Text("See All")
-                                        .font(.system(size: 14))
-                                }
-                                .frame(height: 120)
-                                .frame(maxWidth: .infinity)
-                                .background(Color.white)
-                                .cornerRadius(10)
-                                .shadow(radius: 2)
+                                CategoryBox(isSeeAll: true)
                             }
                         }
                         .padding(.horizontal)
                     }
                     .padding(.top, 10)
 
-                    // New Listings (Horizontal Scroll)
+                    // New Listings
                     VStack(alignment: .leading) {
                         Text("New Listings")
                             .font(.custom("ReemKufi-Bold", size: 22))
@@ -98,6 +90,9 @@ struct HomeView: View {
                 productVM.fetchProducts()
                 categoryVM.fetchDisplayedCategories()
             }
+            .navigationDestination(isPresented: $isSearching) {
+                SearchResultsView(searchQuery: searchText)
+            }
         }
     }
 }
@@ -112,4 +107,3 @@ struct HomeView_Previews: PreviewProvider {
             .environmentObject(CartViewModel())
     }
 }
-
