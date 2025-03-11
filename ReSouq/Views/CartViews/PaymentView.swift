@@ -117,6 +117,7 @@ struct PaymentView: View {
                         orderViewModel.placeOrder(userID: userID, cart: cartViewModel.cart) { success in
                             if success {
                                 DispatchQueue.main.async {
+                                    cartViewModel.markProductsAsSoldOut()
                                     cartViewModel.cart.products.removeAll()
                                     navigateToOrders = true
                                 }

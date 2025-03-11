@@ -31,17 +31,27 @@ struct ProductItem: View {
                 }
             }
 
-            Button(action: {
-                cartViewModel.addProduct(product)
-            }) {
-                Text("Add to Cart")
+            if let productID = product.id, cartViewModel.soldOutProducts.contains(productID) {
+                Text("Sold Out")
                     .font(.system(size: 14))
                     .frame(width: 120, height: 30)
-                    .background(Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1)))
-                    .foregroundColor(Color(UIColor(red: 232/255, green: 225/255, blue: 210/255, alpha: 1)))
+                    .background(Color.gray)
+                    .foregroundColor(.white)
                     .cornerRadius(10)
+            } else {
+                Button(action: {
+                    cartViewModel.addProduct(product)
+                }) {
+                    Text("Add to Cart")
+                        .font(.system(size: 14))
+                        .frame(width: 120, height: 30)
+                        .background(Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1)))
+                        .foregroundColor(Color(UIColor(red: 232/255, green: 225/255, blue: 210/255, alpha: 1)))
+                        .cornerRadius(10)
+                }
+                .padding(.top, 5)
             }
-            .padding(.top, 5)
+
         }
         .frame(width: 160)
         .padding()
