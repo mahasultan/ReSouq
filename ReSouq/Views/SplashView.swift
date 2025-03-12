@@ -2,46 +2,53 @@
 //  SplashView.swift
 //  ReSouq
 //
-//
 
 import SwiftUI
 
 struct SplashView: View {
-    @State private var isActive = false
-    @State private var scaleEffect: CGFloat = 1.0
     @EnvironmentObject var authViewModel: AuthViewModel
-
+    @State private var scaleEffect: CGFloat = 1.0
+    @EnvironmentObject var navigationManager: NavigationManager
+    @State private var isActive = false
+    
     var body: some View {
-        ZStack {
-            Color(UIColor(red: 232/255, green: 225/255, blue: 210/255, alpha: 1))
-                .ignoresSafeArea()
-
-            Image("Logo")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 310, height: 300)
-                .scaleEffect(scaleEffect)
-                .onAppear {
-                    withAnimation(.easeIn(duration: 1.5)) {
-                        scaleEffect = 1.2
-                    }
-                }
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .onAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                self.isActive = true
-            }
-        }
-        .fullScreenCover(isPresented: $isActive) {
-            if authViewModel.isLoggedIn {
-                HomeView()
+        if isActive {
+            if authViewModel.user != nil {
+                MainTabView()
+                    .environmentObject(authViewModel)
+                    .environmentObject(navigationManager)
             } else {
                 LoginView()
+                    .environmentObject(authViewModel)
+            }
+        } else {
+            ZStack {
+                Color(UIColor(red: 232/255, green: 225/255, blue: 210/255, alpha: 1))
+                    .ignoresSafeArea()
+
+                Image("Logo")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 310, height: 300)
+                    .scaleEffect(scaleEffect)
+                    .onAppear {
+                        withAnimation(.easeIn(duration: 1.5)) {
+                            scaleEffect = 1.2
+                        }
+                    }
+            }            .background(Color(UIColor(red: 232/255, green: 225/255, blue: 210/255, alpha: 1))) // Same theme color
+            .ignoresSafeArea()
+            .onAppear {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) { // Show splash for 2 seconds
+                    self.isActive = true
+                }
             }
         }
     }
 }
 
-
-
+#Preview {
+    SplashView()
+        .environmentObject(AuthViewModel())
+        .environmentObject(NavigationManager())
+}

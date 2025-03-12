@@ -4,10 +4,6 @@
 //
 //
 
-//
-//  AuthViewModel.swift
-//  ReSouq
-//
 
 import SwiftUI
 import FirebaseAuth

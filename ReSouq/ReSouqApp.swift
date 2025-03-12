@@ -30,7 +30,7 @@ struct ReSouqApp: App {
 
     var body: some Scene {
         WindowGroup {
-            MainTabView()
+            SplashView()
                 .environmentObject(authViewModel)
                 .environmentObject(cartViewModel)
                 .environmentObject(orderViewModel)
