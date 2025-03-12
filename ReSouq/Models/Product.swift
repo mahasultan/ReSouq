@@ -18,4 +18,5 @@ struct Product: Identifiable, Codable {
     var gender: String
     var condition: String
     var createdAt: Date = Date()
+    
 }

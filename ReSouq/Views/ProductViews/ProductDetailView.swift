@@ -41,7 +41,7 @@ struct ProductDetailView: View {
                     .foregroundColor(buttonColor)
                     .padding(.horizontal)
 
-                // Price  
+                // Price
                 Text("QR \(product.price, specifier: "%.2f")")
                     .font(.custom("ReemKufi-Bold", size: 22))
                     .foregroundColor(buttonColor)
@@ -97,9 +97,9 @@ struct ProductDetailView: View {
                     Spacer()
 
                     // Add to Cart Button or Sold Out Label
-                    if cartViewModel.cart.products.contains(where: { $0.product.id == product.id }) {
+                    if let productID = product.id, cartViewModel.soldOutProducts.contains(productID) {
                         Text("Sold Out")
-                            .font(.custom("ReemKufi-Bold", size: 16))
+                            .font(.custom("ReemKufi-Bold", size: 18))
                             .frame(width: 140, height: 40)
                             .background(Color.gray)
                             .foregroundColor(.white)

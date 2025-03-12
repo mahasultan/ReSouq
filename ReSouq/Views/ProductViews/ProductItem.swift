@@ -5,7 +5,6 @@ struct ProductItem: View {
     @EnvironmentObject var cartViewModel: CartViewModel
     @EnvironmentObject var productViewModel: ProductViewModel
 
-
     var body: some View {
         VStack {
             NavigationLink(destination: ProductDetailView(product: product)) {
@@ -32,7 +31,7 @@ struct ProductItem: View {
                 }
             }
 
-            if cartViewModel.cart.products.contains(where: { $0.product.id == product.id }) {
+            if let productID = product.id, cartViewModel.soldOutProducts.contains(productID) {
                 Text("Sold Out")
                     .font(.system(size: 14))
                     .frame(width: 120, height: 30)
@@ -52,6 +51,7 @@ struct ProductItem: View {
                 }
                 .padding(.top, 5)
             }
+
         }
         .frame(width: 160)
         .padding()

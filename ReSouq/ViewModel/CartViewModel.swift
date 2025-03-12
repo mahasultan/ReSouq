@@ -11,6 +11,7 @@ import FirebaseAuth
 
 class CartViewModel: ObservableObject {
     @Published var cart: Cart
+    @Published var soldOutProducts: Set<String> = []
     private var db = Firestore.firestore()
     
     init() {
@@ -122,5 +123,9 @@ class CartViewModel: ObservableObject {
             print("Error updating cart: \(error.localizedDescription)")
         }
     }
+    
+    func markProductsAsSoldOut() {
+            soldOutProducts.formUnion(cart.products.map { $0.product.id ?? "unknown" })
+        }
 }
 
