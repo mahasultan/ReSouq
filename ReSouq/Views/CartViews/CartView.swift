@@ -72,17 +72,16 @@ struct CartView: View {
                                             VStack(alignment: .leading) {
                                                 Text(cartItem.product.name)
                                                     .font(.system(size: 18, weight: .bold))
-                                                    .foregroundColor(.blue)
+                                                    .foregroundColor(Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1)))
 
                                                 Text("QR \(String(format: "%.2f", cartItem.product.price))")
-                                                    .foregroundColor(.red)
+                                                    .foregroundColor(.black)
                                                     .font(.system(size: 16))
                                             }
                                         }
 
                                         Spacer()
 
-                                        // ✅ Remove product button
                                         Button(action: {
                                             cartViewModel.removeProduct(cartItem.product)
                                         }) {
@@ -109,7 +108,7 @@ struct CartView: View {
                             .font(.headline)
                             .foregroundColor(.black)
                             .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.horizontal) // ✅ Left-align total price
+                            .padding(.horizontal)
 
                         NavigationLink(destination: PaymentView()) {
                             Text("Checkout")
