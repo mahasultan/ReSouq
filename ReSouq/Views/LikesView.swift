@@ -38,7 +38,7 @@ struct LikesView: View {
                                                     .resizable()
                                                     .indicator(.activity)
                                                     .scaledToFill()
-                                                    .frame(width: 80, height: 80) // ✅ Bigger size
+                                                    .frame(width: 80, height: 80) 
                                                     .clipShape(RoundedRectangle(cornerRadius: 10))
                                                     .clipped()
                                             } else {

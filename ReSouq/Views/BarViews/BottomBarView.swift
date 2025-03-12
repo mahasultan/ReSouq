@@ -93,6 +93,7 @@ struct BottomBarView: View {
                     .foregroundColor(navigationManager.currentPage == page ? Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1)) : .gray)
             }
         }
+        .edgesIgnoringSafeArea(.top) 
     }
 }
 
