@@ -30,10 +30,9 @@ struct BottomBarView: View {
 
                 Spacer()
 
-                // Add Product (Bigger)
                 Button(action: {
-                    if navigationManager.currentPage != "Add" {
-                        navigationManager.currentPage = "Add"
+                    if navigationManager.currentPage != "AddProduct" { 
+                        navigationManager.currentPage = "AddProduct"
                     }
                 }) {
                     ZStack {

@@ -22,7 +22,7 @@ struct ReSouqApp: App {
     @StateObject var orderViewModel = OrderViewModel()
     @StateObject var productViewModel = ProductViewModel()
     @StateObject var navigationManager = NavigationManager()
-    @StateObject var categoryViewModel = CategoryViewModel() 
+    @StateObject var categoryViewModel = CategoryViewModel()
 
     init() {
         FirebaseApp.configure()

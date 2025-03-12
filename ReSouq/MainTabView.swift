@@ -12,48 +12,57 @@ struct MainTabView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-
             TabView(selection: $navigationManager.currentPage) {
                 HomeView()
                     .tag("Home")
-                    .tabItem { Label("Home", systemImage: "house.fill") }
+                    .tabItem {
+                        Image(systemName: "house.fill")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 24, height: 24) // Standard size
+                        Text("Home")
+                    }
 
                 LikesView()
                     .tag("Likes")
-                    .tabItem { Label("Likes", systemImage: "heart.fill") }
+                    .tabItem {
+                        Image(systemName: "heart.fill")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 24, height: 24) // Standard size
+                        Text("Likes")
+                    }
 
                 AddProductView()
                     .tag("AddProduct")
                     .tabItem { Label("Add", systemImage: "plus.circle.fill") }
-                    .frame(width: 24, height: 24) // Standard size
-
 
                 CartView()
                     .tag("Cart")
                     .tabItem {
-                        Label("Cart", systemImage: "cart.fill")
-                            .overlay(
-                                cartViewModel.cart.products.count > 0 ?
-                                Text("\(cartViewModel.cart.products.count)")
-                                    .font(.caption2)
-                                    .bold()
-                                    .foregroundColor(.white)
-                                    .frame(width: 18, height: 18)
-                                    .background(Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1)))
-                                    .clipShape(Circle())
-                                    .offset(x: 12, y: -12)
-                                : nil
-                            )
+                        Image(systemName: "cart.fill")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 24, height: 24) // Standard size
+                        Text("Cart")
                     }
 
                 ProfileView()
                     .tag("Profile")
-                    .tabItem { Label("Profile", systemImage: "person.fill") }
+                    .tabItem {
+                        Image(systemName: "person.fill")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 24, height: 24) // Standard size
+                        Text("Profile")
+                    }
             }
-            .accentColor(Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1)))
+            .accentColor(Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1))) // ✅ Active tab is Maroon
             .onAppear {
-                UITabBar.appearance().unselectedItemTintColor = UIColor.black
-            }        }
-        .edgesIgnoringSafeArea(.bottom)
+                UITabBar.appearance().unselectedItemTintColor = UIColor.black // ✅ Default icons are black
+            }
+        }
+        .edgesIgnoringSafeArea(.bottom) // ✅ Ensures full coverage
     }
 }
+
