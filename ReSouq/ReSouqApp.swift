@@ -23,7 +23,9 @@ struct ReSouqApp: App {
     @StateObject var authViewModel = AuthViewModel()
     @StateObject var cartViewModel = CartViewModel()
     @StateObject var orderViewModel = OrderViewModel()  
-    @StateObject var productViewModel = ProductViewModel()  
+    @StateObject var productViewModel = ProductViewModel()
+    @StateObject var navigationManager = NavigationManager()
+
 
     init() {
         FirebaseApp.configure()
@@ -31,11 +33,13 @@ struct ReSouqApp: App {
 
     var body: some Scene {
         WindowGroup {
-            SplashView()
+            MainTabView()
                 .environmentObject(authViewModel)
                 .environmentObject(cartViewModel)
-                .environmentObject(orderViewModel) 
+                .environmentObject(orderViewModel)
                 .environmentObject(productViewModel)
+                .environmentObject(navigationManager)
         }
     }
+
 }

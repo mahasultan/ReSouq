@@ -97,8 +97,7 @@ struct LikesView: View {
                 }
 
                 VStack {
-                    Spacer()
-                    BottomBarView()
+
                 }
                 .ignoresSafeArea(.all, edges: .bottom)
             }

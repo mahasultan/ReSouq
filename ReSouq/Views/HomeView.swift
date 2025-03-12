@@ -88,8 +88,6 @@ struct HomeView: View {
 
                 // Bottom Navigation Bar
                 VStack {
-                    Spacer()
-                    BottomBarView()
                 }
                 .ignoresSafeArea(.all, edges: .bottom)
             }

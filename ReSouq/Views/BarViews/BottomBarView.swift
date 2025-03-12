@@ -3,99 +3,96 @@
 //  ReSouq
 //
 //
+
 import SwiftUI
 
 struct BottomBarView: View {
+    @EnvironmentObject var navigationManager: NavigationManager
     @EnvironmentObject var cartViewModel: CartViewModel
+
     var body: some View {
-        VStack {
-            Spacer()
-            
-            VStack(spacing: 0) {
-                HStack {
-                    Spacer()
-                    
-                    NavigationLink(destination: HomeView()) {
-                        Image(systemName: "house.fill")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 26, height: 26)
-                            .foregroundColor(.black)
-                    }
-                    
-                    Spacer()
-                    
-                    NavigationLink(destination: LikesView()) {
-                        Image(systemName: "heart.fill")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 26, height: 26)
-                            .foregroundColor(.black)
-                    }
-                    
-                    Spacer()
-                    
-                    NavigationLink(destination: AddProductView()) {
-                        ZStack {
-                            Circle()
-                                .fill(Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1))) // Dark red
-                                .frame(width: 60, height: 60)
-                                .shadow(radius: 4)
+        VStack(spacing: 0) {
+            // Faint Line (Divider)
+            Divider()
+                .background(Color.gray.opacity(0.3)) // Adjust opacity for faintness
+                .frame(height: 1) // Adjust height for thickness
 
-                            Image(systemName: "plus")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 25, height: 25)
-                                .foregroundColor(.white)
-                        }
-                        .offset(y: -12)
+            HStack {
+                Spacer()
+
+                // Home Button
+                bottomBarButton(icon: "house.fill", label: "Home", page: "Home")
+
+                Spacer()
+
+                // Likes Button
+                bottomBarButton(icon: "heart.fill", label: "Likes", page: "Likes")
+
+                Spacer()
+
+                // Add Product (Bigger)
+                Button(action: {
+                    if navigationManager.currentPage != "Add" {
+                        navigationManager.currentPage = "Add"
                     }
-                    
-                    Spacer()
-                                        
-                    NavigationLink(destination: CartView()) {
-                        ZStack {
-                            Image(systemName: "cart.fill")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 26, height: 26)
-                                .foregroundColor(.black)
-                            
-                            
-                            if cartViewModel.cart.products.count > 0 {
-                                Text("\(cartViewModel.cart.products.count)")
-                                    .font(.caption2)
-                                    .bold()
-                                    .foregroundColor(.white)
-                                    .frame(width: 18, height: 18)
-                                    .background(Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1)))
-                                    .clipShape(Circle())
-                                    .offset(x: 12, y: -12)
-                            }}}
-                    
-                    Spacer()
-                    
-                    NavigationLink(destination: ProfileView()) {
-                        Image(systemName: "person.fill")
+                }) {
+                    ZStack {
+                        Circle()
+                            .fill(Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1))) // Dark red
+                            .frame(width: 60, height: 60)
+                            .shadow(radius: 4)
+
+                        Image(systemName: "plus")
                             .resizable()
                             .scaledToFit()
-                            .frame(width: 26, height: 26)
-                            .foregroundColor(.black)
+                            .frame(width: 25, height: 25)
+                            .foregroundColor(.white)
                     }
-                    
-                    Spacer()
+                    .offset(y: -12)
                 }
-                .padding(.horizontal, 20)
-                .frame(height: 60)
 
-                Color(UIColor(red: 232/255, green: 225/255, blue: 210/255, alpha: 1))
-                    .frame(height: 15)
+                Spacer()
+
+                // Cart Button
+                bottomBarButton(icon: "cart.fill", label: "Cart", page: "Cart")
+
+                Spacer()
+
+                // Profile Button
+                bottomBarButton(icon: "person.fill", label: "Profile", page: "Profile")
+
+                Spacer()
             }
-            .background(
-                Color(UIColor(red: 232/255, green: 225/255, blue: 210/255, alpha: 1))
-                    .shadow(radius: 3)
-            )
-            .ignoresSafeArea(.all, edges: .bottom) 
+            .padding(.horizontal, 20)
+            .frame(height: 60)
+            .background(Color(UIColor(red: 232/255, green: 225/255, blue: 210/255, alpha: 1))) // Beige Background
+
+            Color(UIColor(red: 232/255, green: 225/255, blue: 210/255, alpha: 1))
+                .frame(height: 15)
+        }
+        .background(
+            Color(UIColor(red: 232/255, green: 225/255, blue: 210/255, alpha: 1))
+                .ignoresSafeArea(edges: .bottom)
+        )
+    }
+
+    private func bottomBarButton(icon: String, label: String, page: String) -> some View {
+        Button(action: {
+            if navigationManager.currentPage != page {
+                navigationManager.currentPage = page
+            }
+        }) {
+            VStack {
+                Image(systemName: icon)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 26, height: 26)
+                    .foregroundColor(navigationManager.currentPage == page ? Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1)) : .gray)
+                
+                Text(label)
+                    .font(.caption)
+                    .foregroundColor(navigationManager.currentPage == page ? Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1)) : .gray)
+            }
         }
     }
 }
@@ -104,6 +101,7 @@ struct BottomBarView: View {
 struct BottomBarView_Previews: PreviewProvider {
     static var previews: some View {
         BottomBarView()
+            .environmentObject(NavigationManager())
+            .environmentObject(CartViewModel())
     }
 }
-
