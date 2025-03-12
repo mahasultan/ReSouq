@@ -17,18 +17,21 @@ class OrderViewModel: ObservableObject {
             .order(by: "orderDate", descending: true)
             .getDocuments { snapshot, error in
                 if let error = error {
-                    print(" Error fetching orders: \(error.localizedDescription)")
+                    print("Error fetching orders: \(error.localizedDescription)")
                     return
                 }
                 
                 DispatchQueue.main.async {
                     self.orders = snapshot?.documents.compactMap { doc -> Order? in
-                        try? doc.data(as: Order.self)
+                        let order = try? doc.data(as: Order.self)
+                        print("Fetched Order: \(String(describing: order))") // Debug print
+                        return order
                     } ?? []
-                    print(" Fetched \(self.orders.count) past orders")
+                    print("Total Orders Fetched: \(self.orders.count)")
                 }
             }
     }
+
 
    
     func placeOrder(userID: String, cart: Cart, completion: @escaping (Bool) -> Void) {
@@ -39,7 +42,7 @@ class OrderViewModel: ObservableObject {
         )
 
         do {
-            let _ = try db.collection("orders").addDocument(from: newOrder) { error in
+            let documentRef = try db.collection("orders").addDocument(from: newOrder) { error in
                 if let error = error {
                     print("Firestore Error: \(error.localizedDescription)")
                     completion(false)
@@ -52,7 +55,9 @@ class OrderViewModel: ObservableObject {
             print("Encoding Error: \(error.localizedDescription)")
             completion(false)
         }
+
     }
+
 
 }
 

@@ -32,6 +32,38 @@ class ProductViewModel: ObservableObject {
         }
     }
     
+    
+    func getProducts(categoryID: String? = nil, searchQuery: String? = nil, categories: [Category]) -> [Product] {
+        var filteredProducts = products
+
+        // If filtering by category (e.g., Clothing + subcategories)
+        if let categoryID = categoryID {
+            let subcategoryIDs = categories
+                .filter { $0.parentCategoryID == categoryID }
+                .map { $0.id }
+            
+            filteredProducts = filteredProducts.filter { product in
+                product.categoryID == categoryID || subcategoryIDs.contains(product.categoryID)
+            }
+        }
+
+        // If filtering by search query
+        if let query = searchQuery, !query.isEmpty {
+            filteredProducts = filteredProducts.filter { product in
+                let categoryName = categories.first(where: { $0.id == product.categoryID })?.name ?? ""
+                return product.name.localizedCaseInsensitiveContains(query) ||
+                       product.gender.localizedCaseInsensitiveContains(query) ||
+                       product.condition.localizedCaseInsensitiveContains(query) ||
+                product.description.localizedCaseInsensitiveContains(query) ||
+                       categoryName.localizedCaseInsensitiveContains(query)
+            }
+        }
+
+        return filteredProducts
+    }
+
+    
+    
     // Fetch liked products from Firestore
     func fetchLikedProducts() {
         guard let userID = userID else { return }
@@ -73,59 +105,101 @@ class ProductViewModel: ObservableObject {
     }
 
     // Save product data to Firestore (with image upload)
-    func saveProduct(userID: String, name: String, price: Double, description: String, categoryID: String, image: UIImage?, completion: @escaping (Bool) -> Void) {
-        isSubmitting = true
-        errorMessage = nil
+    func saveProduct(
+            userID: String,
+            name: String,
+            price: Double,
+            description: String,
+            categoryID: String,
+            gender: String,
+            condition: String,
+            image: UIImage?,
+            completion: @escaping (Bool) -> Void
+        ) {
+            isSubmitting = true
+            errorMessage = nil
 
-        if let image = image {
-            uploadImage(image) { imageURL in
-                if let imageURL = imageURL {
-                    self.saveToFirestore(userID: userID, name: name, price: price, description: description, categoryID: categoryID, imageURL: imageURL, completion: completion)
-                } else {
+            if let image = image {
+                uploadImage(image) { imageURL in
+                    if let imageURL = imageURL {
+                        self.saveToFirestore(
+                            userID: userID,
+                            name: name,
+                            price: price,
+                            description: description,
+                            categoryID: categoryID,
+                            gender: gender,
+                            condition: condition,
+                            imageURL: imageURL,
+                            completion: completion
+                        )
+                    } else {
+                        DispatchQueue.main.async {
+                            self.isSubmitting = false
+                            self.errorMessage = "Image upload failed."
+                            completion(false)
+                        }
+                    }
+                }
+            } else {
+                self.saveToFirestore(
+                    userID: userID,
+                    name: name,
+                    price: price,
+                    description: description,
+                    categoryID: categoryID,
+                    gender: gender,
+                    condition: condition,
+                    imageURL: nil,
+                    completion: completion
+                )
+            }
+        }
+
+        // Helper function to store product in Firestore
+        private func saveToFirestore(
+            userID: String,
+            name: String,
+            price: Double,
+            description: String,
+            categoryID: String,
+            gender: String,
+            condition: String,
+            imageURL: String?,
+            completion: @escaping (Bool) -> Void
+        ) {
+            let newProduct = Product(
+                name: name,
+                price: price,
+                description: description,
+                imageURL: imageURL,
+                sellerID: userID,
+                categoryID: categoryID,
+                gender: gender,
+                condition: condition
+            )
+
+            let db = Firestore.firestore()
+            do {
+                try db.collection("products").addDocument(from: newProduct) { error in
                     DispatchQueue.main.async {
                         self.isSubmitting = false
-                        self.errorMessage = "Image upload failed."
-                        completion(false)
+                        if let error = error {
+                            self.errorMessage = "Failed to add product: \(error.localizedDescription)"
+                            completion(false)
+                        } else {
+                            completion(true)
+                        }
                     }
                 }
-            }
-        } else {
-            self.saveToFirestore(userID: userID, name: name, price: price, description: description, categoryID: categoryID, imageURL: nil, completion: completion)
-        }
-    }
-
-    // Helper function to store product in Firestore
-    private func saveToFirestore(userID: String, name: String, price: Double, description: String, categoryID: String, imageURL: String?, completion: @escaping (Bool) -> Void) {
-        let newProduct = Product(
-            name: name,
-            price: price,
-            description: description,
-            imageURL: imageURL,  
-            sellerID: userID,
-            categoryID: categoryID
-        )
-
-        let db = Firestore.firestore()
-        do {
-            try db.collection("products").addDocument(from: newProduct) { error in
+            } catch {
                 DispatchQueue.main.async {
                     self.isSubmitting = false
-                    if let error = error {
-                        self.errorMessage = "Failed to add product: \(error.localizedDescription)"
-                        completion(false)
-                    } else {
-                        completion(true)
-                    }
+                    self.errorMessage = "Unexpected error: \(error.localizedDescription)"
+                    completion(false)
                 }
             }
-        } catch {
-            DispatchQueue.main.async {
-                self.isSubmitting = false
-                self.errorMessage = "Unexpected error: \(error.localizedDescription)"
-                completion(false)
-            }
         }
-    }
 
     // Toggle like/unlike a product
     func toggleLike(product: Product) {

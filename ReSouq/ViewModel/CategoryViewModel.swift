@@ -2,14 +2,13 @@
 //  CategoryViewModel.swift
 //  ReSouq
 //
-//
 
 import FirebaseFirestore
 import Foundation
 
 class CategoryViewModel: ObservableObject {
-    @Published var categories: [Category] = []
-    @Published var displayedCategories: [Category] = []
+    @Published var categories: [Category] = [] // Subcategories only
+    @Published var displayedCategories: [Category] = [] // Main categories only
 
     private let db = Firestore.firestore()
 
@@ -26,7 +25,7 @@ class CategoryViewModel: ObservableObject {
             }
 
             DispatchQueue.main.async {
-                self.categories = documents.compactMap { doc in
+                let allCategories = documents.compactMap { doc -> Category? in
                     let data = doc.data()
                     return Category(
                         id: doc.documentID,
@@ -34,23 +33,40 @@ class CategoryViewModel: ObservableObject {
                         parentCategoryID: data["parentCategoryID"] as? String
                     )
                 }
-                print("Categories Loaded: \(self.categories.count)")
+
+                // Exclude main categories (those with nil parentCategoryID)
+                self.categories = allCategories.filter { $0.parentCategoryID != nil }
+                print("Subcategories Loaded: \(self.categories.count)")
             }
         }
     }
 
     func fetchDisplayedCategories() {
-        fetchCategories()
+        db.collection("categories").getDocuments { snapshot, error in
+            if let error = error {
+                print("Firestore Error: \(error.localizedDescription)")
+                return
+            }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            if self.categories.isEmpty {
-                print("No categories loaded!")
-            } else {
-                self.displayedCategories = self.categories.prefix(3).map { $0 }
-                print("Displayed Categories: \(self.displayedCategories.count)")
+            guard let documents = snapshot?.documents else {
+                print("No categories found in Firestore.")
+                return
+            }
+
+            DispatchQueue.main.async {
+                let allCategories = documents.compactMap { doc -> Category? in
+                    let data = doc.data()
+                    return Category(
+                        id: doc.documentID,
+                        name: data["name"] as? String ?? "Unknown",
+                        parentCategoryID: data["parentCategoryID"] as? String
+                    )
+                }
+
+                // Only include main categories (those with nil parentCategoryID)
+                self.displayedCategories = allCategories.filter { $0.parentCategoryID == nil }
+                print("Main Categories Loaded: \(self.displayedCategories.count)")
             }
         }
     }
 }
-
-

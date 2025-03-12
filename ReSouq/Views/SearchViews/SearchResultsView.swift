@@ -1,27 +1,25 @@
 //
-//  CategoryProductsView.swift
+//  SearchResultsView.swift
 //  ReSouq
-//
 //
 
 import SwiftUI
 
-struct CategoryProductsView: View {
-    var categoryID: String
-    var categoryName: String
+struct SearchResultsView: View {
+    var searchQuery: String
     @StateObject var productVM = ProductViewModel()
     @StateObject var categoryVM = CategoryViewModel()
 
     var body: some View {
         VStack {
-            Text("\(categoryName) Products")
+            Text("Search Results for '\(searchQuery)'")
                 .font(.custom("ReemKufi-Bold", size: 22))
                 .padding(.top, 10)
 
-            let filteredProducts = productVM.getProducts(categoryID: categoryID, categories: categoryVM.categories)
+            let filteredProducts = productVM.getProducts(searchQuery: searchQuery, categories: categoryVM.categories)
 
             if filteredProducts.isEmpty {
-                Text("No products found.")
+                Text("No results found.")
                     .foregroundColor(.red)
                     .padding()
             } else {
@@ -35,11 +33,9 @@ struct CategoryProductsView: View {
                 }
             }
         }
-        .navigationTitle(categoryName)
         .onAppear {
             productVM.fetchProducts()
             categoryVM.fetchCategories()
         }
     }
 }
-
