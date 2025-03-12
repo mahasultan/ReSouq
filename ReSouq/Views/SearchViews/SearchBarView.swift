@@ -13,12 +13,12 @@ struct SearchBarView: View {
             TextField("Search Resouq...", text: $searchText)
                 .padding(10)
                 .background(Color.white.opacity(0.8))
+                .cornerRadius(20)
                 .overlay(
-                    RoundedRectangle(cornerRadius: 10)
+                    RoundedRectangle(cornerRadius: 20)
                         .stroke(Color.gray.opacity(0.5), lineWidth: 1)
                 )
-                .font(.custom("ReemKufi-Bold", size: 18))
-                .padding(.horizontal)
+                .font(.custom("ReemKufi-regular", size: 14))
 
             Button(action: {
                 if !searchText.isEmpty {
@@ -27,7 +27,7 @@ struct SearchBarView: View {
             }) {
                 Image(systemName: "magnifyingglass")
                     .foregroundColor(.gray)
-                    .padding(.trailing, 10)
+                    .padding(.trailing, 5)
             }
         }
         .padding(.vertical, 5)
