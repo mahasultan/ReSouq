@@ -9,7 +9,10 @@ struct SearchResultsView: View {
     var searchQuery: String
     @StateObject var productVM = ProductViewModel()
     @StateObject var categoryVM = CategoryViewModel()
-
+    let columns = [
+            GridItem(.flexible(), spacing: 40),
+            GridItem(.flexible(), spacing: 40)]
+            
     var body: some View {
         VStack {
             Text("Search Results for '\(searchQuery)'")
@@ -24,12 +27,14 @@ struct SearchResultsView: View {
                     .padding()
             } else {
                 ScrollView {
-                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 15) {
+                    LazyVGrid(columns: columns, spacing: 20) {
                         ForEach(filteredProducts) { product in
                             ProductItem(product: product)
+                                .frame(maxWidth: .infinity)
                         }
                     }
-                    .padding()
+                    .padding(.horizontal, 20)
+                                       .padding(.bottom, 20)
                 }
             }
         }

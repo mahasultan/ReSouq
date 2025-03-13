@@ -233,6 +233,6 @@ class ProductViewModel: ObservableObject {
 
     // Sort products by creation date
     var sortedProducts: [Product] {
-        products.sorted { $0.createdAt < $1.createdAt }
+        products.sorted { $0.createdAt > $1.createdAt } // Newest first
     }
 }

@@ -55,7 +55,7 @@ struct ProductItem: View {
         }
         .frame(width: 160)
         .padding()
-        .background(Color.white)
+        .background(Color(UIColor(red: 232/255, green: 225/255, blue: 210/255, alpha: 1)))
         .cornerRadius(15)
         .shadow(radius: 2)
     }
