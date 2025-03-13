@@ -2,7 +2,6 @@
 //  MainTabView.swift
 //  ReSouq
 //
-//
 
 import SwiftUI
 
@@ -37,15 +36,30 @@ struct MainTabView: View {
                     .tag("AddProduct")
                     .tabItem { Label("Add", systemImage: "plus.circle.fill") }
 
+             
                 CartView()
                     .tag("Cart")
                     .tabItem {
-                        Image(systemName: "cart.fill")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 24, height: 24) // Standard size
-                        Text("Cart")
+                        ZStack {
+                            if !cartViewModel.cart.products.isEmpty {
+                                ZStack {
+                                    Image(systemName: "cart.fill") // 🛒 Cart Icon
+                                        .font(.system(size: 22))
+
+                                    ZStack {
+                                        Text("\(cartViewModel.cart.products.count)")
+                                            .font(.caption2)
+                                            .bold()
+                                           
+                                    }
+                                }
+                            } else {
+                                Image(systemName: "cart.fill")
+                                Text("Cart")
+                            }
+                        }
                     }
+
 
                 ProfileView()
                     .tag("Profile")
@@ -65,4 +79,3 @@ struct MainTabView: View {
         .edgesIgnoringSafeArea(.bottom) // ✅ Ensures full coverage
     }
 }
-

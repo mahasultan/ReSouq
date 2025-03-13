@@ -8,20 +8,6 @@ import SDWebImageSwiftUI
 
 struct CartView: View {
     @EnvironmentObject var cartViewModel: CartViewModel
-    @State private var selectedShipping = "Standard"
-    @State private var selectedPaymentMethod = "Apple Pay"
-    
-    let shippingOptions = [
-        "Standard (7-10 days) - Free",
-        "Express (1-2 days) - 50 QR"
-    ]
-    
-    let paymentMethods = ["Apple Pay", "Card"]
-    
-    var totalWithShipping: Double {
-        let shippingCost = selectedShipping.contains("Express") ? 50.0 : 0.0
-        return cartViewModel.cart.totalPrice + shippingCost
-    }
     
     var body: some View {
         NavigationStack {

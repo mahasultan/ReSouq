@@ -11,6 +11,7 @@ import FirebaseAuth
 
 class CartViewModel: ObservableObject {
     @Published var cart: Cart
+    
     @Published var soldOutProducts: Set<String> = []
     private var db = Firestore.firestore()
     
@@ -74,6 +75,7 @@ class CartViewModel: ObservableObject {
     }
 
     func addProduct(_ product: Product, quantity: Int = 1) {
+        
         let userID = cart.userID
         
         let newCartItem = CartItem(product: product, quantity: quantity)
@@ -83,6 +85,7 @@ class CartViewModel: ObservableObject {
         } else {
             cart.products.append(newCartItem)
         }
+        
         
         let cartRef = db.collection("carts").document(userID)
         do {
@@ -99,6 +102,7 @@ class CartViewModel: ObservableObject {
     }
 
     func removeProduct(_ product: Product) {
+        
         if let index = cart.products.firstIndex(where: { $0.product.id == product.id }) {
             if cart.products[index].quantity > 1 {
                 cart.products[index].quantity -= 1
@@ -106,6 +110,7 @@ class CartViewModel: ObservableObject {
                 cart.products.remove(at: index)
             }
             updateCart()
+           
         }
     }
 
