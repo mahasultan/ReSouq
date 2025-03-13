@@ -73,6 +73,11 @@ class CartViewModel: ObservableObject {
             }
         }
     }
+    
+    func clearCart() {
+        cart.products.removeAll()
+        updateCart()
+    }
 
     func addProduct(_ product: Product, quantity: Int = 1) {
         
@@ -130,7 +135,30 @@ class CartViewModel: ObservableObject {
     }
     
     func markProductsAsSoldOut() {
-            soldOutProducts.formUnion(cart.products.map { $0.product.id ?? "unknown" })
+        let soldOutIDs = cart.products.map { $0.product.id ?? "unknown" }
+        soldOutProducts.formUnion(soldOutIDs)
+
+        let productsRef = db.collection("products")
+
+        for productID in soldOutIDs {
+            let productDocRef = productsRef.document(productID)
+            
+            productDocRef.getDocument { document, error in
+                if let document = document, document.exists {
+                   
+                    productDocRef.updateData(["isSoldOut": true]) { error in
+                        if let error = error {
+                            print("Error marking product \(productID) as sold out: \(error.localizedDescription)")
+                        } else {
+                            print("Product \(productID) marked as sold out in Firestore")
+                        }
+                    }
+                } else {
+                    print(" Warning: Product \(productID) does not exist in Firestore. Skipping update.")
+                }
+            }
         }
+    }
+
 }
 

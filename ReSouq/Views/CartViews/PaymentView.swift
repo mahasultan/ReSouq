@@ -203,8 +203,8 @@ struct PaymentView: View {
                                     self.placedOrder = savedOrder
                                     print(" Stored Order ID: \(self.placedOrder?.id ?? "nil")")
                                     print(" Stored Products Count: \(self.placedOrder?.products.count ?? 0)")
-
-                                    cartViewModel.cart.products.removeAll()
+                                    cartViewModel.markProductsAsSoldOut()
+                                    cartViewModel.clearCart()
                                     self.navigateToOrders = true
                                 } else {
                                     print(" Order failed to save.")
