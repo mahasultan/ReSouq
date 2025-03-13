@@ -8,6 +8,7 @@ struct PaymentView: View {
     @State private var selectedShipping: String = "Standard"
     @State private var selectedPaymentMethod = "Apple Pay"
     @State private var navigateToOrders = false
+
     
     let shippingOptions = ["Standard (7-10 days) - Free", "Express (1-2 days) - 50 QR"]
     let paymentMethods = ["Apple Pay", "Card"]
@@ -112,7 +113,7 @@ struct PaymentView: View {
                                         }) {
                                             HStack {
                                                 Text(option)
-                                                    .padding(.vertical, 12)                                                 .frame(maxWidth: .infinity, alignment: .leading)
+                                                    .padding(.vertical, 12)                                                    .frame(maxWidth: .infinity, alignment: .leading)
                                                     .foregroundColor(selectedShipping == (option.contains("Express") ? "Express" : "Standard") ? .white : .black)
 
                                                 if selectedShipping == (option.contains("Express") ? "Express" : "Standard") {
