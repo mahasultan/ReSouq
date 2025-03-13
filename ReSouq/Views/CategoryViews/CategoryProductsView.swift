@@ -12,6 +12,11 @@ struct CategoryProductsView: View {
     @StateObject var productVM = ProductViewModel()
     @StateObject var categoryVM = CategoryViewModel()
 
+    let columns = [
+        GridItem(.flexible(), spacing: 50),
+        GridItem(.flexible(), spacing: 50)
+    ]
+
     var body: some View {
         VStack {
             Text("\(categoryName) Products")
@@ -26,12 +31,14 @@ struct CategoryProductsView: View {
                     .padding()
             } else {
                 ScrollView {
-                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 15) {
+                    LazyVGrid(columns: columns, spacing: 20) {
                         ForEach(filteredProducts) { product in
                             ProductItem(product: product)
+                                .frame(maxWidth: .infinity)
                         }
                     }
-                    .padding()
+                    .padding(.horizontal, 25)
+                    .padding(.bottom, 25)  
                 }
             }
         }
@@ -42,4 +49,3 @@ struct CategoryProductsView: View {
         }
     }
 }
-
