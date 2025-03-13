@@ -5,16 +5,23 @@ struct PaymentView: View {
     @EnvironmentObject var orderViewModel: OrderViewModel
     @EnvironmentObject var authViewModel: AuthViewModel
     @EnvironmentObject var cartViewModel: CartViewModel
-    @State private var selectedShipping: String = "Standard"
+    @State private var selectedShipping = "Standard"
     @State private var selectedPaymentMethod = "Apple Pay"
     @State private var navigateToOrders = false
+    @State private var placedOrder: Order?
+
+
 
     
-    let shippingOptions = ["Standard (7-10 days) - Free", "Express (1-2 days) - 50 QR"]
+    let shippingOptions = [
+        "Standard (7-10 days) - Free",
+        "Express (1-2 days) - 50 QR"
+    ]
+    
     let paymentMethods = ["Apple Pay", "Card"]
     
     var totalWithShipping: Double {
-        let shippingCost = selectedShipping == "Express" ? 50.0 : 0.0
+        let shippingCost = selectedShipping.contains("Express") ? 50.0 : 0.0
         return cartViewModel.cart.totalPrice + shippingCost
     }
     
@@ -187,18 +194,21 @@ struct PaymentView: View {
                     }
                 }
 
-                // Checkout button
+                
                 Button(action: {
                     if !cartViewModel.cart.products.isEmpty, let userID = authViewModel.userID {
-                        orderViewModel.placeOrder(userID: userID, cart: cartViewModel.cart) { success in
-                            if success {
-                                DispatchQueue.main.async {
-                                    cartViewModel.markProductsAsSoldOut()
+                        orderViewModel.placeOrder(userID: userID, cart: cartViewModel.cart) { savedOrder in
+                            DispatchQueue.main.async {
+                                if let savedOrder = savedOrder {
+                                    self.placedOrder = savedOrder
+                                    print(" Stored Order ID: \(self.placedOrder?.id ?? "nil")")
+                                    print(" Stored Products Count: \(self.placedOrder?.products.count ?? 0)")
+
                                     cartViewModel.cart.products.removeAll()
-                                    navigateToOrders = true
+                                    self.navigateToOrders = true
+                                } else {
+                                    print(" Order failed to save.")
                                 }
-                            } else {
-                                print("Order failed to save.")
                             }
                         }
                     } else {
@@ -214,21 +224,28 @@ struct PaymentView: View {
                 }
                 .padding()
 
-                // Navigation to Orders page after payment
+                
+
+
+                
                 NavigationLink(
-                    destination: OrderView().environmentObject(orderViewModel),
+                    destination: OrderDetailView(order: placedOrder ?? Order(userID: "default", products: [], totalPrice: 0.0))
+                        .environmentObject(orderViewModel),
                     isActive: $navigateToOrders
                 ) {
                     EmptyView()
                 }
                 .hidden()
+                .onAppear {
+                    print("DEBUG: Navigating with Order ID: \(placedOrder?.id ?? "nil")")
+                    print("DEBUG: Products Count: \(placedOrder?.products.count ?? 0)")
+                }
 
-                Spacer()
             }
+            .navigationTitle("Payment")
             .onAppear {
-                cartViewModel.fetchCart()
+                cartViewModel.fetchCart() // Fetch latest cart data
             }
-            .navigationBarBackButtonHidden(true)
+            
         }
-    }
-}
+    }}
