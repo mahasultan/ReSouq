@@ -8,6 +8,8 @@ import FirebaseFirestore
 
 class OrderViewModel: ObservableObject {
     @Published var orders: [Order] = []
+    @Published var latestOrder: Order?
+
     private var db = Firestore.firestore()
     
 
@@ -57,7 +59,41 @@ class OrderViewModel: ObservableObject {
         }
 
     }
+    
+    func placeOrder(userID: String, cart: Cart, completion: @escaping (Order?) -> Void) {
+        var newOrder = Order(
+            userID: userID,
+            products: cart.products,
+            totalPrice: cart.totalPrice
+        )
+
+        let documentRef = db.collection("orders").document()
+        newOrder.id = documentRef.documentID
+
+        do {
+            try documentRef.setData(from: newOrder) { error in
+                if let error = error {
+                    print("Firestore Error: \(error.localizedDescription)")
+                    completion(nil)
+                } else {
+                    print("Order placed successfully with ID: \(newOrder.id ?? "Unknown ID")")
+                    DispatchQueue.main.async {
+                        self.latestOrder = newOrder
+                    }
+                    completion(newOrder)
+                }
+            }
+        } catch {
+            print("Encoding Error: \(error.localizedDescription)")
+            completion(nil)
+        }
+    }
+
+    }
 
 
-}
+
+
+
+
 

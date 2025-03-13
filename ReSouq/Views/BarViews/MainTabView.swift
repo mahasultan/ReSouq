@@ -71,11 +71,11 @@ struct MainTabView: View {
                         Text("Profile")
                     }
             }
-            .accentColor(Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1))) // ✅ Active tab is Maroon
+            .accentColor(Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1)))
             .onAppear {
-                UITabBar.appearance().unselectedItemTintColor = UIColor.black // ✅ Default icons are black
+                UITabBar.appearance().unselectedItemTintColor = UIColor.black //
             }
         }
-        .edgesIgnoringSafeArea(.bottom) // ✅ Ensures full coverage
+        .edgesIgnoringSafeArea(.bottom) 
     }
 }
