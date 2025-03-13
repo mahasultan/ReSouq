@@ -53,10 +53,10 @@ struct LikesView: View {
                                                 VStack(alignment: .leading) {
                                                     Text(product.name)
                                                         .font(.system(size: 18, weight: .bold))
-                                                        .foregroundColor(.blue)
-
+                                                        .foregroundColor(Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1)))
+                                                    
                                                     Text("QR \(String(format: "%.2f", product.price))")
-                                                        .foregroundColor(.red)
+                                                        .foregroundColor(.black)
                                                         .font(.system(size: 16))
                                                 }
                                             }
