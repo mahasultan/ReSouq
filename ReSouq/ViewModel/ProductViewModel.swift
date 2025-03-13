@@ -231,8 +231,10 @@ class ProductViewModel: ObservableObject {
         }
     }
 
-    // Sort products by creation date
+    // Sort products by creation date and limit to 10 newest products
     var sortedProducts: [Product] {
         products.sorted { $0.createdAt > $1.createdAt } // Newest first
+            .prefix(10) // Take only the first 10
+            .map { $0 } // Convert back to an array
     }
 }
