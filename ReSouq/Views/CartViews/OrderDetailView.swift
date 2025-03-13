@@ -7,6 +7,7 @@ import SwiftUI
 
 struct OrderDetailView: View {
     var order: Order
+    @EnvironmentObject var orderViewModel: OrderViewModel
 
     var body: some View {
         VStack {

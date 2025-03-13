@@ -2,7 +2,6 @@
 //  MainTabView.swift
 //  ReSouq
 //
-//
 
 import SwiftUI
 
@@ -37,15 +36,30 @@ struct MainTabView: View {
                     .tag("AddProduct")
                     .tabItem { Label("Add", systemImage: "plus.circle.fill") }
 
+             
                 CartView()
                     .tag("Cart")
                     .tabItem {
-                        Image(systemName: "cart.fill")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 24, height: 24) // Standard size
-                        Text("Cart")
+                        ZStack {
+                            if !cartViewModel.cart.products.isEmpty {
+                                ZStack {
+                                    Image(systemName: "cart.fill") // 🛒 Cart Icon
+                                        .font(.system(size: 22))
+
+                                    ZStack {
+                                        Text("\(cartViewModel.cart.products.count)")
+                                            .font(.caption2)
+                                            .bold()
+                                           
+                                    }
+                                }
+                            } else {
+                                Image(systemName: "cart.fill")
+                                Text("Cart")
+                            }
+                        }
                     }
+
 
                 ProfileView()
                     .tag("Profile")
@@ -57,12 +71,11 @@ struct MainTabView: View {
                         Text("Profile")
                     }
             }
-            .accentColor(Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1))) // ✅ Active tab is Maroon
+            .accentColor(Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1)))
             .onAppear {
-                UITabBar.appearance().unselectedItemTintColor = UIColor.black // ✅ Default icons are black
+                UITabBar.appearance().unselectedItemTintColor = UIColor.black //
             }
         }
-        .edgesIgnoringSafeArea(.bottom) // ✅ Ensures full coverage
+        .edgesIgnoringSafeArea(.bottom) 
     }
 }
-

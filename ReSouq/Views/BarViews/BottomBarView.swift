@@ -2,7 +2,6 @@
 //  BottomBarView.swift
 //  ReSouq
 //
-//
 
 import SwiftUI
 
@@ -31,7 +30,7 @@ struct BottomBarView: View {
                 Spacer()
 
                 Button(action: {
-                    if navigationManager.currentPage != "AddProduct" { 
+                    if navigationManager.currentPage != "AddProduct" {
                         navigationManager.currentPage = "AddProduct"
                     }
                 }) {
@@ -54,9 +53,9 @@ struct BottomBarView: View {
 
                 // Cart Button
                 bottomBarButton(icon: "cart.fill", label: "Cart", page: "Cart")
+ 
 
                 Spacer()
-
                 // Profile Button
                 bottomBarButton(icon: "person.fill", label: "Profile", page: "Profile")
 
@@ -93,7 +92,7 @@ struct BottomBarView: View {
                     .foregroundColor(navigationManager.currentPage == page ? Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1)) : .gray)
             }
         }
-        .edgesIgnoringSafeArea(.top) 
+        .edgesIgnoringSafeArea(.top)
     }
 }
 
@@ -105,3 +104,4 @@ struct BottomBarView_Previews: PreviewProvider {
             .environmentObject(CartViewModel())
     }
 }
+                    
