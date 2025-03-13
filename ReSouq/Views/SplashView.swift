@@ -36,10 +36,10 @@ struct SplashView: View {
                             scaleEffect = 1.2
                         }
                     }
-            }            .background(Color(UIColor(red: 232/255, green: 225/255, blue: 210/255, alpha: 1))) // Same theme color
+            }            .background(Color(UIColor(red: 232/255, green: 225/255, blue: 210/255, alpha: 1))) 
             .ignoresSafeArea()
             .onAppear {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2) { // Show splash for 2 seconds
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                     self.isActive = true
                 }
             }
