@@ -75,13 +75,31 @@ struct AddProductView: View {
                             CustomTextField(placeholder: "Price (QAR)", text: $price, keyboardType: .decimalPad)
                                 .font(.system(size: 18))
                             
-                            TextEditor(text: $description)
-                                .frame(height: 100)
-                                .padding()
-                                .background(Color.white)
-                                .overlay(RoundedRectangle(cornerRadius: 10).stroke(textFieldBorderColor, lineWidth: 1))
-                                .cornerRadius(10)
-                                .padding(.horizontal)
+                            ZStack(alignment: .topLeading) {
+                                if description.isEmpty {
+                                    Text("Description (Optional)")
+                                        .foregroundColor(.gray.opacity(0.7))
+                                        .padding(.leading, 18)
+                                        .padding(.top, 18)
+                                        .font(.custom("ReemKufi-Bold", size: 18))
+                                        .zIndex(1)
+                                }
+                               
+                                TextEditor(text: $description)
+                                    .padding(.horizontal, 14)
+                                    .padding(.top, 8)
+                                    .frame(height: 100)
+                                    .background(Color.white)
+                                    .font(.custom("ReemKufi-Bold", size: 18))
+                                    .foregroundColor(.black)
+                                    .zIndex(0)
+
+                                RoundedRectangle(cornerRadius: 10)
+                                    .stroke(textFieldBorderColor, lineWidth: 1)
+                                    .frame(height: 100)
+                                    .zIndex(2)
+                            }
+                            .padding(.horizontal)
                             
                             // Category Picker
                             CustomDropdownPicker(title: "Select Category", selection: $selectedCategoryID, options: categoryVM.categories.map { ($0.name, $0.id) })
@@ -134,13 +152,14 @@ struct AddProductView: View {
               let priceValue = Double(price.trimmingCharacters(in: .whitespacesAndNewlines)),
               !selectedCategoryID.isEmpty,
               !selectedGender.isEmpty,
-              !selectedCondition.isEmpty else {
-            productVM.errorMessage = "Please fill in all fields."
+              !selectedCondition.isEmpty,
+              let image = productImage else {
+            productVM.errorMessage = "Please fill in all fields, including an image."
             return
         }
-        
+
         productVM.isSubmitting = true // Prevent multiple taps
-        
+
         productVM.saveProduct(
             userID: userID,
             name: name,
@@ -149,16 +168,30 @@ struct AddProductView: View {
             categoryID: selectedCategoryID,
             gender: selectedGender,
             condition: selectedCondition,
-            image: productImage
+            image: image
         ) { success in
             DispatchQueue.main.async {
                 productVM.isSubmitting = false
                 if success {
+                    resetForm()
                     navigationManager.currentPage = "Home" // Navigate to home
                 }
             }
         }
     }
+    
+    private func resetForm() {
+        name = ""
+        price = ""
+        description = ""
+        selectedCategoryID = ""
+        selectedGender = ""
+        selectedCondition = ""
+        productImage = nil
+        isImagePickerPresented = false
+        productVM.errorMessage = nil
+    }
+
 }
 
 // MARK: - Custom Components
