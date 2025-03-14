@@ -15,12 +15,13 @@ struct ProfileView: View {
     private let buttonColor = Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1))
     private let textColor = Color.black
     private let secondaryTextColor = Color.gray
-    private let backgroundColor = Color(UIColor(red: 232/255, green: 225/255, blue: 210/255, alpha: 1)) // Beige
+    private let backgroundColor = Color(UIColor(red: 232/255, green: 225/255, blue: 210/255, alpha: 1))
 
     var body: some View {
         NavigationStack {
             ZStack(alignment: .top) {
                 VStack(spacing: 10) {
+                    // **Fixed Top Bar**
                     ZStack {
                         TopBarView(showLogoutButton: false, showAddButton: false)
 
@@ -45,17 +46,13 @@ struct ProfileView: View {
                             if let user = authViewModel.user {
                                 // **User Info Section inside Beige Rectangle**
                                 VStack(spacing: 15) {
-                                    // Profile Image
-                                    WebImage(url: URL(string: user.profileImageURL ?? ""))
+                                    // **Profile Icon Instead of Image**
+                                    Image(systemName: "person.circle.fill")
                                         .resizable()
-                                        .indicator(.activity)
-                                        .scaledToFill()
+                                        .scaledToFit()
                                         .frame(width: 100, height: 100)
-                                        .clipShape(Circle())
-                                        .overlay(Circle().stroke(buttonColor, lineWidth: 2))
-                                        .padding(.top, 10)
+                                        .foregroundColor(.gray)
 
-                                    // User Info (Centered)
                                     VStack(spacing: 5) {
                                         Text(user.fullName)
                                             .font(.custom("ReemKufi-Bold", size: 22))
@@ -169,15 +166,6 @@ struct ProfileView: View {
                                         .padding(.horizontal, 20)
                                     }
                                 }
-
-                                // **More Content at the Bottom**
-                                VStack {
-                                    Text("More content coming soon...")
-                                        .font(.custom("ReemKufi-Bold", size: 18))
-                                        .foregroundColor(.gray)
-                                        .padding(.top, 40)
-                                }
-                                .frame(maxWidth: .infinity)
                             } else {
                                 ProgressView()
                                     .onAppear {
