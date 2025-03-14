@@ -4,9 +4,12 @@ import SDWebImageSwiftUI
 struct ProductDetailView: View {
     var product: Product
     @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject var authViewModel: AuthViewModel
     @EnvironmentObject var cartViewModel: CartViewModel
     @EnvironmentObject var productViewModel: ProductViewModel
     @EnvironmentObject var categoryViewModel: CategoryViewModel
+
+    @State private var isEditing = false // Tracks edit button press
 
     // App Colors
     private let buttonColor = Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1)) // Dark Red
@@ -20,7 +23,7 @@ struct ProductDetailView: View {
 
                 HStack {
                     Spacer()
-                    
+
                     Button(action: {
                         presentationMode.wrappedValue.dismiss()
                     }) {
@@ -32,6 +35,7 @@ struct ProductDetailView: View {
                 }
             }
             .navigationBarBackButtonHidden(true)
+
             ScrollView {
                 VStack(spacing: 12) { // Reduced spacing
                     // Product Image
@@ -53,19 +57,18 @@ struct ProductDetailView: View {
                             .clipShape(RoundedRectangle(cornerRadius: 15))
                     }
 
-                    // Product Name (Black & Less Spacing)
+                    // Product Name
                     Text(product.name)
                         .font(.custom("ReemKufi-Bold", size: 26))
                         .foregroundColor(.black)
                         .padding(.top, 5) // Reduced spacing
 
-                    // Price (Less Spacing)
+                    // Price
                     Text("QR \(product.price, specifier: "%.2f")")
                         .font(.custom("ReemKufi-Bold", size: 22))
                         .foregroundColor(buttonColor)
 
-                    Divider()
-                        .padding(.horizontal)
+                    Divider().padding(.horizontal)
 
                     // Category, Gender, and Condition
                     VStack(alignment: .leading, spacing: 10) {
@@ -77,8 +80,7 @@ struct ProductDetailView: View {
                     }
                     .padding(.horizontal)
 
-                    Divider()
-                        .padding(.horizontal)
+                    Divider().padding(.horizontal)
 
                     // Description
                     VStack(alignment: .leading, spacing: 8) {
@@ -99,7 +101,7 @@ struct ProductDetailView: View {
 
                     Spacer()
 
-                    // Like and Add to Cart Buttons
+                    // Like, Edit (if user is seller), and Add to Cart Buttons
                     HStack {
                         // Like Button
                         Button(action: {
@@ -112,6 +114,23 @@ struct ProductDetailView: View {
                                 .foregroundColor(productViewModel.likedProducts.contains(where: { $0.id == product.id }) ? buttonColor : .gray)
                         }
                         .padding()
+
+                        // Edit Button (Only if Seller)
+                        if product.sellerID == authViewModel.userID {
+                            Button(action: {
+                                isEditing = true
+                            }) {
+                                Image(systemName: "pencil.circle.fill")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 30, height: 30)
+                                    .foregroundColor(buttonColor)
+                            }
+                            .sheet(isPresented: $isEditing) {
+                                EditProductView(product: product) // Open AddProductView with prefilled data
+                            }
+                            .padding()
+                        }
 
                         Spacer()
 
@@ -145,9 +164,15 @@ struct ProductDetailView: View {
         }
         .background(Color.white.ignoresSafeArea())
         .onAppear {
+                   productViewModel.fetchProducts()  
+               }
+        .onAppear {
             if categoryViewModel.categories.isEmpty {
                 categoryViewModel.fetchCategories()
             }
+        }
+        .sheet(isPresented: $isEditing) {
+            EditProductView(product: product) // Navigate to EditProductView
         }
     }
 }
