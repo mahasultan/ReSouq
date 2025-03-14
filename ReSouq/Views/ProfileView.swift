@@ -9,12 +9,13 @@ import SDWebImageSwiftUI
 struct ProfileView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
     @EnvironmentObject var orderViewModel: OrderViewModel
+    @EnvironmentObject var productViewModel: ProductViewModel
     @State private var isLoggedOut = false
 
     private let buttonColor = Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1))
     private let textColor = Color.black
     private let secondaryTextColor = Color.gray
-    private let backgroundColor = Color(UIColor(red: 232/255, green: 225/255, blue: 210/255, alpha: 1))
+    private let backgroundColor = Color(UIColor(red: 232/255, green: 225/255, blue: 210/255, alpha: 1)) // Beige
 
     var body: some View {
         NavigationStack {
@@ -36,7 +37,7 @@ struct ProfileView: View {
                             .padding(.trailing, 20)
                         }
                     }
-                    .zIndex(1) // Keeps it above scrollable content
+                    .zIndex(1)
 
                     // **Scrollable Content**
                     ScrollView(.vertical, showsIndicators: false) {
@@ -77,7 +78,7 @@ struct ProfileView: View {
 
                                 // **My Orders Section**
                                 Text("My Orders")
-                                    .font(.custom("ReemKufi-Bold", size: 22)) // Apply Reem font
+                                    .font(.custom("ReemKufi-Bold", size: 22))
                                     .bold()
                                     .foregroundColor(buttonColor)
                                     .padding(.leading, 20)
@@ -116,6 +117,59 @@ struct ProfileView: View {
                                     }
                                 }
 
+                                // **My Listings Section**
+                                Text("My Listings")
+                                    .font(.custom("ReemKufi-Bold", size: 22))
+                                    .bold()
+                                    .foregroundColor(buttonColor)
+                                    .padding(.leading, 20)
+                                    .padding(.top, 20)
+
+                                if productViewModel.products.isEmpty {
+                                    Text("No listings found.")
+                                        .foregroundColor(.gray)
+                                        .padding(.leading, 20)
+                                } else {
+                                    ScrollView(.horizontal, showsIndicators: false) {
+                                        HStack(spacing: 15) {
+                                            ForEach(productViewModel.products.filter { $0.sellerID == authViewModel.userID }) { product in
+                                                NavigationLink(destination: ProductDetailView(product: product)) {
+                                                    VStack(alignment: .leading, spacing: 5) {
+                                                        if let imageUrl = product.imageURL, let url = URL(string: imageUrl) {
+                                                            WebImage(url: url)
+                                                                .resizable()
+                                                                .scaledToFill()
+                                                                .frame(width: 150, height: 150)
+                                                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                                                                .clipped()
+                                                        } else {
+                                                            Image(systemName: "photo")
+                                                                .resizable()
+                                                                .scaledToFit()
+                                                                .frame(width: 150, height: 150)
+                                                                .foregroundColor(.gray)
+                                                        }
+
+                                                        Text(product.name)
+                                                            .bold()
+                                                            .foregroundColor(.black)
+                                                            .lineLimit(1)
+
+                                                        Text("QR \(String(format: "%.2f", product.price))")
+                                                            .font(.subheadline)
+                                                            .foregroundColor(buttonColor)
+                                                    }
+                                                    .padding()
+                                                    .frame(width: 200)
+                                                    .background(backgroundColor)
+                                                    .cornerRadius(10)
+                                                }
+                                            }
+                                        }
+                                        .padding(.horizontal, 20)
+                                    }
+                                }
+
                                 // **More Content at the Bottom**
                                 VStack {
                                     Text("More content coming soon...")
@@ -130,6 +184,7 @@ struct ProfileView: View {
                                         if let userID = authViewModel.getCurrentUserID() {
                                             authViewModel.fetchUserDetails(uid: userID)
                                             orderViewModel.fetchOrders(for: userID)
+                                            productViewModel.fetchProducts()
                                         }
                                     }
                             }
@@ -141,8 +196,9 @@ struct ProfileView: View {
                 .background(Color.white.ignoresSafeArea())
                 .onAppear {
                     if let userID = authViewModel.userID {
-                        print("Fetching orders for user ID: \(userID)") // Debugging
+                        print("Fetching orders and listings for user ID: \(userID)") // Debugging
                         orderViewModel.fetchOrders(for: userID)
+                        productViewModel.fetchProducts()
                     }
                 }
             }
@@ -155,4 +211,5 @@ struct ProfileView: View {
     ProfileView()
         .environmentObject(AuthViewModel())
         .environmentObject(OrderViewModel())
+        .environmentObject(ProductViewModel())
 }
