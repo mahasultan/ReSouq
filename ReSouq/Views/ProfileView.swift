@@ -21,7 +21,6 @@ struct ProfileView: View {
         NavigationStack {
             ZStack(alignment: .top) {
                 VStack(spacing: 10) {
-                    // **Fixed Top Bar**
                     ZStack {
                         TopBarView(showLogoutButton: false, showAddButton: false)
 
@@ -40,13 +39,10 @@ struct ProfileView: View {
                     }
                     .zIndex(1)
 
-                    // **Scrollable Content**
                     ScrollView(.vertical, showsIndicators: false) {
                         VStack(alignment: .leading, spacing: 20) {
                             if let user = authViewModel.user {
-                                // **User Info Section inside Beige Rectangle**
                                 VStack(spacing: 15) {
-                                    // **Profile Icon Instead of Image**
                                     Image(systemName: "person.circle.fill")
                                         .resizable()
                                         .scaledToFit()
@@ -73,7 +69,6 @@ struct ProfileView: View {
                                 .cornerRadius(15)
                                 .padding(.horizontal, 20)
 
-                                // **My Orders Section**
                                 Text("My Orders")
                                     .font(.custom("ReemKufi-Bold", size: 22))
                                     .bold()
@@ -114,7 +109,6 @@ struct ProfileView: View {
                                     }
                                 }
 
-                                // **My Listings Section**
                                 Text("My Listings")
                                     .font(.custom("ReemKufi-Bold", size: 22))
                                     .bold()
