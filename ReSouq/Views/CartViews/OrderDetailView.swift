@@ -1,8 +1,3 @@
-//
-//  Untitled.swift
-//  ReSouq
-//
-
 import SwiftUI
 
 struct OrderDetailView: View {
@@ -10,58 +5,75 @@ struct OrderDetailView: View {
     @EnvironmentObject var orderViewModel: OrderViewModel
 
     var body: some View {
+        HStack {
+            TopBarView(showLogoutButton: false, showAddButton: false)
+
+        }
         VStack {
             Text("Order Details")
-                .font(.largeTitle)
-                .bold()
-                .padding()
-                .foregroundColor(Color.white)
-                .background(Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1)))
-                .cornerRadius(10)
+                .font(.custom("ReemKufi-Bold", size: 30))
+                .foregroundColor(Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1)))
+                .padding(.leading, 15)
 
-            VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: 8) {
                 Text("Order ID: \(order.id ?? "N/A")")
                     .bold()
-                Text("Date: \(order.orderDate.formatted(date: .abbreviated, time: .omitted))")
-                Text("Total: QR \(String(format: "%.2f", order.totalPrice))")
-
-                Divider()
-
-                Text("Items in Order:")
                     .font(.headline)
-                    .padding(.top)
+                Text("Date: \(order.orderDate.formatted(date: .abbreviated, time: .omitted))")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                Text("Total: QR \(String(format: "%.2f", order.totalPrice))")
+                    .bold()
+                    .font(.headline)
+                    .foregroundColor(Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1)))
 
-                List(order.products) { item in
-                    HStack {
-                        AsyncImage(url: URL(string: item.product.imageURL ?? "")) { image in
-                            image.resizable()
-                        } placeholder: {
-                            Image(systemName: "photo")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 50, height: 50)
-                                .foregroundColor(.gray)
-                        }
-                        .frame(width: 50, height: 50)
-                        .cornerRadius(8)
+                Divider().background(Color.gray.opacity(0.5))
 
-                        VStack(alignment: .leading) {
-                            Text(item.product.name)
-                                .bold()
-                            Text("QR \(String(format: "%.2f", item.product.price))")
-                                .foregroundColor(.gray)
-                            Text("Quantity: \(item.quantity)")
-                        }
-                    }
-                }
+                Text("Items in Order")
+                    .font(.headline)
+                    .padding(.top, 5)
             }
             .padding()
-            .background(Color(UIColor(red: 232/255, green: 225/255, blue: 210/255, alpha: 1)))
-            .cornerRadius(10)
+            .background(RoundedRectangle(cornerRadius: 12).fill(Color.white))
+
+            ScrollView {
+                VStack(spacing: 12) {
+                    ForEach(order.products) { item in
+                        HStack(spacing: 12) {
+                            AsyncImage(url: URL(string: item.product.imageURL ?? "")) { image in
+                                image.resizable()
+                            } placeholder: {
+                                Image(systemName: "photo")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 50, height: 50)
+                                    .foregroundColor(.gray)
+                            }
+                            .frame(width: 50, height: 50)
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
+
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(item.product.name)
+                                    .font(.headline)
+                                Text("QR \(String(format: "%.2f", item.product.price))")
+                                    .font(.subheadline)
+                                    .foregroundColor(.gray)
+
+                            }
+
+                            Spacer()
+                        }
+                        .padding()
+                        .background(RoundedRectangle(cornerRadius: 12).fill(Color(UIColor(red: 232/255, green: 225/255, blue: 210/255, alpha: 1))))
+                    }
+                }
+                .padding(.horizontal)
+            }
 
             Spacer()
         }
         .padding()
-        .navigationTitle("Order Details")
+        .navigationBarBackButtonHidden(true)
+
     }
 }

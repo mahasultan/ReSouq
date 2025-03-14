@@ -8,7 +8,7 @@ import SwiftUI
 import FirebaseFirestore
 
 struct EditProductView: View {
-    var product: Product // Calls a product for editing (has to exist)
+    var product: Product
 
     @EnvironmentObject var authViewModel: AuthViewModel
     @StateObject var categoryVM = CategoryViewModel()
@@ -42,8 +42,6 @@ struct EditProductView: View {
     var body: some View {
         NavigationStack {
             VStack {
-                TopBarView(showLogoutButton: false, showAddButton: false)
-
                 ScrollView {
                     VStack(spacing: 20) {
                         Text("Edit Product")

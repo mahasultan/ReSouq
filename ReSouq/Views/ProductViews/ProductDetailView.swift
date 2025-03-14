@@ -9,15 +9,13 @@ struct ProductDetailView: View {
     @EnvironmentObject var productViewModel: ProductViewModel
     @EnvironmentObject var categoryViewModel: CategoryViewModel
 
-    @State private var isEditing = false // Tracks edit button press
+    @State private var isEditing = false
 
-    // App Colors
     private let buttonColor = Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1)) // Dark Red
     private let textColor = Color.black
 
     var body: some View {
         VStack {
-            // Top Bar with Back Button on the Right
             ZStack {
                 TopBarView(showLogoutButton: false, showAddButton: false)
 

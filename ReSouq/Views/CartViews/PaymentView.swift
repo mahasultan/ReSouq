@@ -102,11 +102,9 @@ struct PaymentView: View {
                                 }
                             }
 
-                            // Divider between items and shipping section
                             Divider()
                                 .padding(.vertical, 10)
 
-                            // Shipping selection with vertical buttons
                             VStack(alignment: .leading, spacing: 10) {
                                 Text("Choose Shipping")
                                     .font(.headline)
@@ -242,10 +240,10 @@ struct PaymentView: View {
                 }
 
             }
-            .navigationTitle("Payment")
             .onAppear {
-                cartViewModel.fetchCart() // Fetch latest cart data
+                cartViewModel.fetchCart() 
             }
-            
+            .navigationBarBackButtonHidden(true)
+
         }
     }}
