@@ -246,6 +246,5 @@ struct PaymentView: View {
                 cartViewModel.fetchCart()
             }
             .navigationBarBackButtonHidden(true)
-
         }
     }}
