@@ -2,12 +2,26 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>UIAppFonts</key>
-	<array>
-		<string>ReemKufi-Bold.ttf</string>
-		<string>ReemKufi-Medium.ttf</string>
-		<string>ReemKufi-Regular.ttf</string>
-		<string>ReemKufi-SemiBold.ttf</string>
-	</array>
+    <key>UIAppFonts</key>
+    <array>
+        <string>ReemKufi-Bold.ttf</string>
+        <string>ReemKufi-Medium.ttf</string>
+        <string>ReemKufi-Regular.ttf</string>
+        <string>ReemKufi-SemiBold.ttf</string>
+    </array>
+
+    <key>CFBundleExecutable</key>
+    <string>${EXECUTABLE_NAME}</string>
+
+    <key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>com.googleusercontent.apps.326962297137-b8lssbebqacvbf316kvk036be151pcr4</string>
+                <string>app-1-326962297137-ios-f4bfc4734c0d7532c9d810</string>  
+            </array>
+        </dict>
+    </array>
 </dict>
 </plist>
