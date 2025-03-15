@@ -192,20 +192,23 @@ struct PaymentView: View {
                     }
                 }
 
-                
                 Button(action: {
                     if !cartViewModel.cart.products.isEmpty, let userID = authViewModel.userID {
                         orderViewModel.placeOrder(userID: userID, cart: cartViewModel.cart) { savedOrder in
                             DispatchQueue.main.async {
                                 if let savedOrder = savedOrder {
                                     self.placedOrder = savedOrder
-                                    print(" Stored Order ID: \(self.placedOrder?.id ?? "nil")")
-                                    print(" Stored Products Count: \(self.placedOrder?.products.count ?? 0)")
+                                    print("Stored Order ID: \(self.placedOrder?.id ?? "nil")")
+                                    print("Stored Products Count: \(self.placedOrder?.products.count ?? 0)")
 
-                                    cartViewModel.cart.products.removeAll()
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                                        cartViewModel.clearCart()
+                                        cartViewModel.markProductsAsSoldOut() // Call only after successful order
+                                    }
+
                                     self.navigateToOrders = true
                                 } else {
-                                    print(" Order failed to save.")
+                                    print("Order failed to save.")
                                 }
                             }
                         }
@@ -221,7 +224,6 @@ struct PaymentView: View {
                         .cornerRadius(10)
                 }
                 .padding()
-
                 
 
 
@@ -241,9 +243,8 @@ struct PaymentView: View {
 
             }
             .onAppear {
-                cartViewModel.fetchCart() 
+                cartViewModel.fetchCart()
             }
             .navigationBarBackButtonHidden(true)
-
         }
     }}
