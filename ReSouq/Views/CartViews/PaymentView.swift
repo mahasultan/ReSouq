@@ -102,11 +102,9 @@ struct PaymentView: View {
                                 }
                             }
 
-                            // Divider between items and shipping section
                             Divider()
                                 .padding(.vertical, 10)
 
-                            // Shipping selection with vertical buttons
                             VStack(alignment: .leading, spacing: 10) {
                                 Text("Choose Shipping")
                                     .font(.headline)
@@ -194,20 +192,23 @@ struct PaymentView: View {
                     }
                 }
 
-                
                 Button(action: {
                     if !cartViewModel.cart.products.isEmpty, let userID = authViewModel.userID {
                         orderViewModel.placeOrder(userID: userID, cart: cartViewModel.cart) { savedOrder in
                             DispatchQueue.main.async {
                                 if let savedOrder = savedOrder {
                                     self.placedOrder = savedOrder
-                                    print(" Stored Order ID: \(self.placedOrder?.id ?? "nil")")
-                                    print(" Stored Products Count: \(self.placedOrder?.products.count ?? 0)")
-                                    cartViewModel.markProductsAsSoldOut()
-                                    cartViewModel.clearCart()
+                                    print("Stored Order ID: \(self.placedOrder?.id ?? "nil")")
+                                    print("Stored Products Count: \(self.placedOrder?.products.count ?? 0)")
+
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                                        cartViewModel.clearCart()
+                                        cartViewModel.markProductsAsSoldOut() // Call only after successful order
+                                    }
+
                                     self.navigateToOrders = true
                                 } else {
-                                    print(" Order failed to save.")
+                                    print("Order failed to save.")
                                 }
                             }
                         }
@@ -223,7 +224,6 @@ struct PaymentView: View {
                         .cornerRadius(10)
                 }
                 .padding()
-
                 
 
 
@@ -242,10 +242,10 @@ struct PaymentView: View {
                 }
 
             }
-            .navigationTitle("Payment")
             .onAppear {
-                cartViewModel.fetchCart() // Fetch latest cart data
+                cartViewModel.fetchCart()
             }
-            
+            .navigationBarBackButtonHidden(true)
+
         }
     }}

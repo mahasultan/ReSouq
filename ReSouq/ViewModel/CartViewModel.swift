@@ -12,6 +12,7 @@ import FirebaseAuth
 class CartViewModel: ObservableObject {
     @Published var cart: Cart
     
+    
     @Published var soldOutProducts: Set<String> = []
     private var db = Firestore.firestore()
     
@@ -25,7 +26,7 @@ class CartViewModel: ObservableObject {
         self.cart = Cart(userID: userID)
         fetchCart()
     }
-
+    
     
     func checkAuthStatus() {
         if let user = Auth.auth().currentUser {
@@ -36,8 +37,6 @@ class CartViewModel: ObservableObject {
     }
     
     func fetchCart() {
-        print("Fetching cart for user: \(cart.userID)")
-
         db.collection("carts").document(cart.userID).getDocument { snapshot, error in
             if let error = error {
                 print("Firestore error fetching cart: \(error.localizedDescription)")
@@ -46,6 +45,10 @@ class CartViewModel: ObservableObject {
             if let snapshot = snapshot, snapshot.exists {
                 do {
                     self.cart = try snapshot.data(as: Cart.self)
+                    
+                    // Fetch sold-out products from Firestore
+                    self.fetchSoldOutProducts()
+                    
                     print("Cart loaded successfully")
                 } catch {
                     print("Firestore error decoding cart: \(error.localizedDescription)")
@@ -56,15 +59,32 @@ class CartViewModel: ObservableObject {
             }
         }
     }
-
-
+    
+    func fetchSoldOutProducts() {
+        db.collection("products").whereField("isSoldOut", isEqualTo: true).getDocuments { snapshot, error in
+            if let error = error {
+                print("Error fetching sold out products: \(error.localizedDescription)")
+                return
+            }
+            
+            let soldOutIDs = snapshot?.documents.compactMap { $0.documentID } ?? []
+            DispatchQueue.main.async {
+                self.soldOutProducts = Set(soldOutIDs)
+                print("Sold Out Products Updated: \(self.soldOutProducts)")
+            }
+        }
+    }
+    
+    
+    
+    
     func createCart() {
         let cartRef = db.collection("carts").document(cart.userID)
         let cartData: [String: Any] = [
             "userID": cart.userID,
             "products": []
         ]
-
+        
         cartRef.setData(cartData, merge: true) { error in
             if let error = error {
                 print("Firestore error while creating cart: \(error.localizedDescription)")
@@ -78,7 +98,7 @@ class CartViewModel: ObservableObject {
         cart.products.removeAll()
         updateCart()
     }
-
+    
     func addProduct(_ product: Product, quantity: Int = 1) {
         
         let userID = cart.userID
@@ -105,7 +125,7 @@ class CartViewModel: ObservableObject {
             print("Firestore error: \(error.localizedDescription)")
         }
     }
-
+    
     func removeProduct(_ product: Product) {
         
         if let index = cart.products.firstIndex(where: { $0.product.id == product.id }) {
@@ -115,10 +135,10 @@ class CartViewModel: ObservableObject {
                 cart.products.remove(at: index)
             }
             updateCart()
-           
+            
         }
     }
-
+    
     private func updateCart() {
         let cartRef = db.collection("carts").document(cart.userID)
         do {
@@ -135,30 +155,18 @@ class CartViewModel: ObservableObject {
     }
     
     func markProductsAsSoldOut() {
-        let soldOutIDs = cart.products.map { $0.product.id ?? "unknown" }
-        soldOutProducts.formUnion(soldOutIDs)
-
-        let productsRef = db.collection("products")
-
-        for productID in soldOutIDs {
-            let productDocRef = productsRef.document(productID)
-            
-            productDocRef.getDocument { document, error in
-                if let document = document, document.exists {
-                   
-                    productDocRef.updateData(["isSoldOut": true]) { error in
-                        if let error = error {
-                            print("Error marking product \(productID) as sold out: \(error.localizedDescription)")
-                        } else {
-                            print("Product \(productID) marked as sold out in Firestore")
-                        }
-                    }
-                } else {
-                    print(" Warning: Product \(productID) does not exist in Firestore. Skipping update.")
-                }
-            }
+        let soldOutIDs = cart.products.compactMap { $0.product.id } // Remove nil values
+        
+        
+        print("🛒 Current Cart Products Before Marking Sold Out: \(cart.products.map { $0.product.id ?? "Unknown" })")
+        print("🔍 Marking the following products as sold out: \(soldOutIDs)")
+        
+        DispatchQueue.main.async {
+            self.soldOutProducts.formUnion(soldOutIDs)
+            print("✅ Sold Out Products Updated: \(self.soldOutProducts)")
+            self.objectWillChange.send()
         }
     }
-
+    
+    
 }
-
