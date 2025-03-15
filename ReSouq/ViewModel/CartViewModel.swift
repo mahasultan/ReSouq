@@ -158,12 +158,12 @@ class CartViewModel: ObservableObject {
         let soldOutIDs = cart.products.compactMap { $0.product.id } // Remove nil values
         
         
-        print("🛒 Current Cart Products Before Marking Sold Out: \(cart.products.map { $0.product.id ?? "Unknown" })")
-        print("🔍 Marking the following products as sold out: \(soldOutIDs)")
+        print("Current Cart Products Before Marking Sold Out: \(cart.products.map { $0.product.id ?? "Unknown" })")
+        print("Marking the following products as sold out: \(soldOutIDs)")
         
         DispatchQueue.main.async {
             self.soldOutProducts.formUnion(soldOutIDs)
-            print("✅ Sold Out Products Updated: \(self.soldOutProducts)")
+            print("Sold Out Products Updated: \(self.soldOutProducts)")
             self.objectWillChange.send()
         }
     }
