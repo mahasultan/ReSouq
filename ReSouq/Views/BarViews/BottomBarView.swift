@@ -74,7 +74,7 @@ struct BottomBarView: View {
         )
     }
 
-    private func bottomBarButton(icon: String, label: String, page: String) -> some View {
+    func bottomBarButton(icon: String, label: String, page: String) -> some View {
         Button(action: {
             if navigationManager.currentPage != page {
                 navigationManager.currentPage = page

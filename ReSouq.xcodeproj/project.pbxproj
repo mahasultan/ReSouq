@@ -32,6 +32,8 @@
 		10244B072D5E111000CFD286 /* FirebaseStorageCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = 10244B062D5E111000CFD286 /* FirebaseStorageCombine-Community */; };
 		10244B092D5E111000CFD286 /* FirebaseVertexAI in Frameworks */ = {isa = PBXBuildFile; productRef = 10244B082D5E111000CFD286 /* FirebaseVertexAI */; };
 		1043CBE82D7E55C400FF2F72 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 1043CBE72D7E55C400FF2F72 /* SDWebImageSwiftUI */; };
+		10E17B9A2D864373005DDF3F /* ViewInspector in Frameworks */ = {isa = PBXBuildFile; productRef = 10E17B992D864373005DDF3F /* ViewInspector */; };
+		10E17BB62D866E8B005DDF3F /* UnitTesting.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 10E17BB52D866E8B005DDF3F /* UnitTesting.xctestplan */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,6 +57,7 @@
 		10244AAA2D5E0FA900CFD286 /* ReSouq.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ReSouq.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		10244ABA2D5E0FAB00CFD286 /* ReSouqTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ReSouqTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		10244AC42D5E0FAB00CFD286 /* ReSouqUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ReSouqUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		10E17BB52D866E8B005DDF3F /* UnitTesting.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = UnitTesting.xctestplan; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -64,6 +67,24 @@
 				Info.plist,
 			);
 			target = 10244AA92D5E0FA900CFD286 /* ReSouq */;
+		};
+		10E17BBB2D867383005DDF3F /* Exceptions for "ReSouqUITests" folder in "ReSouqTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				BottomBarViewTests.swift,
+				CategoryProductsViewTests.swift,
+				ContentViewTests.swift,
+			);
+			target = 10244AB92D5E0FAB00CFD286 /* ReSouqTests */;
+		};
+		10E17BBC2D867383005DDF3F /* Exceptions for "ReSouqUITests" folder in "ReSouqUITests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				BottomBarViewTests.swift,
+				CategoryProductsViewTests.swift,
+				ContentViewTests.swift,
+			);
+			target = 10244AC32D5E0FAB00CFD286 /* ReSouqUITests */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -83,6 +104,10 @@
 		};
 		10244AC72D5E0FAB00CFD286 /* ReSouqUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				10E17BBB2D867383005DDF3F /* Exceptions for "ReSouqUITests" folder in "ReSouqTests" target */,
+				10E17BBC2D867383005DDF3F /* Exceptions for "ReSouqUITests" folder in "ReSouqUITests" target */,
+			);
 			path = ReSouqUITests;
 			sourceTree = "<group>";
 		};
@@ -125,6 +150,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				10E17B9A2D864373005DDF3F /* ViewInspector in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -141,6 +167,7 @@
 		10244AA12D5E0FA900CFD286 = {
 			isa = PBXGroup;
 			children = (
+				10E17BB52D866E8B005DDF3F /* UnitTesting.xctestplan */,
 				10244AAC2D5E0FA900CFD286 /* ReSouq */,
 				10244ABD2D5E0FAB00CFD286 /* ReSouqTests */,
 				10244AC72D5E0FAB00CFD286 /* ReSouqUITests */,
@@ -226,6 +253,7 @@
 			);
 			name = ReSouqTests;
 			packageProductDependencies = (
+				10E17B992D864373005DDF3F /* ViewInspector */,
 			);
 			productName = ReSouqTests;
 			productReference = 10244ABA2D5E0FAB00CFD286 /* ReSouqTests.xctest */;
@@ -289,6 +317,7 @@
 			packageReferences = (
 				10244AD92D5E111000CFD286 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				1043CBE62D7E55C400FF2F72 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
+				10E17B982D864373005DDF3F /* XCRemoteSwiftPackageReference "ViewInspector" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 10244AAB2D5E0FA900CFD286 /* Products */;
@@ -307,6 +336,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				10E17BB62D866E8B005DDF3F /* UnitTesting.xctestplan in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -671,6 +701,14 @@
 				minimumVersion = 3.1.3;
 			};
 		};
+		10E17B982D864373005DDF3F /* XCRemoteSwiftPackageReference "ViewInspector" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/nalexn/ViewInspector.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.10.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -798,6 +836,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 1043CBE62D7E55C400FF2F72 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
 			productName = SDWebImageSwiftUI;
+		};
+		10E17B992D864373005DDF3F /* ViewInspector */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 10E17B982D864373005DDF3F /* XCRemoteSwiftPackageReference "ViewInspector" */;
+			productName = ViewInspector;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
