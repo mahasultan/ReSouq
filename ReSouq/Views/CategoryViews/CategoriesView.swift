@@ -16,7 +16,6 @@ struct CategoriesView: View {
                 Text(category.name)
             }
         }
-        .navigationTitle("All Categories")
         .onAppear {
             categoryVM.fetchCategories()
         }
