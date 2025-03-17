@@ -1,22 +1,15 @@
-//
-//  SplashView.swift
-//  ReSouq
-//
-
 import SwiftUI
 
 struct SplashView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
-    @State private var scaleEffect: CGFloat = 1.0
-    @EnvironmentObject var navigationManager: NavigationManager
     @State private var isActive = false
-    
+    @State private var scaleEffect: CGFloat = 1.0
+
     var body: some View {
         if isActive {
             if authViewModel.user != nil {
                 MainTabView()
                     .environmentObject(authViewModel)
-                    .environmentObject(navigationManager)
             } else {
                 LoginView()
                     .environmentObject(authViewModel)
@@ -36,8 +29,7 @@ struct SplashView: View {
                             scaleEffect = 1.2
                         }
                     }
-            }            .background(Color(UIColor(red: 232/255, green: 225/255, blue: 210/255, alpha: 1))) 
-            .ignoresSafeArea()
+            }
             .onAppear {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                     self.isActive = true
@@ -47,8 +39,3 @@ struct SplashView: View {
     }
 }
 
-#Preview {
-    SplashView()
-        .environmentObject(AuthViewModel())
-        .environmentObject(NavigationManager())
-}

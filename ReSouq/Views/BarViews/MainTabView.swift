@@ -6,6 +6,7 @@
 import SwiftUI
 
 struct MainTabView: View {
+    @EnvironmentObject var authViewModel: AuthViewModel
     @EnvironmentObject var cartViewModel: CartViewModel
     @EnvironmentObject var navigationManager: NavigationManager
 
@@ -18,7 +19,7 @@ struct MainTabView: View {
                         Image(systemName: "house.fill")
                             .resizable()
                             .scaledToFit()
-                            .frame(width: 24, height: 24) // Standard size
+                            .frame(width: 24, height: 24)
                         Text("Home")
                     }
 
@@ -28,7 +29,7 @@ struct MainTabView: View {
                         Image(systemName: "heart.fill")
                             .resizable()
                             .scaledToFit()
-                            .frame(width: 24, height: 24) // Standard size
+                            .frame(width: 24, height: 24)
                         Text("Likes")
                     }
 
@@ -36,21 +37,19 @@ struct MainTabView: View {
                     .tag("AddProduct")
                     .tabItem { Label("Add", systemImage: "plus.circle.fill") }
 
-             
                 CartView()
                     .tag("Cart")
                     .tabItem {
                         ZStack {
                             if !cartViewModel.cart.products.isEmpty {
                                 ZStack {
-                                    Image(systemName: "cart.fill") // 🛒 Cart Icon
+                                    Image(systemName: "cart.fill")
                                         .font(.system(size: 22))
 
                                     ZStack {
                                         Text("\(cartViewModel.cart.products.count)")
                                             .font(.caption2)
                                             .bold()
-                                           
                                     }
                                 }
                             } else {
@@ -60,22 +59,33 @@ struct MainTabView: View {
                         }
                     }
 
-
-                ProfileView()
-                    .tag("Profile")
-                    .tabItem {
-                        Image(systemName: "person.fill")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 24, height: 24) // Standard size
-                        Text("Profile")
-                    }
+                if authViewModel.user != nil {
+                    ProfileView()
+                        .tag("Profile")
+                        .tabItem {
+                            Image(systemName: "person.fill")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 24, height: 24)
+                            Text("Profile")
+                        }
+                } else {
+                    GuestProfileView()
+                        .tag("GuestProfile")
+                        .tabItem {
+                            Image(systemName: "person.fill")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 24, height: 24)
+                            Text("Profile")
+                        }
+                }
             }
             .accentColor(Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1)))
             .onAppear {
                 UITabBar.appearance().unselectedItemTintColor = UIColor.black //
             }
         }
-        .edgesIgnoringSafeArea(.bottom) 
+        .edgesIgnoringSafeArea(.bottom)
     }
 }

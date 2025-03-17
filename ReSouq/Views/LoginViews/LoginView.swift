@@ -1,8 +1,3 @@
-//
-//  LoginView.swift
-//  ReSouq
-//
-
 import SwiftUI
 
 struct LoginView: View {
@@ -13,13 +8,13 @@ struct LoginView: View {
     @State private var otpCode: String = ""
     @State private var showOTPField = false
     @EnvironmentObject var authViewModel: AuthViewModel
+    @State private var navigateToHome = false
 
     var body: some View {
         NavigationStack {
             VStack(spacing: 15) {
                 Spacer(minLength: 40)
 
-                // Title
                 HStack {
                     VStack(alignment: .leading) {
                         Text("Welcome\nBack")
@@ -29,7 +24,6 @@ struct LoginView: View {
                     Spacer()
                 }
                 .padding(.horizontal, 30)
-                .padding(.top, 20)
                 .overlay(
                     Image("recycle_icon")
                         .resizable()
@@ -40,7 +34,6 @@ struct LoginView: View {
 
                 Spacer(minLength: 10)
 
-                // Toggle between Email/Phone login
                 Picker("", selection: $isUsingPhoneLogin) {
                     Text("Email").tag(false)
                     Text("Phone").tag(true)
@@ -48,7 +41,6 @@ struct LoginView: View {
                 .pickerStyle(SegmentedPickerStyle())
                 .padding(.horizontal, 30)
 
-                // Email or Phone Input
                 VStack(alignment: .leading) {
                     if isUsingPhoneLogin {
                         TextField("Enter your phone number", text: $identifier)
@@ -65,7 +57,6 @@ struct LoginView: View {
                 .shadow(radius: 1)
                 .padding(.horizontal, 30)
 
-                // Password or OTP Input
                 if isUsingPhoneLogin {
                     if showOTPField {
                         TextField("Enter OTP", text: $otpCode)
@@ -78,30 +69,27 @@ struct LoginView: View {
                             .padding(.horizontal, 30)
                     }
                 } else {
-                    VStack(alignment: .leading) {
-                        HStack {
-                            if isPasswordVisible {
-                                TextField("Enter your password", text: $password)
-                            } else {
-                                SecureField("Enter your password", text: $password)
-                            }
-                            Button(action: {
-                                isPasswordVisible.toggle()
-                            }) {
-                                Image(systemName: isPasswordVisible ? "eye.slash" : "eye")
-                                    .foregroundColor(.gray)
-                            }
+                    HStack {
+                        if isPasswordVisible {
+                            TextField("Enter your password", text: $password)
+                        } else {
+                            SecureField("Enter your password", text: $password)
                         }
-                        .padding()
-                        .frame(height: 50)
-                        .background(Color(UIColor(red: 245/255, green: 245/255, blue: 245/255, alpha: 1)))
-                        .cornerRadius(20)
-                        .shadow(radius: 1)
+                        Button(action: {
+                            isPasswordVisible.toggle()
+                        }) {
+                            Image(systemName: "eye.slash" )
+                                .foregroundColor(.gray)
+                        }
                     }
+                    .padding()
+                    .frame(height: 50)
+                    .background(Color(UIColor(red: 245/255, green: 245/255, blue: 245/255, alpha: 1)))
+                    .cornerRadius(20)
+                    .shadow(radius: 1)
                     .padding(.horizontal, 30)
                 }
 
-                // Error Message
                 if let errorMessage = authViewModel.errorMessage {
                     Text(errorMessage)
                         .foregroundColor(.red)
@@ -109,7 +97,6 @@ struct LoginView: View {
                         .padding(.top, 5)
                 }
 
-                // Login Button
                 Button(action: {
                     if isUsingPhoneLogin {
                         if showOTPField {
@@ -133,7 +120,6 @@ struct LoginView: View {
                 }
                 .padding(.top, 10)
 
-                // Sign-Up Navigation
                 HStack {
                     Text("I don’t have an account")
                         .foregroundColor(.black)
@@ -146,6 +132,20 @@ struct LoginView: View {
                 }
                 .padding(.top, 10)
 
+                // ✅ Updated "Continue as a Guest" Button
+                Button(action: {
+                    navigateToHome = true
+                }) {
+                    Text("Continue as a Guest")
+                        .font(.system(size: 14)) // ⬅️ Smaller Font
+                        .foregroundColor(.gray) // ⬅️ Gray Color
+                }
+                .padding(.top, 10)
+
+                NavigationLink(destination: MainTabView().navigationBarBackButtonHidden(true), isActive: $navigateToHome) {
+                    EmptyView()
+                }
+
                 Spacer()
             }
             .background(Color(UIColor(red: 232/255, green: 225/255, blue: 210/255, alpha: 1)))
@@ -155,7 +155,6 @@ struct LoginView: View {
     }
 }
 
-// MARK: - Preview
 struct LoginView_Previews: PreviewProvider {
     static var previews: some View {
         LoginView().environmentObject(AuthViewModel())
