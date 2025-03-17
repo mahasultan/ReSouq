@@ -42,7 +42,6 @@ struct CategoryProductsView: View {
                 }
             }
         }
-        .navigationTitle(categoryName)
         .onAppear {
             productVM.fetchProducts()
             categoryVM.fetchCategories()
