@@ -61,7 +61,7 @@ class ProductViewModel: ObservableObject {
             }
         }
 
-        return filteredProducts
+        return filteredProducts.sorted { $0.createdAt > $1.createdAt }
     }
 
     // Upload image to Firebase Storage
