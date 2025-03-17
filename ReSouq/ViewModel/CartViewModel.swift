@@ -99,45 +99,43 @@ class CartViewModel: ObservableObject {
         updateCart()
     }
     
-    func addProduct(_ product: Product, quantity: Int = 1) {
-        
+    func addProduct(_ product: Product) {
         let userID = cart.userID
-        
-        let newCartItem = CartItem(product: product, quantity: quantity)
-        
+
+        // Check if the product already exists in the cart
         if let index = cart.products.firstIndex(where: { $0.product.id == product.id }) {
-            cart.products[index].quantity += quantity
+            print("Product is already in the cart. No duplicate added.")
         } else {
+            // Add the product only if it's not in the cart
+            let newCartItem = CartItem(id: UUID().uuidString, product: product)
             cart.products.append(newCartItem)
-        }
-        
-        
-        let cartRef = db.collection("carts").document(userID)
-        do {
-            try cartRef.setData(from: cart, merge: true) { error in
-                if let error = error {
-                    print("Firestore error: \(error.localizedDescription)")
-                } else {
-                    print("Product added to cart and synced with Firestore")
+
+            let cartRef = db.collection("carts").document(userID)
+            do {
+                try cartRef.setData(from: cart, merge: true) { error in
+                    if let error = error {
+                        print("Firestore error: \(error.localizedDescription)")
+                    } else {
+                        print("Product added to cart and synced with Firestore")
+                    }
                 }
+            } catch {
+                print("Firestore error: \(error.localizedDescription)")
             }
-        } catch {
-            print("Firestore error: \(error.localizedDescription)")
         }
     }
+
+
     
     func removeProduct(_ product: Product) {
-        
         if let index = cart.products.firstIndex(where: { $0.product.id == product.id }) {
-            if cart.products[index].quantity > 1 {
-                cart.products[index].quantity -= 1
-            } else {
-                cart.products.remove(at: index)
-            }
+            cart.products.remove(at: index) // Remove the product completely
             updateCart()
-            
+        } else {
+            print("Product not found in the cart.")
         }
     }
+
     
     private func updateCart() {
         let cartRef = db.collection("carts").document(cart.userID)
