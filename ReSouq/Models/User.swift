@@ -15,6 +15,9 @@ struct User: Identifiable, Codable {
     var phoneNumber: String?
     var profileImageURL: String?
     var location: String?
+    var savedAddresses: [String] = []
     var createdAt: Date = Date()
+    
+    
 }
 

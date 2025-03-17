@@ -188,6 +188,7 @@ class AuthViewModel: ObservableObject {
             "email": email,
             "phoneNumber": phoneNumber ?? "",
             "profileImageURL": profileImageURL,
+            "savedAddresses": [], 
             "createdAt": Timestamp(date: Date())
         ]
 
@@ -243,7 +244,26 @@ class AuthViewModel: ObservableObject {
             }
         }
     }
+    func saveShippingAddress(_ address: String) {
+        guard let userID = self.user?.id else { return }
+        let userRef = Firestore.firestore().collection("users").document(userID)
 
+        var updatedAddresses = self.user?.savedAddresses ?? []
+        
+        if !updatedAddresses.contains(address) { // Prevent duplicate addresses
+            updatedAddresses.append(address)
+            userRef.updateData(["savedAddresses": updatedAddresses]) { error in
+                if let error = error {
+                    print("Error saving shipping address: \(error.localizedDescription)")
+                } else {
+                    DispatchQueue.main.async {
+                        self.user?.savedAddresses = updatedAddresses
+                    }
+                    print("Shipping address saved successfully!")
+                }
+            }
+        }
+    }
     // MARK: - Logout
     func logout() {
         do {

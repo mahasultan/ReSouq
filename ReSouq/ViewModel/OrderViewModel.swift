@@ -12,7 +12,7 @@ class OrderViewModel: ObservableObject {
 
     private var db = Firestore.firestore()
     
-
+    // Fetch orders for a specific user
     func fetchOrders(for userID: String) {
         db.collection("orders")
             .whereField("userID", isEqualTo: userID)
@@ -34,37 +34,13 @@ class OrderViewModel: ObservableObject {
             }
     }
 
-
-   
-    func placeOrder(userID: String, cart: Cart, completion: @escaping (Bool) -> Void) {
-        let newOrder = Order(
-            userID: userID,
-            products: cart.products,
-            totalPrice: cart.totalPrice
-        )
-
-        do {
-            let documentRef = try db.collection("orders").addDocument(from: newOrder) { error in
-                if let error = error {
-                    print("Firestore Error: \(error.localizedDescription)")
-                    completion(false)
-                } else {
-                    print("Order placed successfully!")
-                    completion(true)
-                }
-            }
-        } catch {
-            print("Encoding Error: \(error.localizedDescription)")
-            completion(false)
-        }
-
-    }
-    
-    func placeOrder(userID: String, cart: Cart, completion: @escaping (Order?) -> Void) {
+    // Place a new order with shipping address
+    func placeOrder(userID: String, cart: Cart, shippingAddress: String, completion: @escaping (Order?) -> Void) {
         var newOrder = Order(
             userID: userID,
             products: cart.products,
-            totalPrice: cart.totalPrice
+            totalPrice: cart.totalPrice,
+            shippingAddress: shippingAddress // Ensure shipping address is stored
         )
 
         let documentRef = db.collection("orders").document()
@@ -76,7 +52,7 @@ class OrderViewModel: ObservableObject {
                     print("Firestore Error: \(error.localizedDescription)")
                     completion(nil)
                 } else {
-                    print("Order placed successfully with ID: \(newOrder.id ?? "Unknown ID")")
+                    print("Order placed successfully with ID: \(newOrder.id ?? "Unknown ID") and Address: \(newOrder.shippingAddress ?? "N/A")")
                     DispatchQueue.main.async {
                         self.latestOrder = newOrder
                     }
@@ -88,12 +64,4 @@ class OrderViewModel: ObservableObject {
             completion(nil)
         }
     }
-
-    }
-
-
-
-
-
-
-
+}

@@ -7,8 +7,8 @@ struct OrderDetailView: View {
     var body: some View {
         HStack {
             TopBarView(showLogoutButton: false, showAddButton: false)
-
         }
+
         VStack {
             Text("Order Details")
                 .font(.custom("ReemKufi-Bold", size: 30))
@@ -26,6 +26,20 @@ struct OrderDetailView: View {
                     .bold()
                     .font(.headline)
                     .foregroundColor(Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1)))
+
+                Divider().background(Color.gray.opacity(0.5))
+
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Shipping Address")
+                        .font(.headline)
+                        .foregroundColor(.black)
+                    Text(order.shippingAddress ?? "No shipping address provided")
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
+                        .padding(.bottom, 5)
+                }
+                .padding()
+                .background(RoundedRectangle(cornerRadius: 12).fill(Color.white))
 
                 Divider().background(Color.gray.opacity(0.5))
 
@@ -58,9 +72,7 @@ struct OrderDetailView: View {
                                 Text("QR \(String(format: "%.2f", item.product.price))")
                                     .font(.subheadline)
                                     .foregroundColor(.gray)
-
                             }
-
                             Spacer()
                         }
                         .padding()
@@ -74,6 +86,5 @@ struct OrderDetailView: View {
         }
         .padding()
         .navigationBarBackButtonHidden(true)
-
     }
 }
