@@ -2,7 +2,7 @@
 
 ReSouq is a marketplace application designed for users to buy and sell pre-owned products. The platform enables sellers to list products with images, descriptions, and pricing while allowing buyers to browse, search, and purchase items.
 
-# Screenshots
+## Screenshots
 <div align="center">
     <img src="https://github.com/user-attachments/assets/d30adddb-f091-4634-a0ab-bafe594168aa" width="250">
     <img src="https://github.com/user-attachments/assets/4b123be5-eada-4ef9-bba7-327688b403c5" width="250">
