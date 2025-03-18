@@ -102,7 +102,12 @@ struct AddProductView: View {
                             .padding(.horizontal)
                             
                             // Category Picker
-                            CustomDropdownPicker(title: "Select Category", selection: $selectedCategoryID, options: categoryVM.categories.map { ($0.name, $0.id) })
+                            SearchableDropdownPicker(
+                                title: "Select Category",
+                                selection: $selectedCategoryID,
+                                options: categoryVM.categories.map { ($0.name, $0.id) }
+                            )
+
                             
                             // Gender Picker
                             CustomDropdownPicker(title: "Select Gender", selection: $selectedGender, options: genderOptions.map { ($0, $0) })
