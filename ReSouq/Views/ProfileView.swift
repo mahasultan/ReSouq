@@ -83,7 +83,7 @@ struct ProfileView: View {
                                 } else {
                                     ScrollView(.horizontal, showsIndicators: false) {
                                         HStack(spacing: 15) {
-                                            ForEach(orderViewModel.orders) { order in
+                                            ForEach(orderViewModel.orders, id: \.id) { order in
                                                 NavigationLink(destination: OrderDetailView(order: order)) {
                                                     VStack(alignment: .leading, spacing: 5) {
                                                         Text("Order #\(order.id ?? "N/A")")
@@ -116,17 +116,21 @@ struct ProfileView: View {
                                     .padding(.leading, 20)
                                     .padding(.top, 20)
 
-                                if productViewModel.products.isEmpty {
+                                let userListings = productViewModel.products
+                                    .filter { $0.sellerID == authViewModel.userID }
+                                    .sorted { $0.createdAt ?? Date() > $1.createdAt ?? Date() }
+
+                                if userListings.isEmpty {
                                     Text("No listings found.")
                                         .foregroundColor(.gray)
                                         .padding(.leading, 20)
                                 } else {
                                     ScrollView(.horizontal, showsIndicators: false) {
                                         HStack(spacing: 15) {
-                                            ForEach(productViewModel.products.filter { $0.sellerID == authViewModel.userID }) { product in
+                                            ForEach(userListings, id: \.id) { product in
                                                 NavigationLink(destination: ProductDetailView(product: product)) {
                                                     VStack(alignment: .leading, spacing: 5) {
-                                                        if let imageUrl = product.imageURL, let url = URL(string: imageUrl) {
+                                                        if let imageUrl = product.imageUrls.first, let url = URL(string: imageUrl) {
                                                             WebImage(url: url)
                                                                 .resizable()
                                                                 .scaledToFill()

@@ -52,19 +52,21 @@ struct OrderDetailView: View {
 
             ScrollView {
                 VStack(spacing: 12) {
-                    ForEach(order.products) { item in
+                    ForEach(order.products, id: \.id) { item in
                         HStack(spacing: 12) {
-                            AsyncImage(url: URL(string: item.product.imageURL ?? "")) { image in
-                                image.resizable()
-                            } placeholder: {
-                                Image(systemName: "photo")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 50, height: 50)
-                                    .foregroundColor(.gray)
+                            if let imageURL = item.product.imageUrls.first, let url = URL(string: imageURL) {
+                                AsyncImage(url: url) { image in
+                                    image.resizable()
+                                } placeholder: {
+                                    Image(systemName: "photo")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 50, height: 50)
+                                        .foregroundColor(.gray)
+                                }
+                                .frame(width: 50, height: 50)
+                                .clipShape(RoundedRectangle(cornerRadius: 8))
                             }
-                            .frame(width: 50, height: 50)
-                            .clipShape(RoundedRectangle(cornerRadius: 8))
 
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(item.product.name)

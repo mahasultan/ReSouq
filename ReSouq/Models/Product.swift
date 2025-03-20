@@ -12,11 +12,11 @@ struct Product: Identifiable, Codable {
     var name: String
     var price: Double
     var description: String
-    var imageURL: String?
+    var imageUrls: [String] 
     var sellerID: String
     var categoryID: String
     var gender: String
     var condition: String
     var createdAt: Date = Date()
-    
 }
+

@@ -33,12 +33,12 @@ struct LikesView: View {
                                 ForEach(productViewModel.likedProducts, id: \.id) { product in
                                     VStack {
                                         HStack {
-                                            if let imageURL = product.imageURL, let url = URL(string: imageURL) {
+                                            if let imageURL = product.imageUrls.first, let url = URL(string: imageURL) {
                                                 WebImage(url: url)
                                                     .resizable()
                                                     .indicator(.activity)
                                                     .scaledToFill()
-                                                    .frame(width: 80, height: 80) 
+                                                    .frame(width: 80, height: 80)
                                                     .clipShape(RoundedRectangle(cornerRadius: 10))
                                                     .clipped()
                                             } else {
