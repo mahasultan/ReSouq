@@ -13,68 +13,76 @@ struct AddProductView: View {
     @State private var selectedCategoryID = ""
     @State private var selectedGender = ""
     @State private var selectedCondition = ""
-    @State private var productImage: UIImage?
+    @State private var selectedImages: [UIImage] = []
     @State private var isImagePickerPresented = false
-    
+
     private let genderOptions = ["Female", "Male", "Unisex"]
     private let conditionOptions = ["New", "Used - Like New", "Used - Good", "Used - Acceptable"]
     private let buttonColor = Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1))
     private let textFieldBorderColor = Color.gray.opacity(0.5)
-    
+
     var body: some View {
         NavigationStack {
             VStack {
-                // Top Bar
                 TopBarView(showLogoutButton: false, showAddButton: false)
-                
+
                 ScrollView {
                     VStack(spacing: 20) {
                         Text("Add Product")
                             .font(.custom("ReemKufi-Bold", size: 30))
                             .foregroundColor(buttonColor)
-                            .padding(.leading, 15)
                             .padding(.top, 10)
-                        
-                        // Image Picker
-                        HStack {
-                            Spacer()
-                            Button(action: {
-                                isImagePickerPresented = true
-                            }) {
-                                if let productImage = productImage {
-                                    Image(uiImage: productImage)
-                                        .resizable()
-                                        .scaledToFill()
-                                        .frame(width: 150, height: 150)
-                                        .clipShape(RoundedRectangle(cornerRadius: 15))
-                                } else {
-                                    ZStack {
-                                        RoundedRectangle(cornerRadius: 15)
-                                            .strokeBorder(Color.gray.opacity(0.5), lineWidth: 1)
-                                            .frame(width: 150, height: 150)
-                                            .background(Color.white)
-                                            .clipShape(RoundedRectangle(cornerRadius: 15))
-                                        Image(systemName: "camera.fill")
+
+                        VStack {
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                HStack(spacing: 15) {
+                                    ForEach(selectedImages, id: \.self) { image in
+                                        Image(uiImage: image)
                                             .resizable()
-                                            .scaledToFit()
-                                            .frame(width: 40, height: 40)
-                                            .foregroundColor(.gray)
+                                            .scaledToFill()
+                                            .frame(width: 120, height: 120)
+                                            .clipShape(RoundedRectangle(cornerRadius: 15))
+                                            .clipped()
                                     }
+
+                                    Button(action: {
+                                        isImagePickerPresented = true
+                                    }) {
+                                        ZStack {
+                                            RoundedRectangle(cornerRadius: 15)
+                                                .strokeBorder(Color.gray.opacity(0.5), lineWidth: 1)
+                                                .frame(width: 120, height: 120)
+                                                .background(Color.white)
+
+                                            VStack {
+                                                Image(systemName: "plus.circle.fill")
+                                                    .resizable()
+                                                    .scaledToFit()
+                                                    .frame(width: 40, height: 40)
+                                                    .foregroundColor(buttonColor)
+                                                Text("Add Image")
+                                                    .font(.custom("ReemKufi-Bold", size: 16))
+                                                    .foregroundColor(.gray)
+                                            }
+                                        }
+                                    }
+                                    .frame(width: 120, height: 120)
                                 }
+                                .frame(maxWidth: .infinity, alignment: .center) // Centers the HStack
                             }
-                            .sheet(isPresented: $isImagePickerPresented) {
-                                ImagePicker(selectedImage: $productImage)
-                            }
-                            Spacer()
                         }
-                        
-                        // Form Fields
+                        .frame(maxWidth: .infinity, alignment: .center) // Centers the VStack
+                        .padding()
+                        .sheet(isPresented: $isImagePickerPresented) {
+                            ImagePicker(selectedImages: $selectedImages)
+                        }
+
                         VStack(spacing: 15) {
                             CustomTextField(placeholder: "Product Name", text: $name)
                                 .font(.system(size: 18))
                             CustomTextField(placeholder: "Price (QAR)", text: $price, keyboardType: .decimalPad)
                                 .font(.system(size: 18))
-                            
+
                             ZStack(alignment: .topLeading) {
                                 if description.isEmpty {
                                     Text("Description (Optional)")
@@ -84,7 +92,7 @@ struct AddProductView: View {
                                         .font(.custom("ReemKufi-Bold", size: 18))
                                         .zIndex(1)
                                 }
-                               
+
                                 TextEditor(text: $description)
                                     .padding(.horizontal, 14)
                                     .padding(.top, 8)
@@ -100,31 +108,23 @@ struct AddProductView: View {
                                     .zIndex(2)
                             }
                             .padding(.horizontal)
-                            
-                            // Category Picker
+
                             SearchableDropdownPicker(
                                 title: "Select Category",
                                 selection: $selectedCategoryID,
                                 options: categoryVM.categories.map { ($0.name, $0.id) }
                             )
-
-                            
-                            // Gender Picker
                             CustomDropdownPicker(title: "Select Gender", selection: $selectedGender, options: genderOptions.map { ($0, $0) })
-                            
-                            // Condition Picker
                             CustomDropdownPicker(title: "Select Condition", selection: $selectedCondition, options: conditionOptions.map { ($0, $0) })
                         }
-                        
-                        // Error Message
+
                         if let errorMessage = productVM.errorMessage {
                             Text(errorMessage)
                                 .font(.custom("ReemKufi-Bold", size: 14))
                                 .foregroundColor(.red)
                                 .padding()
                         }
-                        
-                        // Submit Button
+
                         Button(action: addProduct) {
                             if productVM.isSubmitting {
                                 ProgressView()
@@ -149,8 +149,8 @@ struct AddProductView: View {
             }
         }
     }
-    
-    // Submit function
+
+
     private func addProduct() {
         guard let userID = authViewModel.userID,
               !name.trimmingCharacters(in: .whitespaces).isEmpty,
@@ -158,12 +158,12 @@ struct AddProductView: View {
               !selectedCategoryID.isEmpty,
               !selectedGender.isEmpty,
               !selectedCondition.isEmpty,
-              let image = productImage else {
-            productVM.errorMessage = "Please fill in all fields, including an image."
+              !selectedImages.isEmpty else {
+            productVM.errorMessage = "Please fill in all fields, including at least one image."
             return
         }
 
-        productVM.isSubmitting = true // Prevent multiple taps
+        productVM.isSubmitting = true
 
         productVM.saveProduct(
             userID: userID,
@@ -173,18 +173,18 @@ struct AddProductView: View {
             categoryID: selectedCategoryID,
             gender: selectedGender,
             condition: selectedCondition,
-            image: image
+            images: selectedImages
         ) { success in
             DispatchQueue.main.async {
                 productVM.isSubmitting = false
                 if success {
                     resetForm()
-                    navigationManager.currentPage = "Home" // Navigate to home
+                    navigationManager.currentPage = "Home"
                 }
             }
         }
     }
-    
+
     private func resetForm() {
         name = ""
         price = ""
@@ -192,14 +192,11 @@ struct AddProductView: View {
         selectedCategoryID = ""
         selectedGender = ""
         selectedCondition = ""
-        productImage = nil
+        selectedImages.removeAll()
         isImagePickerPresented = false
         productVM.errorMessage = nil
     }
-
 }
-
-// MARK: - Custom Components
 
 // Custom TextField
 struct CustomTextField: View {

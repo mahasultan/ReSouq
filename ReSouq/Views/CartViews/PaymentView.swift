@@ -63,7 +63,7 @@ struct PaymentView: View {
                             ForEach(cartViewModel.cart.products) { cartItem in
                                 VStack {
                                     HStack {
-                                        if let imageURL = cartItem.product.imageURL, let url = URL(string: imageURL) {
+                                        if let imageURL = cartItem.product.imageUrls.first, let url = URL(string: imageURL) {
                                             WebImage(url: url)
                                                 .resizable()
                                                 .indicator(.activity)

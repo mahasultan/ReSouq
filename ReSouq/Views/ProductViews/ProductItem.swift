@@ -9,7 +9,7 @@ struct ProductItem: View {
         VStack {
             NavigationLink(destination: ProductDetailView(product: product)) {
                 VStack {
-                    AsyncImage(url: URL(string: product.imageURL ?? "")) { image in
+                    AsyncImage(url: URL(string: product.imageUrls.first ?? "")) { image in
                         image.resizable()
                     } placeholder: {
                         Image(systemName: "photo")

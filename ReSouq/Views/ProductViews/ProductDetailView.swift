@@ -10,8 +10,10 @@ struct ProductDetailView: View {
     @EnvironmentObject var categoryViewModel: CategoryViewModel
 
     @State private var isEditing = false
+    @State private var selectedImageIndex = 0
 
-    private let buttonColor = Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1)) // Dark Red
+
+    private let buttonColor = Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1))
     private let textColor = Color.black
 
     var body: some View {
@@ -35,40 +37,36 @@ struct ProductDetailView: View {
             .navigationBarBackButtonHidden(true)
 
             ScrollView {
-                VStack(spacing: 12) { // Reduced spacing
-                    // Product Image
-                    if let imageUrl = product.imageURL, let url = URL(string: imageUrl) {
-                        WebImage(url: url)
-                            .resizable()
-                            .indicator(.activity)
-                            .transition(.fade(duration: 0.5))
-                            .scaledToFit()
-                            .frame(height: 250)
-                            .clipShape(RoundedRectangle(cornerRadius: 15))
-                            .padding(.top, 10)
-                    } else {
-                        Image(systemName: "photo")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(height: 250)
-                            .foregroundColor(.gray)
-                            .clipShape(RoundedRectangle(cornerRadius: 15))
+                VStack(spacing: 12) {
+                    
+                    TabView(selection: $selectedImageIndex) {
+                        ForEach(Array(product.imageUrls.enumerated()), id: \.1) { index, imageUrl in
+                            WebImage(url: URL(string: imageUrl))
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 300, height: 300)
+                                .clipShape(RoundedRectangle(cornerRadius: 15))
+                                .tag(index)
+                        }
+                    }
+                    .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
+                    .frame(height: 320)
+                    .onAppear {
+                        UIPageControl.appearance().currentPageIndicatorTintColor = UIColor.gray
+                        UIPageControl.appearance().pageIndicatorTintColor = UIColor.lightGray
                     }
 
-                    // Product Name
                     Text(product.name)
                         .font(.custom("ReemKufi-Bold", size: 26))
                         .foregroundColor(.black)
-                        .padding(.top, 5) // Reduced spacing
+                        .padding(.top, 5)
 
-                    // Price
                     Text("QR \(product.price, specifier: "%.2f")")
                         .font(.custom("ReemKufi-Bold", size: 22))
                         .foregroundColor(buttonColor)
 
                     Divider().padding(.horizontal)
 
-                    // Category, Gender, and Condition
                     VStack(alignment: .leading, spacing: 10) {
                         let categoryName = categoryViewModel.categories.first(where: { $0.id == product.categoryID })?.name ?? "Unknown"
 
@@ -80,7 +78,6 @@ struct ProductDetailView: View {
 
                     Divider().padding(.horizontal)
 
-                    // Description
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Description")
                             .font(.custom("ReemKufi-Bold", size: 20))
@@ -90,7 +87,7 @@ struct ProductDetailView: View {
                             .font(.system(size: 18))
                             .foregroundColor(textColor)
                             .padding()
-                            .frame(maxWidth: .infinity, minHeight: 120, maxHeight: 150, alignment: .topLeading) // Fixed size
+                            .frame(maxWidth: .infinity, minHeight: 120, maxHeight: 150, alignment: .topLeading)
                             .background(Color.white)
                             .clipShape(RoundedRectangle(cornerRadius: 10))
                             .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.gray.opacity(0.5), lineWidth: 1))
@@ -99,9 +96,7 @@ struct ProductDetailView: View {
 
                     Spacer()
 
-                    // Like, Edit (if user is seller), and Add to Cart Buttons
                     HStack {
-                        // Like Button
                         Button(action: {
                             productViewModel.toggleLike(product: product)
                         }) {
@@ -113,7 +108,6 @@ struct ProductDetailView: View {
                         }
                         .padding()
 
-                        // Edit Button (Only if Seller)
                         if product.sellerID == authViewModel.userID {
                             Button(action: {
                                 isEditing = true
@@ -125,14 +119,13 @@ struct ProductDetailView: View {
                                     .foregroundColor(buttonColor)
                             }
                             .sheet(isPresented: $isEditing) {
-                                EditProductView(product: product) // Open AddProductView with prefilled data
+                                EditProductView(product: product)
                             }
                             .padding()
                         }
 
                         Spacer()
 
-                        // Add to Cart Button or Sold Out Label
                         if let productID = product.id, cartViewModel.soldOutProducts.contains(productID) {
                             Text("Sold Out")
                                 .font(.custom("ReemKufi-Bold", size: 18))
@@ -162,27 +155,25 @@ struct ProductDetailView: View {
         }
         .background(Color.white.ignoresSafeArea())
         .onAppear {
-                   productViewModel.fetchProducts()  
-               }
+            productViewModel.fetchProducts()
+        }
         .onAppear {
             if categoryViewModel.categories.isEmpty {
                 categoryViewModel.fetchCategories()
             }
         }
         .sheet(isPresented: $isEditing) {
-            EditProductView(product: product) // Navigate to EditProductView
+            EditProductView(product: product)
         }
     }
 }
 
 // MARK: - Custom UI Components
-
-// Detail Row for Category, Gender, and Condition
 struct DetailRow: View {
     var title: String
     var value: String
 
-    private let textColor = Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1)) // Dark Red
+    private let textColor = Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1))
 
     var body: some View {
         HStack {
@@ -198,4 +189,5 @@ struct DetailRow: View {
         }
         .padding(.vertical, 5)
     }
+    
 }

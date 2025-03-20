@@ -38,7 +38,7 @@ struct CategoryProductsView: View {
                         }
                     }
                     .padding(.horizontal, 25)
-                    .padding(.bottom, 25)  
+                    .padding(.bottom, 25)
                 }
             }
         }
