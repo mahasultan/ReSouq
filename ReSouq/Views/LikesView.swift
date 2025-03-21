@@ -2,7 +2,6 @@
 //  LikesView.swift
 //  ReSouq
 //
-//
 
 import SwiftUI
 import SDWebImageSwiftUI
@@ -30,9 +29,10 @@ struct LikesView: View {
                     } else {
                         ScrollView {
                             VStack {
-                                ForEach(productViewModel.likedProducts, id: \.id) { product in
+                                ForEach(productViewModel.likedProducts, id: \.productID) { product in
                                     VStack {
                                         HStack {
+                                            // Product Image
                                             if let imageURL = product.imageUrls.first, let url = URL(string: imageURL) {
                                                 WebImage(url: url)
                                                     .resizable()
@@ -49,12 +49,13 @@ struct LikesView: View {
                                                     .foregroundColor(.gray)
                                             }
 
+                                            // Product Name & Price
                                             NavigationLink(destination: ProductDetailView(product: product)) {
                                                 VStack(alignment: .leading) {
                                                     Text(product.name)
                                                         .font(.system(size: 18, weight: .bold))
                                                         .foregroundColor(Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1)))
-                                                    
+
                                                     Text("QR \(String(format: "%.2f", product.price))")
                                                         .foregroundColor(.black)
                                                         .font(.system(size: 16))
@@ -63,6 +64,7 @@ struct LikesView: View {
 
                                             Spacer()
 
+                                            // Like Button
                                             Button(action: {
                                                 productViewModel.toggleLike(product: product)
                                             }) {
@@ -72,7 +74,21 @@ struct LikesView: View {
                                                     .frame(width: 25, height: 25)
                                                     .foregroundColor(Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1)))
                                             }
+                                        }
+                                        .padding(.horizontal)
 
+                                        // ✅ Show "Sold Out" if the product is sold
+                                        if product.isSold ?? false {
+                                            Text("Sold Out")
+                                                .font(.custom("ReemKufi-Bold", size: 18))
+                                                .frame(maxWidth: .infinity)
+                                                .padding()
+                                                .background(Color.gray)
+                                                .foregroundColor(.white)
+                                                .cornerRadius(10)
+                                                .padding(.horizontal)
+                                        } else {
+                                            // ✅ Show Cart Button if NOT Sold
                                             Button(action: {
                                                 cartViewModel.addProduct(product)
                                             }) {
@@ -82,12 +98,13 @@ struct LikesView: View {
                                                     .frame(width: 25, height: 25)
                                                     .foregroundColor(.black)
                                             }
+                                            .padding(.horizontal)
                                         }
-                                        .padding(.horizontal)
 
                                         Divider()
                                             .padding(.horizontal)
                                     }
+                                    .padding(.vertical, 10)
                                 }
                             }
                         }
@@ -95,11 +112,6 @@ struct LikesView: View {
 
                     Spacer()
                 }
-
-                VStack {
-
-                }
-                .ignoresSafeArea(.all, edges: .bottom)
             }
             .onAppear {
                 productViewModel.fetchLikedProducts()
