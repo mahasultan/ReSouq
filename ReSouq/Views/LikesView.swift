@@ -144,11 +144,9 @@ struct LikesView: View {
         }
     }
 
-    // ✅ Function to Load Recently Viewed Products in Sorted Order
     func loadRecentlyViewed() {
         let recentlyViewedIDs = UserDefaults.standard.array(forKey: "recentlyViewed") as? [String] ?? []
         
-        // Sort the products by the order of IDs stored in UserDefaults (Most recent first)
         recentlyViewedProducts = productViewModel.products.filter { product in
             if let productID = product.id {
                 return recentlyViewedIDs.contains(productID)
@@ -160,7 +158,7 @@ struct LikesView: View {
                   let index2 = recentlyViewedIDs.firstIndex(of: product2.id ?? "") else {
                 return false
             }
-            return index1 > index2  // Sort so the most recent comes first
+            return index1 > index2  
         }
     }
 }
