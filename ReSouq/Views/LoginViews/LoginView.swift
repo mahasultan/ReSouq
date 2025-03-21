@@ -142,9 +142,16 @@ struct LoginView: View {
                 }
                 .padding(.top, 10)
 
-                NavigationLink(destination: MainTabView().navigationBarBackButtonHidden(true), isActive: $navigateToHome) {
+                NavigationLink(
+                    destination: MainTabView().navigationBarBackButtonHidden(true),
+                    isActive: Binding(
+                        get: { authViewModel.isLoggedIn || navigateToHome },
+                        set: { _ in }
+                    )
+                ) {
                     EmptyView()
                 }
+
 
                 Spacer()
             }
