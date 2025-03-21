@@ -64,42 +64,28 @@ struct LikesView: View {
 
                                             Spacer()
 
-                                            // Like Button
-                                            Button(action: {
-                                                productViewModel.toggleLike(product: product)
-                                            }) {
-                                                Image(systemName: "heart.fill")
-                                                    .resizable()
-                                                    .scaledToFit()
-                                                    .frame(width: 25, height: 25)
-                                                    .foregroundColor(Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1)))
+                                            VStack {
+                                                // Like Button
+                                                Button(action: {
+                                                    productViewModel.toggleLike(product: product)
+                                                }) {
+                                                    Image(systemName: "heart.fill")
+                                                        .resizable()
+                                                        .scaledToFit()
+                                                        .frame(width: 25, height: 25)
+                                                        .foregroundColor(Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1)))
+                                                }
+                                                
+                                                // Small "Sold Out" Label Below Heart
+                                                if product.isSold ?? false {
+                                                    Text("Sold Out")
+                                                        .font(.system(size: 12, weight: .bold)) // Smaller size
+                                                        .foregroundColor(.gray)
+                                                        .padding(.top, 2) // Space below the heart
+                                                }
                                             }
                                         }
                                         .padding(.horizontal)
-
-                                        // ✅ Show "Sold Out" if the product is sold
-                                        if product.isSold ?? false {
-                                            Text("Sold Out")
-                                                .font(.custom("ReemKufi-Bold", size: 18))
-                                                .frame(maxWidth: .infinity)
-                                                .padding()
-                                                .background(Color.gray)
-                                                .foregroundColor(.white)
-                                                .cornerRadius(10)
-                                                .padding(.horizontal)
-                                        } else {
-                                            // ✅ Show Cart Button if NOT Sold
-                                            Button(action: {
-                                                cartViewModel.addProduct(product)
-                                            }) {
-                                                Image(systemName: "cart.fill")
-                                                    .resizable()
-                                                    .scaledToFit()
-                                                    .frame(width: 25, height: 25)
-                                                    .foregroundColor(.black)
-                                            }
-                                            .padding(.horizontal)
-                                        }
 
                                         Divider()
                                             .padding(.horizontal)
