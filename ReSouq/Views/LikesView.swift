@@ -2,7 +2,6 @@
 //  LikesView.swift
 //  ReSouq
 //
-//
 
 import SwiftUI
 import SDWebImageSwiftUI
@@ -30,9 +29,10 @@ struct LikesView: View {
                     } else {
                         ScrollView {
                             VStack {
-                                ForEach(productViewModel.likedProducts, id: \.id) { product in
+                                ForEach(productViewModel.likedProducts, id: \.productID) { product in
                                     VStack {
                                         HStack {
+                                            // Product Image
                                             if let imageURL = product.imageUrls.first, let url = URL(string: imageURL) {
                                                 WebImage(url: url)
                                                     .resizable()
@@ -49,12 +49,13 @@ struct LikesView: View {
                                                     .foregroundColor(.gray)
                                             }
 
+                                            // Product Name & Price
                                             NavigationLink(destination: ProductDetailView(product: product)) {
                                                 VStack(alignment: .leading) {
                                                     Text(product.name)
                                                         .font(.system(size: 18, weight: .bold))
                                                         .foregroundColor(Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1)))
-                                                    
+
                                                     Text("QR \(String(format: "%.2f", product.price))")
                                                         .foregroundColor(.black)
                                                         .font(.system(size: 16))
@@ -63,24 +64,25 @@ struct LikesView: View {
 
                                             Spacer()
 
-                                            Button(action: {
-                                                productViewModel.toggleLike(product: product)
-                                            }) {
-                                                Image(systemName: "heart.fill")
-                                                    .resizable()
-                                                    .scaledToFit()
-                                                    .frame(width: 25, height: 25)
-                                                    .foregroundColor(Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1)))
-                                            }
-
-                                            Button(action: {
-                                                cartViewModel.addProduct(product)
-                                            }) {
-                                                Image(systemName: "cart.fill")
-                                                    .resizable()
-                                                    .scaledToFit()
-                                                    .frame(width: 25, height: 25)
-                                                    .foregroundColor(.black)
+                                            VStack {
+                                                // Like Button
+                                                Button(action: {
+                                                    productViewModel.toggleLike(product: product)
+                                                }) {
+                                                    Image(systemName: "heart.fill")
+                                                        .resizable()
+                                                        .scaledToFit()
+                                                        .frame(width: 25, height: 25)
+                                                        .foregroundColor(Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1)))
+                                                }
+                                                
+                                                // Small "Sold Out" Label Below Heart
+                                                if product.isSold ?? false {
+                                                    Text("Sold Out")
+                                                        .font(.system(size: 12, weight: .bold)) // Smaller size
+                                                        .foregroundColor(.gray)
+                                                        .padding(.top, 2) // Space below the heart
+                                                }
                                             }
                                         }
                                         .padding(.horizontal)
@@ -88,6 +90,7 @@ struct LikesView: View {
                                         Divider()
                                             .padding(.horizontal)
                                     }
+                                    .padding(.vertical, 10)
                                 }
                             }
                         }
@@ -95,11 +98,6 @@ struct LikesView: View {
 
                     Spacer()
                 }
-
-                VStack {
-
-                }
-                .ignoresSafeArea(.all, edges: .bottom)
             }
             .onAppear {
                 productViewModel.fetchLikedProducts()

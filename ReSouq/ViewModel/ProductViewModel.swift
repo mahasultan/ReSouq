@@ -178,7 +178,7 @@ class ProductViewModel: ObservableObject {
     }
     func fetchLikedProducts() {
         guard let userID = Auth.auth().currentUser?.uid else { return }
-        
+
         db.collection("users").document(userID).collection("likedProducts").getDocuments { snapshot, error in
             if let error = error {
                 print("Error fetching liked products: \(error.localizedDescription)")
@@ -187,11 +187,30 @@ class ProductViewModel: ObservableObject {
 
             DispatchQueue.main.async {
                 self.likedProducts = snapshot?.documents.compactMap { document in
-                    try? document.data(as: Product.self)
+                    var product = try? document.data(as: Product.self)
+
+                    // Fetch the latest 'isSold' status from Firestore
+                    if let productID = product?.productID {
+                        self.db.collection("products").document(productID).getDocument { productSnapshot, error in
+                            if let productData = productSnapshot?.data(),
+                               let isSold = productData["isSold"] as? Bool {
+                                DispatchQueue.main.async {
+                                    if let index = self.likedProducts.firstIndex(where: { $0.productID == productID }) {
+                                        self.likedProducts[index].isSold = isSold
+                                        print("Updated isSold for liked product \(productID): \(isSold)")
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    return product
                 } ?? []
             }
         }
     }
+
+
     func toggleLike(product: Product) {
         guard let userID = Auth.auth().currentUser?.uid, let productID = product.productID else { return }
 
