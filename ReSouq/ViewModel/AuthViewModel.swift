@@ -244,6 +244,38 @@ class AuthViewModel: ObservableObject {
             }
         }
     }
+    
+    func updateUserProfile(fullName: String, phoneNumber: String, email: String, completion: @escaping () -> Void) {
+        guard let userID = Auth.auth().currentUser?.uid else {
+            print("Error: No authenticated user found")
+            completion()
+            return
+        }
+
+        let userRef = Firestore.firestore().collection("users").document(userID)
+
+        userRef.updateData([
+            "fullName": fullName,
+            "phoneNumber": phoneNumber,
+            "email": email
+        ]) { error in
+            DispatchQueue.main.async {
+                if let error = error {
+                    print("Error updating profile: \(error.localizedDescription)")
+                } else {
+                    print("Profile updated successfully")
+
+                    // Update local user object to reflect changes immediately
+                    self.user?.fullName = fullName
+                    self.user?.phoneNumber = phoneNumber
+                    self.user?.email = email
+                }
+                completion() // Ensure the completion handler is always called
+            }
+        }
+    }
+
+
     func saveShippingAddress(_ address: String) {
         guard let userID = self.user?.id else { return }
         let userRef = Firestore.firestore().collection("users").document(userID)
