@@ -3,6 +3,7 @@
 //  ReSouq
 //
 
+
 import SwiftUI
 
 struct HomeView: View {
@@ -29,7 +30,6 @@ struct HomeView: View {
                             SearchBarView(searchText: $searchText, isSearching: $isSearching)
                                 .frame(width: 180, height: 30)
                                 .padding(.leading, 20)
-
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.horizontal)
@@ -80,13 +80,10 @@ struct HomeView: View {
                                 }
                                 .padding(.horizontal)
                             }
+
                         }
                         .padding(.top, 10)
                     }
-
-                    VStack {
-                    }
-                    .ignoresSafeArea(.all, edges: .bottom)
                 }
             }
             .onAppear {
@@ -96,10 +93,10 @@ struct HomeView: View {
             .navigationDestination(isPresented: $isSearching) {
                 SearchResultsView(searchQuery: searchText)
             }
-
         }
     }
 }
+
 
 // Preview
 struct HomeView_Previews: PreviewProvider {
@@ -110,4 +107,6 @@ struct HomeView_Previews: PreviewProvider {
             .environmentObject(ProductViewModel())
             .environmentObject(CartViewModel())
     }
+    
+    
 }

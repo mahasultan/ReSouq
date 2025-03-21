@@ -9,6 +9,7 @@ import SDWebImageSwiftUI
 struct LikesView: View {
     @EnvironmentObject var productViewModel: ProductViewModel
     @EnvironmentObject var cartViewModel: CartViewModel
+    @State private var recentlyViewedProducts: [Product] = []
 
     var body: some View {
         NavigationStack {
@@ -16,11 +17,39 @@ struct LikesView: View {
                 VStack {
                     TopBarView(showLogoutButton: false, showAddButton: false)
 
+                    if !recentlyViewedProducts.isEmpty {
+                        VStack(alignment: .leading) {
+                            Text("Recently Viewed")
+                                .font(.custom("ReemKufi-Bold", size: 22))
+                                .foregroundColor(.black)
+                                .padding(.horizontal)
+
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                HStack(spacing: 15) {
+                                    ForEach(recentlyViewedProducts) { product in
+                                        NavigationLink(destination: ProductDetailView(product: product)) {
+                                            WebImage(url: URL(string: product.imageUrls.first ?? ""))
+                                                .resizable()
+                                                .indicator(.activity)
+                                                .scaledToFill()
+                                                .frame(width: 65, height: 65)
+                                                .clipShape(Circle())
+                                                .overlay(Circle().stroke(Color.gray.opacity(0.5), lineWidth: 1))
+                                        }
+                                    }
+                                }
+                                .padding(.horizontal)
+                            }
+                        }
+                        .padding(.top, 10)
+                    }
+
                     Text("Wishlist")
                         .font(.custom("ReemKufi-Bold", size: 28))
                         .foregroundColor(.black)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.horizontal)
+                        .padding(.top, 20)
 
                     if productViewModel.likedProducts.isEmpty {
                         Text("No liked products yet.")
@@ -32,7 +61,6 @@ struct LikesView: View {
                                 ForEach(productViewModel.likedProducts, id: \.productID) { product in
                                     VStack {
                                         HStack {
-                                            // Product Image
                                             if let imageURL = product.imageUrls.first, let url = URL(string: imageURL) {
                                                 WebImage(url: url)
                                                     .resizable()
@@ -49,7 +77,6 @@ struct LikesView: View {
                                                     .foregroundColor(.gray)
                                             }
 
-                                            // Product Name & Price
                                             NavigationLink(destination: ProductDetailView(product: product)) {
                                                 VStack(alignment: .leading) {
                                                     Text(product.name)
@@ -65,7 +92,6 @@ struct LikesView: View {
                                             Spacer()
 
                                             VStack {
-                                                // Like Button
                                                 Button(action: {
                                                     productViewModel.toggleLike(product: product)
                                                 }) {
@@ -75,13 +101,24 @@ struct LikesView: View {
                                                         .frame(width: 25, height: 25)
                                                         .foregroundColor(Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1)))
                                                 }
-                                                
-                                                // Small "Sold Out" Label Below Heart
+
                                                 if product.isSold ?? false {
                                                     Text("Sold Out")
-                                                        .font(.system(size: 12, weight: .bold)) // Smaller size
+                                                        .font(.system(size: 12, weight: .bold))
                                                         .foregroundColor(.gray)
-                                                        .padding(.top, 2) // Space below the heart
+                                                        .padding(.top, 2)
+                                                }
+                                            }
+
+                                            if product.isSold == false {
+                                                Button(action: {
+                                                    cartViewModel.addProduct(product)
+                                                }) {
+                                                    Image(systemName: "cart.badge.plus")
+                                                        .resizable()
+                                                        .scaledToFit()
+                                                        .frame(width: 30, height: 30)
+                                                        .foregroundColor(Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1)))
                                                 }
                                             }
                                         }
@@ -101,8 +138,29 @@ struct LikesView: View {
             }
             .onAppear {
                 productViewModel.fetchLikedProducts()
+                loadRecentlyViewed()
             }
             .navigationBarBackButtonHidden(true)
+        }
+    }
+
+    // ✅ Function to Load Recently Viewed Products in Sorted Order
+    func loadRecentlyViewed() {
+        let recentlyViewedIDs = UserDefaults.standard.array(forKey: "recentlyViewed") as? [String] ?? []
+        
+        // Sort the products by the order of IDs stored in UserDefaults (Most recent first)
+        recentlyViewedProducts = productViewModel.products.filter { product in
+            if let productID = product.id {
+                return recentlyViewedIDs.contains(productID)
+            }
+            return false
+        }
+        .sorted { (product1, product2) -> Bool in
+            guard let index1 = recentlyViewedIDs.firstIndex(of: product1.id ?? ""),
+                  let index2 = recentlyViewedIDs.firstIndex(of: product2.id ?? "") else {
+                return false
+            }
+            return index1 > index2  // Sort so the most recent comes first
         }
     }
 }
