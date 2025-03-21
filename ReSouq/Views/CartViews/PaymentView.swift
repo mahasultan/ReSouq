@@ -5,6 +5,7 @@ struct PaymentView: View {
     @EnvironmentObject var orderViewModel: OrderViewModel
     @EnvironmentObject var authViewModel: AuthViewModel
     @EnvironmentObject var cartViewModel: CartViewModel
+    @EnvironmentObject var productViewModel: ProductViewModel
 
     @State private var selectedShipping = "Standard"
     @State private var selectedPaymentMethod = "Apple Pay"
@@ -211,37 +212,28 @@ struct PaymentView: View {
                             .padding(.top, 10)
 
                             Button(action: {
-                                if !cartViewModel.cart.products.isEmpty, let userID = authViewModel.userID {
-                                    let finalShippingAddress = selectedSavedAddress ?? shippingAddress.trimmingCharacters(in: .whitespaces)
-
-                                    if finalShippingAddress.isEmpty {
-                                        print("ERROR: No shipping address provided")
-                                        return
-                                    }
-
-                                    orderViewModel.placeOrder(userID: userID, cart: cartViewModel.cart, shippingAddress: finalShippingAddress) { savedOrder in
-                                        DispatchQueue.main.async {
-                                            if let savedOrder = savedOrder {
-                                                authViewModel.saveShippingAddress(finalShippingAddress)
-                                                self.placedOrder = savedOrder
-                                                print("Stored Order ID: \(self.placedOrder?.id ?? "nil")")
-                                                print("Stored Products Count: \(self.placedOrder?.products.count ?? 0)")
-                                                print("Stored Shipping Address: \(self.placedOrder?.shippingAddress ?? "None")")
-
-                                                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                                                    cartViewModel.clearCart()
-                                                    cartViewModel.markProductsAsSoldOut()
-                                                }
-
-                                                self.navigateToOrders = true
-                                            } else {
-                                                print("Order failed to save.")
-                                            }
-                                        }
-                                    }
-                                } else {
-                                    print("Cannot place an order. The cart is empty.")
+                                guard !cartViewModel.cart.products.isEmpty, let userID = authViewModel.userID else {
+                                    print("Cannot place an order. Cart is empty or user is not logged in.")
+                                    return
                                 }
+
+                                let finalShippingAddress = selectedSavedAddress ?? shippingAddress
+
+                                orderViewModel.confirmOrder(
+                                    userID: userID,
+                                    cart: cartViewModel.cart,
+                                    shippingAddress: finalShippingAddress,
+                                    authViewModel: authViewModel,
+                                    cartViewModel: cartViewModel,
+                                    productViewModel: productViewModel,
+                                    onSuccess: { order in
+                                        self.placedOrder = order
+                                        self.navigateToOrders = true
+                                    },
+                                    onFailure: {
+                                        showAlert = true
+                                    }
+                                )
                             }) {
                                 Text("Confirm Payment")
                                     .frame(maxWidth: .infinity)
@@ -250,6 +242,7 @@ struct PaymentView: View {
                                     .foregroundColor(Color(UIColor(red: 232/255, green: 225/255, blue: 210/255, alpha: 1)))
                                     .cornerRadius(10)
                             }
+
                             .padding()
 
                             .alert(isPresented: $showAlert) {

@@ -13,7 +13,7 @@ class CartViewModel: ObservableObject {
     @Published var cart: Cart
     
     
-    @Published var soldOutProducts: Set<String> = []
+   
     private var db = Firestore.firestore()
     
     init() {
@@ -46,8 +46,7 @@ class CartViewModel: ObservableObject {
                 do {
                     self.cart = try snapshot.data(as: Cart.self)
                     
-                    // Fetch sold-out products from Firestore
-                    self.fetchSoldOutProducts()
+
                     
                     print("Cart loaded successfully")
                 } catch {
@@ -60,20 +59,6 @@ class CartViewModel: ObservableObject {
         }
     }
     
-    func fetchSoldOutProducts() {
-        db.collection("products").whereField("isSoldOut", isEqualTo: true).getDocuments { snapshot, error in
-            if let error = error {
-                print("Error fetching sold out products: \(error.localizedDescription)")
-                return
-            }
-            
-            let soldOutIDs = snapshot?.documents.compactMap { $0.documentID } ?? []
-            DispatchQueue.main.async {
-                self.soldOutProducts = Set(soldOutIDs)
-                print("Sold Out Products Updated: \(self.soldOutProducts)")
-            }
-        }
-    }
     
     
     
@@ -102,11 +87,16 @@ class CartViewModel: ObservableObject {
     func addProduct(_ product: Product) {
         let userID = cart.userID
 
-        // Check if the product already exists in the cart
-        if let index = cart.products.firstIndex(where: { $0.product.id == product.id }) {
-            print("Product is already in the cart. No duplicate added.")
+        print("🛒 Adding to cart: \(product.name), ID: \(product.productID ?? "MISSING")")
+
+        guard let productID = product.productID, !productID.isEmpty else {
+            print("Cannot add product to cart – missing Firestore ID")
+            return
+        }
+
+        if cart.products.contains(where: { $0.product.productID == productID }) {
+            print("Product is already in the cart.")
         } else {
-            // Add the product only if it's not in the cart
             let newCartItem = CartItem(id: UUID().uuidString, product: product)
             cart.products.append(newCartItem)
 
@@ -114,7 +104,7 @@ class CartViewModel: ObservableObject {
             do {
                 try cartRef.setData(from: cart, merge: true) { error in
                     if let error = error {
-                        print("Firestore error: \(error.localizedDescription)")
+                        print("Firestore error adding product to cart: \(error.localizedDescription)")
                     } else {
                         print("Product added to cart and synced with Firestore")
                     }
@@ -125,10 +115,9 @@ class CartViewModel: ObservableObject {
         }
     }
 
-
     
     func removeProduct(_ product: Product) {
-        if let index = cart.products.firstIndex(where: { $0.product.id == product.id }) {
+        if let index = cart.products.firstIndex(where: { $0.product.productID == product.productID }) {
             cart.products.remove(at: index) // Remove the product completely
             updateCart()
         } else {
@@ -151,20 +140,7 @@ class CartViewModel: ObservableObject {
             print("Error updating cart: \(error.localizedDescription)")
         }
     }
-    
-    func markProductsAsSoldOut() {
-        let soldOutIDs = cart.products.compactMap { $0.product.id } // Remove nil values
-        
-        
-        print("Current Cart Products Before Marking Sold Out: \(cart.products.map { $0.product.id ?? "Unknown" })")
-        print("Marking the following products as sold out: \(soldOutIDs)")
-        
-        DispatchQueue.main.async {
-            self.soldOutProducts.formUnion(soldOutIDs)
-            print("Sold Out Products Updated: \(self.soldOutProducts)")
-            self.objectWillChange.send()
-        }
-    }
+
     
     
 }

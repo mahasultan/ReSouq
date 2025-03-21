@@ -3,7 +3,7 @@ import SwiftUI
 struct SearchResultsView: View {
     var searchQuery: String
     @EnvironmentObject var productVM: ProductViewModel
-    @EnvironmentObject var categoryVM: CategoryViewModel
+    @EnvironmentObject var categoryViewModel: CategoryViewModel
 
     let columns = [
         GridItem(.flexible(), spacing: 40),
@@ -39,7 +39,7 @@ struct SearchResultsView: View {
         }
         .onAppear {
             productVM.fetchProducts()
-            categoryVM.fetchCategories()
+            categoryViewModel.fetchCategories()
         }
     }
 }

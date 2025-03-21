@@ -72,7 +72,10 @@ class ProductViewModel: ObservableObject {
                 return
             }
 
+            let newDocRef = self.db.collection("products").document() // Create a Firestore reference
             let newProduct = Product(
+                id: newDocRef.documentID,  // Assign Firestore ID
+                productID: newDocRef.documentID,  // Ensure Firestore ID is saved
                 name: name,
                 price: price,
                 description: description,
@@ -80,20 +83,34 @@ class ProductViewModel: ObservableObject {
                 sellerID: userID,
                 categoryID: categoryID,
                 gender: gender,
-                condition: condition
+                condition: condition,
+                isSold: false
             )
 
+            print("Saving product to Firestore with ID: \(newDocRef.documentID)")
+
             do {
-                try self.db.collection("products").addDocument(from: newProduct) { error in
-                    self.isSubmitting = false
-                    completion(error == nil)
+                try newDocRef.setData(from: newProduct) { error in
+                    DispatchQueue.main.async {
+                        self.isSubmitting = false
+                        if let error = error {
+                            self.errorMessage = "Failed to save product: \(error.localizedDescription)"
+                            completion(false)
+                        } else {
+                            print("Product saved with ID: \(newDocRef.documentID)")
+                            completion(true)
+                        }
+                    }
                 }
             } catch {
                 self.isSubmitting = false
+                self.errorMessage = "Encoding error: \(error.localizedDescription)"
                 completion(false)
             }
         }
     }
+
+
     func updateProduct(
         productID: String,
         name: String,
@@ -176,7 +193,7 @@ class ProductViewModel: ObservableObject {
         }
     }
     func toggleLike(product: Product) {
-        guard let userID = Auth.auth().currentUser?.uid, let productID = product.id else { return }
+        guard let userID = Auth.auth().currentUser?.uid, let productID = product.productID else { return }
 
         let userRef = db.collection("users").document(userID).collection("likedProducts")
 
@@ -210,11 +227,19 @@ class ProductViewModel: ObservableObject {
 
             DispatchQueue.main.async {
                 self.products = snapshot?.documents.compactMap { document in
-                    try? document.data(as: Product.self)
+                    var product = try? document.data(as: Product.self)
+                    product?.productID = document.documentID // Ensure Firestore ID is set
+                    return product
                 } ?? []
+
+                print("Products fetched successfully. Total: \(self.products.count)")
+                for product in self.products {
+                    print("Product: \(product.name), ID: \(product.productID ?? "MISSING")")
+                }
             }
         }
     }
+
     func getProducts(categoryID: String? = nil, searchQuery: String? = nil, categories: [Category]) -> [Product] {
         var filteredProducts = products
 
@@ -236,5 +261,7 @@ class ProductViewModel: ObservableObject {
             .prefix(10) // Take only the first 10
             .map { $0 } // Convert back to an array
     }
+
+
 
 }

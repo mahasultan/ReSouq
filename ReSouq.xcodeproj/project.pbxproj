@@ -86,6 +86,36 @@
 			);
 			target = 10244AC32D5E0FAB00CFD286 /* ReSouqUITests */;
 		};
+		CE6EB9D02D8DDB2800503A07 /* Exceptions for "ReSouqTests" folder in "ReSouqTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				AuthViewModelTests.swift,
+				CartTests.swift,
+				CategoryTests.swift,
+				ImagePickerTests.swift,
+				OrderViewModelTests.swift,
+				ProductTests.swift,
+				ProductViewModelTests.swift,
+				ReSouqTests.swift,
+				UserTests.swift,
+			);
+			target = 10244AB92D5E0FAB00CFD286 /* ReSouqTests */;
+		};
+		CE6EB9D12D8DDB2800503A07 /* Exceptions for "ReSouqTests" folder in "ReSouqUITests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				AuthViewModelTests.swift,
+				CartTests.swift,
+				CategoryTests.swift,
+				ImagePickerTests.swift,
+				OrderViewModelTests.swift,
+				ProductTests.swift,
+				ProductViewModelTests.swift,
+				ReSouqTests.swift,
+				UserTests.swift,
+			);
+			target = 10244AC32D5E0FAB00CFD286 /* ReSouqUITests */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -97,11 +127,6 @@
 			path = ReSouq;
 			sourceTree = "<group>";
 		};
-		10244ABD2D5E0FAB00CFD286 /* ReSouqTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = ReSouqTests;
-			sourceTree = "<group>";
-		};
 		10244AC72D5E0FAB00CFD286 /* ReSouqUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -109,6 +134,15 @@
 				10E17BBC2D867383005DDF3F /* Exceptions for "ReSouqUITests" folder in "ReSouqUITests" target */,
 			);
 			path = ReSouqUITests;
+			sourceTree = "<group>";
+		};
+		CE6EB9C62D8DDB2800503A07 /* ReSouqTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				CE6EB9D02D8DDB2800503A07 /* Exceptions for "ReSouqTests" folder in "ReSouqTests" target */,
+				CE6EB9D12D8DDB2800503A07 /* Exceptions for "ReSouqTests" folder in "ReSouqUITests" target */,
+			);
+			path = ReSouqTests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -168,8 +202,8 @@
 			isa = PBXGroup;
 			children = (
 				10E17BB52D866E8B005DDF3F /* UnitTesting.xctestplan */,
+				CE6EB9C62D8DDB2800503A07 /* ReSouqTests */,
 				10244AAC2D5E0FA900CFD286 /* ReSouq */,
-				10244ABD2D5E0FAB00CFD286 /* ReSouqTests */,
 				10244AC72D5E0FAB00CFD286 /* ReSouqUITests */,
 				10244AAB2D5E0FA900CFD286 /* Products */,
 			);
@@ -248,9 +282,6 @@
 			dependencies = (
 				10244ABC2D5E0FAB00CFD286 /* PBXTargetDependency */,
 			);
-			fileSystemSynchronizedGroups = (
-				10244ABD2D5E0FAB00CFD286 /* ReSouqTests */,
-			);
 			name = ReSouqTests;
 			packageProductDependencies = (
 				10E17B992D864373005DDF3F /* ViewInspector */,
@@ -274,6 +305,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				10244AC72D5E0FAB00CFD286 /* ReSouqUITests */,
+				CE6EB9C62D8DDB2800503A07 /* ReSouqTests */,
 			);
 			name = ReSouqUITests;
 			packageProductDependencies = (

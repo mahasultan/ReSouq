@@ -10,7 +10,7 @@ struct CategoryProductsView: View {
     var categoryID: String
     var categoryName: String
     @StateObject var productVM = ProductViewModel()
-    @StateObject var categoryVM = CategoryViewModel()
+    @StateObject var categoryViewModel = CategoryViewModel()
 
     let columns = [
         GridItem(.flexible(), spacing: 50),
@@ -23,7 +23,7 @@ struct CategoryProductsView: View {
                 .font(.custom("ReemKufi-Bold", size: 22))
                 .padding(.top, 10)
 
-            let filteredProducts = productVM.getProducts(categoryID: categoryID, categories: categoryVM.categories)
+            let filteredProducts = productVM.getProducts(categoryID: categoryID, categories: categoryViewModel.categories)
 
             if filteredProducts.isEmpty {
                 Text("No products found.")
@@ -44,7 +44,7 @@ struct CategoryProductsView: View {
         }
         .onAppear {
             productVM.fetchProducts()
-            categoryVM.fetchCategories()
+            categoryViewModel.fetchCategories()
         }
     }
 }

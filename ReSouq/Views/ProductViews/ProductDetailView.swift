@@ -100,11 +100,11 @@ struct ProductDetailView: View {
                         Button(action: {
                             productViewModel.toggleLike(product: product)
                         }) {
-                            Image(systemName: productViewModel.likedProducts.contains(where: { $0.id == product.id }) ? "heart.fill" : "heart")
+                            Image(systemName: productViewModel.likedProducts.contains(where: { $0.id == product.productID }) ? "heart.fill" : "heart")
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 30, height: 30)
-                                .foregroundColor(productViewModel.likedProducts.contains(where: { $0.id == product.id }) ? buttonColor : .gray)
+                                .foregroundColor(productViewModel.likedProducts.contains(where: { $0.id == product.productID }) ? buttonColor : .gray)
                         }
                         .padding()
 
@@ -125,16 +125,7 @@ struct ProductDetailView: View {
                         }
 
                         Spacer()
-
-                        if let productID = product.id, cartViewModel.soldOutProducts.contains(productID) {
-                            Text("Sold Out")
-                                .font(.custom("ReemKufi-Bold", size: 18))
-                                .frame(maxWidth: .infinity)
-                                .padding()
-                                .background(Color.gray)
-                                .foregroundColor(.white)
-                                .cornerRadius(12)
-                        } else {
+ 
                             Button(action: {
                                 cartViewModel.addProduct(product)
                             }) {
@@ -146,7 +137,7 @@ struct ProductDetailView: View {
                                     .cornerRadius(10)
                             }
                             .padding()
-                        }
+                        
                     }
                     .padding(.horizontal)
                 }
