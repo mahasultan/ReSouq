@@ -7,8 +7,8 @@ import SwiftUI
 
 struct HomeView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
-    @StateObject var productVM = ProductViewModel()
-    @StateObject var categoryVM = CategoryViewModel()
+    @EnvironmentObject var productViewModel: ProductViewModel
+    @StateObject var categoryViewModel = CategoryViewModel()
     @StateObject var cartVM = CartViewModel()
 
     @State private var searchText = ""
@@ -43,12 +43,12 @@ struct HomeView: View {
                                 .padding(.horizontal)
 
                             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 15) {
-                                if categoryVM.displayedCategories.isEmpty {
+                                if categoryViewModel.displayedCategories.isEmpty {
                                     Text("No categories found.")
                                         .foregroundColor(.red)
                                         .padding()
                                 } else {
-                                    ForEach(categoryVM.displayedCategories.prefix(4)) { category in
+                                    ForEach(categoryViewModel.displayedCategories.prefix(4)) { category in
                                         NavigationLink(destination: CategoryProductsView(categoryID: category.id, categoryName: category.name)) {
                                             CategoryBox(category: category)
                                         }
@@ -68,12 +68,12 @@ struct HomeView: View {
 
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack(spacing: 15) {
-                                    if productVM.sortedProducts.isEmpty {
+                                    if productViewModel.sortedProducts.isEmpty {
                                         Text("No products found.")
                                             .foregroundColor(.red)
                                             .padding()
                                     } else {
-                                        ForEach(productVM.sortedProducts) { product in
+                                        ForEach(productViewModel.sortedProducts) { product in
                                             ProductItem(product: product)
                                         }
                                     }
@@ -90,12 +90,13 @@ struct HomeView: View {
                 }
             }
             .onAppear {
-                productVM.fetchProducts()
-                categoryVM.fetchDisplayedCategories()
+                productViewModel.fetchProducts()
+                categoryViewModel.fetchDisplayedCategories()
             }
             .navigationDestination(isPresented: $isSearching) {
                 SearchResultsView(searchQuery: searchText)
             }
+
         }
     }
 }

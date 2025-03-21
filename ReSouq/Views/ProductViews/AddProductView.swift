@@ -3,7 +3,7 @@ import FirebaseFirestore
 
 struct AddProductView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
-    @StateObject var categoryVM = CategoryViewModel()
+    @StateObject var categoryViewModel = CategoryViewModel()
     @StateObject var productVM = ProductViewModel()
     @EnvironmentObject var navigationManager: NavigationManager
 
@@ -112,7 +112,7 @@ struct AddProductView: View {
                             SearchableDropdownPicker(
                                 title: "Select Category",
                                 selection: $selectedCategoryID,
-                                options: categoryVM.categories.map { ($0.name, $0.id) }
+                                options: categoryViewModel.categories.map { ($0.name, $0.id) }
                             )
                             CustomDropdownPicker(title: "Select Gender", selection: $selectedGender, options: genderOptions.map { ($0, $0) })
                             CustomDropdownPicker(title: "Select Condition", selection: $selectedCondition, options: conditionOptions.map { ($0, $0) })
@@ -145,7 +145,7 @@ struct AddProductView: View {
             }
             .background(Color.white.ignoresSafeArea())
             .onAppear {
-                categoryVM.fetchCategories()
+                categoryViewModel.fetchCategories()
             }
         }
     }

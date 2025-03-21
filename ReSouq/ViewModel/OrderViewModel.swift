@@ -53,6 +53,7 @@ class OrderViewModel: ObservableObject {
                     completion(nil)
                 } else {
                     print("Order placed successfully with ID: \(newOrder.id ?? "Unknown ID") and Address: \(newOrder.shippingAddress ?? "N/A")")
+                    self.markProductsAsSold(cart.products)
                     DispatchQueue.main.async {
                         self.latestOrder = newOrder
                     }
@@ -64,4 +65,65 @@ class OrderViewModel: ObservableObject {
             completion(nil)
         }
     }
+    
+    func markProductsAsSold(_ products: [CartItem]) {
+        for cartItem in products {
+            guard let productID = cartItem.product.productID else {
+                print("Product ID is nil for: \(cartItem.product.name)")
+                continue
+            }
+
+            let productRef = db.collection("products").document(productID)
+            print("Attempting to mark as sold: \(cartItem.product.name), ID: \(cartItem.product.productID ?? "nil")")
+            productRef.updateData(["isSold": true]) { error in
+                if let error = error {
+                    print("Error updating product \(productID): \(error.localizedDescription)")
+                } else {
+                    print("Product marked as sold: \(productID)")
+                }
+            }
+        }
+    }
+
+
+    
+    
+    func confirmOrder(
+        userID: String,
+        cart: Cart,
+        shippingAddress: String,
+        authViewModel: AuthViewModel,
+        cartViewModel: CartViewModel,
+        productViewModel: ProductViewModel,
+        onSuccess: @escaping (Order) -> Void,
+        onFailure: @escaping () -> Void
+    ) {
+        let finalAddress = shippingAddress.trimmingCharacters(in: .whitespaces)
+        guard !finalAddress.isEmpty else {
+            print("ERROR: Shipping address is empty.")
+            onFailure()
+            return
+        }
+
+        self.placeOrder(userID: userID, cart: cart, shippingAddress: finalAddress) { savedOrder in
+            DispatchQueue.main.async {
+                if let savedOrder = savedOrder {
+                    authViewModel.saveShippingAddress(finalAddress)
+                    self.markProductsAsSold(cart.products)
+                    productViewModel.fetchProducts()
+
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                        cartViewModel.clearCart()
+                    }
+
+                    onSuccess(savedOrder)
+                } else {
+                    print("Order failed to save.")
+                    onFailure()
+                }
+            }
+        }
+    }
+
+
 }

@@ -11,18 +11,18 @@ import SwiftUI
 @testable import ReSouq
 
 class CategoryProductsViewTests: XCTestCase {
-    var productVM: ProductViewModel!
-    var categoryVM: CategoryViewModel!
+    var productViewModel: ProductViewModel!
+    var categoryViewModel: CategoryViewModel!
 
     override func setUp() {
         super.setUp()
-        productVM = ProductViewModel()
-        categoryVM = CategoryViewModel()
+        productViewModel = ProductViewModel()
+        categoryViewModel = CategoryViewModel()
     }
 
     override func tearDown() {
-        productVM = nil
-        categoryVM = nil
+        productViewModel = nil
+        categoryViewModel = nil
         super.tearDown()
     }
 
@@ -35,12 +35,12 @@ class CategoryProductsViewTests: XCTestCase {
             name: "Test Product 1",
             price: 100.0,
             description: "A test product",
-            imageURL: "https://example.com/image1.jpg",
+            imageURL: ["https://example.com/image1.jpg"],
             sellerID: "seller123",
             categoryID: categoryID, // Matches category
             gender: "Unisex",
-            condition: "New",
-            createdAt: Date()
+            condition: "New"
+            
         )
 
         let product2 = Product(
@@ -48,19 +48,19 @@ class CategoryProductsViewTests: XCTestCase {
             name: "Test Product 2",
             price: 150.0,
             description: "Another test product",
-            imageURL: "https://example.com/image2.jpg",
+            imageURL: ["https://example.com/image2.jpg"],
             sellerID: "seller456",
             categoryID: "differentCategory", // Different category
             gender: "Unisex",
-            condition: "Used",
-            createdAt: Date()
+            condition: "Used"
+            
         )
 
         // Add mock products to ViewModel
-        productVM.products = [product1, product2]
+        productViewModel.products = [product1, product2]
 
         // Filter products by category
-        let filteredProducts = productVM.getProducts(categoryID: categoryID, categories: categoryVM.categories)
+        let filteredProducts = productViewModel.getProducts(categoryID: categoryID, categories: categoryViewModel.categories)
 
         // Expected only 1 product to match the category
         XCTAssertEqual(filteredProducts.count, 1, "Only one product should match the selected category")
@@ -72,9 +72,9 @@ class CategoryProductsViewTests: XCTestCase {
         let categoryID = "emptyCategory"
 
         // No products in ViewModel
-        productVM.products = []
+        productViewModel.products = []
 
-        let filteredProducts = productVM.getProducts(categoryID: categoryID, categories: categoryVM.categories)
+        let filteredProducts = productViewModel.getProducts(categoryID: categoryID, categories: categoryViewModel.categories)
 
         // Expected no products to be found
         XCTAssertTrue(filteredProducts.isEmpty, "Filtered products should be empty for a non-existing category")

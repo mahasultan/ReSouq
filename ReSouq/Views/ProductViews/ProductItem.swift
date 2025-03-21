@@ -30,14 +30,15 @@ struct ProductItem: View {
                         .foregroundColor(.gray)
                 }
             }
-
-            if let productID = product.id, cartViewModel.soldOutProducts.contains(productID) {
+ 
+            if product.isSold ?? false { // Use default `false` if nil
                 Text("Sold Out")
                     .font(.system(size: 14))
                     .frame(width: 120, height: 30)
                     .background(Color.gray)
                     .foregroundColor(.white)
                     .cornerRadius(10)
+                    .padding(.top, 5)
             } else {
                 Button(action: {
                     cartViewModel.addProduct(product)
@@ -52,7 +53,9 @@ struct ProductItem: View {
                 .padding(.top, 5)
             }
 
-        }
+
+            }
+
         .frame(width: 160)
         .padding()
         .background(Color(UIColor(red: 232/255, green: 225/255, blue: 210/255, alpha: 1))) // Beige
