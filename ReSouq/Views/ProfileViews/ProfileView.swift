@@ -42,33 +42,49 @@ struct ProfileView: View {
                     ScrollView(.vertical, showsIndicators: false) {
                         VStack(alignment: .leading, spacing: 20) {
                             if let user = authViewModel.user {
-                                VStack(spacing: 15) {
-                                    Image(systemName: "person.circle.fill")
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 100, height: 100)
-                                        .foregroundColor(.gray)
+                                ZStack(alignment: .topTrailing) {
+                                                                    VStack(spacing: 15) {
+                                                                        Image(systemName: "person.circle.fill")
+                                                                            .resizable()
+                                                                            .scaledToFit()
+                                                                            .frame(width: 100, height: 100)
+                                                                            .foregroundColor(.gray)
 
-                                    VStack(spacing: 5) {
-                                        Text(user.fullName)
-                                            .font(.custom("ReemKufi-Bold", size: 22))
-                                            .foregroundColor(textColor)
+                                                                        VStack(spacing: 5) {
+                                                                            Text(user.fullName)
+                                                                                .font(.custom("ReemKufi-Bold", size: 22))
+                                                                                .foregroundColor(textColor)
 
-                                        Text(user.email)
-                                            .font(.custom("ReemKufi-Bold", size: 18))
-                                            .foregroundColor(secondaryTextColor)
+                                                                            Text(user.email)
+                                                                                .font(.custom("ReemKufi-Bold", size: 18))
+                                                                                .foregroundColor(secondaryTextColor)
 
-                                        Text(user.phoneNumber?.isEmpty == false ? user.phoneNumber! : "No phone number")
-                                            .font(.custom("ReemKufi-Bold", size: 18))
-                                            .foregroundColor(secondaryTextColor)
-                                    }
-                                }
-                                .frame(maxWidth: .infinity)
-                                .padding()
-                                .background(backgroundColor)
-                                .cornerRadius(15)
-                                .padding(.horizontal, 20)
+                                                                            Text(user.phoneNumber?.isEmpty == false ? user.phoneNumber! : "No phone number")
+                                                                                .font(.custom("ReemKufi-Bold", size: 18))
+                                                                                .foregroundColor(secondaryTextColor)
+                                                                        }
+                                                                    }
+                                                                    .frame(maxWidth: .infinity)
+                                                                    .padding()
+                                                                    .background(backgroundColor)
+                                                                    .cornerRadius(15)
+                                                                    .padding(.horizontal, 20)
 
+                                                                    // Edit Button (Top Right Corner)
+                                                                    NavigationLink(destination: EditProfileView()) {
+                                                                        Image(systemName: "pencil")
+                                                                            .resizable()
+                                                                            .scaledToFit()
+                                                                            .frame(width: 18, height: 18)
+                                                                            .padding(10)
+                                                                            .background(buttonColor)
+                                                                            .clipShape(Circle())
+                                                                            .foregroundColor(.white)
+                                                                            .shadow(radius: 3)
+                                                                    }
+                                                                    .offset(x: -40, y: 10) // Adjust position
+                                                                }
+                            
                                 Text("My Orders")
                                     .font(.custom("ReemKufi-Bold", size: 22))
                                     .bold()
