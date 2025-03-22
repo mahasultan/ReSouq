@@ -59,6 +59,7 @@ class ProductViewModel: ObservableObject {
         categoryID: String,
         gender: String,
         condition: String,
+        size: String?,
         images: [UIImage],
         completion: @escaping (Bool) -> Void
     ) {
@@ -84,6 +85,7 @@ class ProductViewModel: ObservableObject {
                 categoryID: categoryID,
                 gender: gender,
                 condition: condition,
+                size: size,
                 isSold: false
             )
 
@@ -119,6 +121,7 @@ class ProductViewModel: ObservableObject {
         categoryID: String,
         gender: String,
         condition: String,
+        size: String?,
         images: [UIImage],
         existingImageUrls: [String],
         completion: @escaping (Bool) -> Void
@@ -127,7 +130,18 @@ class ProductViewModel: ObservableObject {
 
         // Upload new images if selected, otherwise keep existing ones
         if images.isEmpty {
-            saveUpdatedProduct(productID: productID, name: name, price: price, description: description, categoryID: categoryID, gender: gender, condition: condition, imageUrls: existingImageUrls, completion: completion)
+            saveUpdatedProduct(
+                productID: productID,
+                name: name,
+                price: price,
+                description: description,
+                categoryID: categoryID,
+                gender: gender,
+                condition: condition,
+                size: size,
+                imageUrls: existingImageUrls,
+                completion: completion
+            )
         } else {
             uploadImages(images) { uploadedUrls in
                 guard let uploadedUrls = uploadedUrls else {
@@ -138,7 +152,18 @@ class ProductViewModel: ObservableObject {
                 }
 
                 let finalImageUrls = existingImageUrls + uploadedUrls
-                self.saveUpdatedProduct(productID: productID, name: name, price: price, description: description, categoryID: categoryID, gender: gender, condition: condition, imageUrls: finalImageUrls, completion: completion)
+                self.saveUpdatedProduct(
+                    productID: productID,
+                    name: name,
+                    price: price,
+                    description: description,
+                    categoryID: categoryID,
+                    gender: gender,
+                    condition: condition,
+                    size: size,
+                    imageUrls: finalImageUrls,
+                    completion: completion
+                )
             }
         }
     }
@@ -151,6 +176,7 @@ class ProductViewModel: ObservableObject {
         categoryID: String,
         gender: String,
         condition: String,
+        size: String?,
         imageUrls: [String],
         completion: @escaping (Bool) -> Void
     ) {
@@ -161,7 +187,8 @@ class ProductViewModel: ObservableObject {
             "categoryID": categoryID,
             "gender": gender,
             "condition": condition,
-            "imageUrls": imageUrls
+            "imageUrls": imageUrls,
+            "size": size ?? ""
         ]
 
         db.collection("products").document(productID).updateData(productData) { error in
@@ -176,6 +203,7 @@ class ProductViewModel: ObservableObject {
             }
         }
     }
+
     func fetchLikedProducts() {
         guard let userID = Auth.auth().currentUser?.uid else { return }
 

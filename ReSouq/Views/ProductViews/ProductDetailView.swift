@@ -2,7 +2,7 @@ import SwiftUI
 import SDWebImageSwiftUI
 
 struct ProductDetailView: View {
-    var product: Product
+    @State var product: Product
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var authViewModel: AuthViewModel
     @EnvironmentObject var cartViewModel: CartViewModel
@@ -70,24 +70,30 @@ struct ProductDetailView: View {
                         DetailRow(title: "Category", value: categoryName)
                         DetailRow(title: "Gender", value: product.gender)
                         DetailRow(title: "Condition", value: product.condition)
+                        if let size = product.size, !size.isEmpty {
+                            DetailRow(title: "Size", value: size)
+                        }
                     }
                     .padding(.horizontal)
 
                     Divider().padding(.horizontal)
 
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("Description")
-                            .font(.custom("ReemKufi-Bold", size: 20))
-                            .foregroundColor(buttonColor)
-
-                        Text(product.description)
-                            .font(.system(size: 18))
-                            .foregroundColor(textColor)
-                            .padding()
-                            .frame(maxWidth: .infinity, minHeight: 120, maxHeight: 150, alignment: .topLeading)
-                            .background(Color.white)
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
-                            .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.gray.opacity(0.5), lineWidth: 1))
+    if product.description.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+        DetailRow(title: "Description", value: "Not included")
+    } else {
+        Text("Description")
+            .font(.custom("ReemKufi-Bold", size: 20))
+            .foregroundColor(buttonColor)
+                            Text(product.description)
+                                .font(.system(size: 18))
+                                .foregroundColor(textColor)
+                                .padding()
+                                .frame(maxWidth: .infinity, minHeight: 120, maxHeight: 150, alignment: .topLeading)
+                                .background(Color.white)
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                                .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.gray.opacity(0.5), lineWidth: 1))
+                        }
                     }
                     .padding(.horizontal)
 
@@ -116,13 +122,13 @@ struct ProductDetailView: View {
                                     .foregroundColor(buttonColor)
                             }
                             .sheet(isPresented: $isEditing) {
-                                EditProductView(product: product)
+                                EditProductView(product: $product)
                             }
                             .padding()
                         }
 
                         Spacer()
-                        
+
                         if product.isSold ?? false {
                             Text("Sold Out")
                                 .font(.custom("ReemKufi-Bold", size: 18))
@@ -155,18 +161,13 @@ struct ProductDetailView: View {
         .onAppear {
             productViewModel.fetchProducts()
             addToRecentlyViewed(product: product)
-        }
-        .onAppear {
+
             if categoryViewModel.categories.isEmpty {
                 categoryViewModel.fetchCategories()
             }
         }
-        .sheet(isPresented: $isEditing) {
-            EditProductView(product: product)
-        }
     }
 
-    // MARK: - Custom UI Components
     struct DetailRow: View {
         var title: String
         var value: String
@@ -189,14 +190,12 @@ struct ProductDetailView: View {
         }
     }
 
-    // MARK: - Recently Viewed Feature
     func addToRecentlyViewed(product: Product) {
         var recentlyViewed = UserDefaults.standard.array(forKey: "recentlyViewed") as? [String] ?? []
 
         if let productID = product.id, !recentlyViewed.contains(productID) {
             recentlyViewed.append(productID)
         }
-
 
         if recentlyViewed.count > 10 {
             recentlyViewed.removeFirst()

@@ -15,6 +15,7 @@ struct Product: Identifiable, Codable {
     var description: String
     var imageUrls: [String] 
     var sellerID: String
+    var size: String?
     var categoryID: String
     var gender: String
     var condition: String
@@ -33,6 +34,7 @@ struct Product: Identifiable, Codable {
             categoryID: String,
             gender: String,
             condition: String,
+            size: String? = nil,
             isSold: Bool? = false
         ) {
             self.id = id
@@ -45,6 +47,7 @@ struct Product: Identifiable, Codable {
             self.categoryID = categoryID
             self.gender = gender
             self.condition = condition
+            self.size = size
             self.isSold = isSold
         }
     }

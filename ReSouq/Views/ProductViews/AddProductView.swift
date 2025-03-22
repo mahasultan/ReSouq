@@ -15,9 +15,12 @@ struct AddProductView: View {
     @State private var selectedCondition = ""
     @State private var selectedImages: [UIImage] = []
     @State private var isImagePickerPresented = false
+    @State private var selectedSize = ""
 
     private let genderOptions = ["Female", "Male", "Unisex"]
     private let conditionOptions = ["New", "Used - Like New", "Used - Good", "Used - Acceptable"]
+    private let shoeSizes = (36...44).map { "\($0)" }
+    private let clothingSizes = ["XS", "S", "M", "L", "XL"]
     private let buttonColor = Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1))
     private let textFieldBorderColor = Color.gray.opacity(0.5)
 
@@ -116,6 +119,54 @@ struct AddProductView: View {
                             )
                             CustomDropdownPicker(title: "Select Gender", selection: $selectedGender, options: genderOptions.map { ($0, $0) })
                             CustomDropdownPicker(title: "Select Condition", selection: $selectedCondition, options: conditionOptions.map { ($0, $0) })
+                            if categoryType(for: selectedCategoryID) == "Clothing" {
+                                VStack(alignment: .leading, spacing: 8) {
+                                    Text("Select Size")
+                                        .font(.custom("ReemKufi-Bold", size: 18))
+                                        .foregroundColor(Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1)))
+                                        .padding(.leading)
+
+                                    Picker("Size", selection: $selectedSize) {
+                                        ForEach(clothingSizes, id: \.self) {
+                                            Text($0)
+                                        }
+                                    }
+                                    .pickerStyle(SegmentedPickerStyle())
+                                    .padding(.horizontal)
+                                }
+                            }
+
+                            // Shoe size selector (Grid-style pill buttons)
+                            else if categoryType(for: selectedCategoryID) == "Shoe" {
+                                VStack(alignment: .leading, spacing: 8) {
+                                    Text("Select Size")
+                                        .font(.custom("ReemKufi-Bold", size: 18))
+                                        .foregroundColor(Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1)))
+                                        .padding(.leading)
+
+                                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 50))], spacing: 10) {
+                                        ForEach(shoeSizes, id: \.self) { size in
+                                            Button(action: {
+                                                selectedSize = size
+                                            }) {
+                                                Text(size)
+                                                    .frame(minWidth: 44)
+                                                    .padding(.vertical, 8)
+                                                    .padding(.horizontal, 12)
+                                                    .background(
+                                                        selectedSize == size ?
+                                                            Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1)) :
+                                                            Color.gray.opacity(0.2)
+                                                    )
+                                                    .foregroundColor(selectedSize == size ? .white : .black)
+                                                    .cornerRadius(10)
+                                                    .font(.custom("ReemKufi-Bold", size: 16))
+                                            }
+                                        }
+                                    }
+                                    .padding(.horizontal)
+                                }
+                            }
                         }
 
                         if let errorMessage = productVM.errorMessage {
@@ -162,6 +213,13 @@ struct AddProductView: View {
             productVM.errorMessage = "Please fill in all fields, including at least one image."
             return
         }
+        
+        if categoryType(for: selectedCategoryID) == "Clothing" || categoryType(for: selectedCategoryID) == "Shoe" {
+                    guard !selectedSize.isEmpty else {
+                        productVM.errorMessage = "Please select a size."
+                        return
+                    }
+                }
 
         productVM.isSubmitting = true
 
@@ -173,6 +231,7 @@ struct AddProductView: View {
             categoryID: selectedCategoryID,
             gender: selectedGender,
             condition: selectedCondition,
+            size: selectedSize,
             images: selectedImages
         ) { success in
             DispatchQueue.main.async {
@@ -192,10 +251,23 @@ struct AddProductView: View {
         selectedCategoryID = ""
         selectedGender = ""
         selectedCondition = ""
+        selectedSize = ""
         selectedImages.removeAll()
         isImagePickerPresented = false
         productVM.errorMessage = nil
     }
+    
+    private func categoryType(for id: String) -> String? {
+            if let category = categoryViewModel.categories.first(where: { $0.id == id }),
+               let parentID = category.parentCategoryID {
+                if parentID == "1" {
+                    return "Clothing"
+                } else if parentID == "14" {
+                    return "Shoe"
+                }
+            }
+            return nil
+        }
 }
 
 // Custom TextField
