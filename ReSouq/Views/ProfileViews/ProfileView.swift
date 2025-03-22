@@ -102,9 +102,14 @@ struct ProfileView: View {
                                             ForEach(orderViewModel.orders, id: \.id) { order in
                                                 NavigationLink(destination: OrderDetailView(order: order)) {
                                                     VStack(alignment: .leading, spacing: 5) {
-                                                        Text("Order #\(order.id ?? "N/A")")
-                                                            .bold()
-                                                            .foregroundColor(.black)
+                                                        Text("Order")
+                                                                                            .font(.custom("ReemKufi-Bold", size: 18))
+                                                                                            .foregroundColor(.black)
+
+                                                                                        Text("#\(order.id ?? "N/A")")
+                                                                                            .font(.system(size: 12))
+                                                                                            .foregroundColor(.gray)
+
 
                                                         Text("Date: \(order.orderDate.formatted(date: .abbreviated, time: .omitted))")
                                                             .font(.subheadline)
