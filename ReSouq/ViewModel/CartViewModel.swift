@@ -87,7 +87,7 @@ class CartViewModel: ObservableObject {
     func addProduct(_ product: Product) {
         let userID = cart.userID
 
-        print("🛒 Adding to cart: \(product.name), ID: \(product.productID ?? "MISSING")")
+        print("Adding to cart: \(product.name), ID: \(product.productID ?? "MISSING")")
 
         guard let productID = product.productID, !productID.isEmpty else {
             print("Cannot add product to cart – missing Firestore ID")
