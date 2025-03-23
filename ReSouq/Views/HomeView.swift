@@ -55,10 +55,10 @@ struct HomeView: View {
                                     }
                                 }
 
-                                // "See All" Button
-                                NavigationLink(destination: CategoriesView()) {
+                                NavigationLink(destination: AllProductsView()) {
                                     CategoryBox(isSeeAll: true)
                                 }
+
                             }
                             .padding(.horizontal)
 
