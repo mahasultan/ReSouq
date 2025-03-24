@@ -21,6 +21,8 @@ struct Product: Identifiable, Codable {
     var condition: String
     var createdAt: Date = Date()
     var isSold: Bool?
+    var currentBid: Double?
+
     
     
     init(
@@ -35,7 +37,8 @@ struct Product: Identifiable, Codable {
             gender: String,
             condition: String,
             size: String? = nil,
-            isSold: Bool? = false
+            isSold: Bool? = false,
+            currentBid: Double? = nil
         ) {
             self.id = id
             self.productID = productID
@@ -49,6 +52,7 @@ struct Product: Identifiable, Codable {
             self.condition = condition
             self.size = size
             self.isSold = isSold
+            self.currentBid = currentBid
         }
     }
 

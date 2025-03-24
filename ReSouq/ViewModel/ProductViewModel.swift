@@ -86,7 +86,8 @@ class ProductViewModel: ObservableObject {
                 gender: gender,
                 condition: condition,
                 size: size,
-                isSold: false
+                isSold: false,
+                currentBid: price
             )
 
             print("Saving product to Firestore with ID: \(newDocRef.documentID)")
@@ -167,6 +168,12 @@ class ProductViewModel: ObservableObject {
             }
         }
     }
+    
+    
+    
+
+    
+  
 
     private func saveUpdatedProduct(
         productID: String,

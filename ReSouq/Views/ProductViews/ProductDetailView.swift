@@ -12,6 +12,8 @@ struct ProductDetailView: View {
     @State private var isEditing = false
     @State private var selectedImageIndex = 0
     @State private var showSuccessMessage = false
+    @State private var userBidInput: String = ""
+
 
     private let buttonColor = Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1))
     private let textColor = Color.black
@@ -54,18 +56,18 @@ struct ProductDetailView: View {
                             UIPageControl.appearance().currentPageIndicatorTintColor = UIColor.gray
                             UIPageControl.appearance().pageIndicatorTintColor = UIColor.lightGray
                         }
-
+                        
                         Text(product.name)
                             .font(.custom("ReemKufi-Bold", size: 26))
                             .foregroundColor(.black)
                             .padding(.top, 5)
-
+                        
                         Text("QR \(product.price, specifier: "%.2f")")
                             .font(.custom("ReemKufi-Bold", size: 22))
                             .foregroundColor(buttonColor)
-
+                        
                         Divider().padding(.horizontal)
-
+                        
                         VStack(alignment: .leading, spacing: 10) {
                             if let category = categoryViewModel.categories.first(where: { $0.id == product.categoryID }) {
                                 DetailRow(title: "Category", value: category.name)
@@ -77,9 +79,9 @@ struct ProductDetailView: View {
                             }
                         }
                         .padding(.horizontal)
-
+                        
                         Divider().padding(.horizontal)
-
+                        
                         VStack(alignment: .leading, spacing: 8) {
                             if product.description.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                                 DetailRow(title: "Description", value: "Not included")
@@ -88,7 +90,7 @@ struct ProductDetailView: View {
                                     Text("Description")
                                         .font(.custom("ReemKufi-Bold", size: 20))
                                         .foregroundColor(buttonColor)
-
+                                    
                                     Text(product.description)
                                         .font(.system(size: 18))
                                         .foregroundColor(textColor)
@@ -101,6 +103,41 @@ struct ProductDetailView: View {
                             }
                         }
                         .padding(.horizontal)
+                        if product.sellerID != authViewModel.userID && !(product.isSold ?? false) {
+                            VStack(alignment: .leading, spacing: 10) {
+                                Text("Place Your Offer")
+                                    .font(.custom("ReemKufi-Bold", size: 20))
+                                    .foregroundColor(buttonColor)
+
+                                TextField("Enter your offer (QR)", text: $userBidInput)
+                                    .keyboardType(.decimalPad)
+                                    .padding()
+                                    .background(Color.white)
+                                    .cornerRadius(10)
+                                    .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.gray.opacity(0.5), lineWidth: 1))
+
+                                Button(action: {
+                                    if let userID = authViewModel.userID {
+                                        productViewModel.submitBid(for: product, amount: userBidInput, bidderID: userID) { success in
+                                            if success {
+                                                userBidInput = ""
+                                            }
+                                        }
+                                    }
+                                }) {
+                                    Text("Submit Offer")
+                                        .font(.custom("ReemKufi-Bold", size: 18))
+                                        .frame(maxWidth: .infinity)
+                                        .padding()
+                                        .background(buttonColor)
+                                        .foregroundColor(.white)
+                                        .cornerRadius(10)
+                                }
+                            }
+                            .padding(.horizontal)
+                            .padding(.top)
+                        }
+
 
                         Spacer()
 
