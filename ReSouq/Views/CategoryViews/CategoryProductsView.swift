@@ -23,7 +23,9 @@ struct CategoryProductsView: View {
                 .font(.custom("ReemKufi-Bold", size: 22))
                 .padding(.top, 10)
 
-            let filteredProducts = productVM.getProducts(categoryID: categoryID, categories: categoryViewModel.categories)
+            let filteredProducts = productVM
+                .getProducts(categoryID: categoryID, categories: categoryViewModel.categories)
+                .sortedByAvailabilityThenDate()
 
             if filteredProducts.isEmpty {
                 Text("No products found.")

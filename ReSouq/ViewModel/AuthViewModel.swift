@@ -43,7 +43,6 @@ class AuthViewModel: ObservableObject {
             return
         }
 
-        // Add Qatar country code +974 before storing
         let formattedPhoneNumber = "+974\(phoneNumber)"
 
         checkPhoneNumberUniqueness(phoneNumber: formattedPhoneNumber) { isUnique in
@@ -109,7 +108,7 @@ class AuthViewModel: ObservableObject {
 
     // MARK: - Send OTP for Phone Login
     func sendOTP(phoneNumber: String) {
-        let formattedPhoneNumber = "+974\(phoneNumber)" // Ensure country code is included
+        let formattedPhoneNumber = "+974\(phoneNumber)" 
         
         PhoneAuthProvider.provider().verifyPhoneNumber(formattedPhoneNumber, uiDelegate: nil) { verificationID, error in
             DispatchQueue.main.async {

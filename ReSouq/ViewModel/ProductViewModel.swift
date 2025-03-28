@@ -304,10 +304,22 @@ class ProductViewModel: ObservableObject {
     }
 
     var sortedProducts: [Product] {
-        products.sorted { $0.createdAt > $1.createdAt } // Newest first
-            .prefix(10) // Take only the first 10
-            .map { $0 } // Convert back to an array
+        products
+            .sorted {
+                // Show unsold products first, then sort by creation date
+                let isSoldA = $0.isSold ?? false
+                let isSoldB = $1.isSold ?? false
+
+                if isSoldA != isSoldB {
+                    return !isSoldA && isSoldB // Unsold before sold
+                } else {
+                    return ($0.createdAt ?? Date.distantPast) > ($1.createdAt ?? Date.distantPast)
+                }
+            }
+            .prefix(10)
+            .map { $0 }
     }
+
 
 
 

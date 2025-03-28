@@ -27,7 +27,7 @@ struct AllProductsView: View {
             } else {
                 ScrollView {
                     LazyVGrid(columns: columns, spacing: 20) {
-                        ForEach(productViewModel.products) { product in
+                        ForEach(productViewModel.products.sortedByAvailabilityThenDate()) { product in
                             ProductItem(product: product)
                         }
                     }

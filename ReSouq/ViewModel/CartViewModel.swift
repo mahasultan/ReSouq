@@ -118,7 +118,7 @@ class CartViewModel: ObservableObject {
     
     func removeProduct(_ product: Product) {
         if let index = cart.products.firstIndex(where: { $0.product.productID == product.productID }) {
-            cart.products.remove(at: index) // Remove the product completely
+            cart.products.remove(at: index) 
             updateCart()
         } else {
             print("Product not found in the cart.")

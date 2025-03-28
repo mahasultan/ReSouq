@@ -2,7 +2,6 @@
 //  CategoryTests.swift
 //  ReSouq
 //
-//  Created by Mohammed Al-Khalifa on 16/03/2025.
 //
 
 

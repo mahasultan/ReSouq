@@ -1,0 +1,31 @@
+{
+  "configurations" : [
+    {
+      "id" : "F0E38D57-76B7-405D-923F-586EADDAA06C",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:ReSouq.xcodeproj",
+        "identifier" : "10244AC32D5E0FAB00CFD286",
+        "name" : "ReSouqUITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:ReSouq.xcodeproj",
+        "identifier" : "10244AB92D5E0FAB00CFD286",
+        "name" : "ReSouqTests"
+      }
+    }
+  ],
+  "version" : 1
+}

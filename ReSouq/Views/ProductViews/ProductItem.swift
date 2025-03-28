@@ -34,6 +34,7 @@ struct ProductItem: View {
                         .font(.system(size: 14))
                         .foregroundColor(.gray)
                 }
+                .foregroundColor(.primary)
             }
 
             let isSold = product.isSold ?? false

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		10168FEB2D94780A0024F3FF /* TestPlan.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 10168FEA2D94780A0024F3FF /* TestPlan.xctestplan */; };
 		10244ADB2D5E111000CFD286 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 10244ADA2D5E111000CFD286 /* FirebaseAnalytics */; };
 		10244ADD2D5E111000CFD286 /* FirebaseAnalyticsOnDeviceConversion in Frameworks */ = {isa = PBXBuildFile; productRef = 10244ADC2D5E111000CFD286 /* FirebaseAnalyticsOnDeviceConversion */; };
 		10244ADF2D5E111000CFD286 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 10244ADE2D5E111000CFD286 /* FirebaseAnalyticsWithoutAdIdSupport */; };
@@ -33,7 +34,6 @@
 		10244B092D5E111000CFD286 /* FirebaseVertexAI in Frameworks */ = {isa = PBXBuildFile; productRef = 10244B082D5E111000CFD286 /* FirebaseVertexAI */; };
 		1043CBE82D7E55C400FF2F72 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 1043CBE72D7E55C400FF2F72 /* SDWebImageSwiftUI */; };
 		10E17B9A2D864373005DDF3F /* ViewInspector in Frameworks */ = {isa = PBXBuildFile; productRef = 10E17B992D864373005DDF3F /* ViewInspector */; };
-		10E17BB62D866E8B005DDF3F /* UnitTesting.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 10E17BB52D866E8B005DDF3F /* UnitTesting.xctestplan */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,10 +54,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		10168FEA2D94780A0024F3FF /* TestPlan.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = TestPlan.xctestplan; sourceTree = "<group>"; };
 		10244AAA2D5E0FA900CFD286 /* ReSouq.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ReSouq.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		10244ABA2D5E0FAB00CFD286 /* ReSouqTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ReSouqTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		10244AC42D5E0FAB00CFD286 /* ReSouqUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ReSouqUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		10E17BB52D866E8B005DDF3F /* UnitTesting.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = UnitTesting.xctestplan; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -92,9 +92,7 @@
 				AuthViewModelTests.swift,
 				CartTests.swift,
 				CategoryTests.swift,
-				ImagePickerTests.swift,
 				OrderViewModelTests.swift,
-				ProductTests.swift,
 				ProductViewModelTests.swift,
 				ReSouqTests.swift,
 				UserTests.swift,
@@ -107,9 +105,7 @@
 				AuthViewModelTests.swift,
 				CartTests.swift,
 				CategoryTests.swift,
-				ImagePickerTests.swift,
 				OrderViewModelTests.swift,
-				ProductTests.swift,
 				ProductViewModelTests.swift,
 				ReSouqTests.swift,
 				UserTests.swift,
@@ -201,7 +197,7 @@
 		10244AA12D5E0FA900CFD286 = {
 			isa = PBXGroup;
 			children = (
-				10E17BB52D866E8B005DDF3F /* UnitTesting.xctestplan */,
+				10168FEA2D94780A0024F3FF /* TestPlan.xctestplan */,
 				CE6EB9C62D8DDB2800503A07 /* ReSouqTests */,
 				10244AAC2D5E0FA900CFD286 /* ReSouq */,
 				10244AC72D5E0FAB00CFD286 /* ReSouqUITests */,
@@ -368,7 +364,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				10E17BB62D866E8B005DDF3F /* UnitTesting.xctestplan in Resources */,
+				10168FEB2D94780A0024F3FF /* TestPlan.xctestplan in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -615,6 +611,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 4J2JP35GAS;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
 				MARKETING_VERSION = 1.0;
@@ -633,6 +630,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 4J2JP35GAS;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
 				MARKETING_VERSION = 1.0;
@@ -650,6 +648,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 4J2JP35GAS;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = cmu.ReSouqUITests;
@@ -666,6 +665,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 4J2JP35GAS;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = cmu.ReSouqUITests;

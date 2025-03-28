@@ -10,25 +10,24 @@ class OrderViewModelTests: XCTestCase {
     override func setUp() {
         super.setUp()
         
-        // ✅ Create a fresh instance of OrderViewModel before each test
         orderViewModel = OrderViewModel()
         
-        // ✅ Mock a sample product
+        // ✅ Fixed product definition
         mockProduct = Product(
             id: "test-product-123",
             name: "Test Product",
             price: 10.0,
             description: "A sample product for testing",
-            imageURL: nil,
+            imageUrls: [],  // ✅ imageUrls instead of imageURL
             sellerID: "test-seller",
             categoryID: "test-category",
             gender: "Unisex",
             condition: "New"
         )
 
-        // ✅ Mock a sample cart with one product
+        // ✅ Fixed CartItem (removed quantity)
         mockCart = Cart(userID: "test-user-123")
-        mockCart.products.append(CartItem(product: mockProduct, quantity: 1))
+        mockCart.products.append(CartItem(id: UUID().uuidString, product: mockProduct))
     }
 
     override func tearDown() {
@@ -42,8 +41,8 @@ class OrderViewModelTests: XCTestCase {
     func testPlaceOrder() {
         let expectation = XCTestExpectation(description: "Order placed successfully")
 
-        orderViewModel.placeOrder(userID: "test-user-123", cart: mockCart) { order in
-            print("🔥 Completion called in testPlaceOrder") // Debugging
+        orderViewModel.placeOrder(userID: "test-user-123", cart: mockCart, shippingAddress: "Doha, Qatar") { order in
+            print("🔥 Completion called in testPlaceOrder")
 
             XCTAssertNotNil(order, "Order should not be nil")
             XCTAssertEqual(order?.userID, "test-user-123", "User ID should match")
@@ -53,9 +52,8 @@ class OrderViewModelTests: XCTestCase {
             expectation.fulfill()
         }
 
-        wait(for: [expectation], timeout: 5.0) // ⬆ Increased timeout
+        wait(for: [expectation], timeout: 5.0)
     }
-
 
     // ✅ Test Fetching Orders (Mocked)
     func testFetchOrders() {
@@ -75,13 +73,12 @@ class OrderViewModelTests: XCTestCase {
     func testLatestOrderUpdate() {
         let expectation = XCTestExpectation(description: "Latest order should update correctly")
 
-        orderViewModel.placeOrder(userID: "test-user-123", cart: mockCart) { order in
+        orderViewModel.placeOrder(userID: "test-user-123", cart: mockCart, shippingAddress: "Doha, Qatar") { order in
             guard let placedOrder = order else {
                 XCTFail("Order was not placed successfully")
                 return
             }
 
-            // 🔥 Debugging: Check if Firestore wrote the order
             print("✅ Order was placed successfully with ID: \(placedOrder.id ?? "Unknown")")
 
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
@@ -90,7 +87,6 @@ class OrderViewModelTests: XCTestCase {
             }
         }
 
-        wait(for: [expectation], timeout: 5.0) // ⬆ Increased timeout
+        wait(for: [expectation], timeout: 5.0)
     }
-
 }

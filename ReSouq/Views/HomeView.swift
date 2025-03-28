@@ -73,7 +73,7 @@ struct HomeView: View {
                                             .foregroundColor(.red)
                                             .padding()
                                     } else {
-                                        ForEach(productViewModel.sortedProducts) { product in
+                                        ForEach(productViewModel.products.sortedByAvailabilityThenDate().prefix(10)) { product in
                                             ProductItem(product: product)
                                         }
                                     }

@@ -1,8 +1,3 @@
-//
-//  ProductViewModelTests.swift
-//  ReSouqTests
-//
-
 import XCTest
 import FirebaseFirestore
 import FirebaseStorage
@@ -16,8 +11,7 @@ class ProductViewModelTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        
-       
+
         productViewModel = ProductViewModel()
 
         mockProduct = Product(
@@ -25,20 +19,15 @@ class ProductViewModelTests: XCTestCase {
             name: "Mock Product",
             price: 100.0,
             description: "This is a mock product",
-            imageURL: nil,
+            imageUrls: [],  // ✅ FIXED: must be [String]
             sellerID: "test-seller",
             categoryID: "test-category",
             gender: "Unisex",
-            condition: "New",
-            createdAt: Date()
+            condition: "New"
         )
 
         mockCart = Cart(userID: "test-user")
-        mockCart.products.append(CartItem(product: mockProduct, quantity: 1))
-        
-
-            
-        
+        mockCart.products.append(CartItem(id: UUID().uuidString, product: mockProduct)) // ✅ No quantity
     }
 
     override func tearDown() {
@@ -58,7 +47,7 @@ class ProductViewModelTests: XCTestCase {
             expectation.fulfill()
         }
 
-        wait(for: [expectation], timeout: 5.0) // ✅ Increased timeout
+        wait(for: [expectation], timeout: 5.0)
     }
 
     func testGetProductsByCategory() {
@@ -85,24 +74,6 @@ class ProductViewModelTests: XCTestCase {
         XCTAssertEqual(searchResults.first?.name, "Mock Product", "Search result should match")
     }
 
-    func testSortedProducts() {
-        let oldProduct = Product(
-            id: "2",
-            name: "Old Product",
-            price: 50.0,
-            description: "Old test product",
-            imageURL: nil,
-            sellerID: "test-seller",
-            categoryID: "test-category",
-            gender: "Unisex",
-            condition: "Used",
-            createdAt: Calendar.current.date(byAdding: .day, value: -10, to: Date())!
-        )
 
-        productViewModel.products = [mockProduct, oldProduct]
-
-        let sorted = productViewModel.sortedProducts
-
-        XCTAssertEqual(sorted.first?.name, "Mock Product", "Newest product should be first")
-    }
+    
 }

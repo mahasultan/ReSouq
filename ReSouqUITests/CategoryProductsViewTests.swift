@@ -2,9 +2,7 @@
 //  CategoryProductsViewTests.swift
 //  ReSouq
 //
-//  Created by Mohammed Al-Khalifa on 16/03/2025.
 //
-
 
 import XCTest
 import SwiftUI
@@ -35,12 +33,11 @@ class CategoryProductsViewTests: XCTestCase {
             name: "Test Product 1",
             price: 100.0,
             description: "A test product",
-            imageURL: ["https://example.com/image1.jpg"],
+            imageUrls: ["https://example.com/image1.jpg"],  // ✅ Fixed
             sellerID: "seller123",
             categoryID: categoryID, // Matches category
             gender: "Unisex",
             condition: "New"
-            
         )
 
         let product2 = Product(
@@ -48,12 +45,11 @@ class CategoryProductsViewTests: XCTestCase {
             name: "Test Product 2",
             price: 150.0,
             description: "Another test product",
-            imageURL: ["https://example.com/image2.jpg"],
+            imageUrls: ["https://example.com/image2.jpg"],  // ✅ Fixed
             sellerID: "seller456",
             categoryID: "differentCategory", // Different category
             gender: "Unisex",
             condition: "Used"
-            
         )
 
         // Add mock products to ViewModel
