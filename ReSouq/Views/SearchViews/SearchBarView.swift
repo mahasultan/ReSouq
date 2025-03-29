@@ -6,7 +6,7 @@ import SwiftUI
 
 struct SearchBarView: View {
     @Binding var searchText: String
-    @Binding var isSearching: Bool
+    var onSearch: () -> Void
 
     var body: some View {
         HStack {
@@ -22,7 +22,7 @@ struct SearchBarView: View {
 
             Button(action: {
                 if !searchText.isEmpty {
-                    isSearching = true
+                    onSearch()
                 }
             }) {
                 Image(systemName: "magnifyingglass")
@@ -31,6 +31,6 @@ struct SearchBarView: View {
             }
         }
         .padding(.vertical, 5)
-        .background(Color(UIColor(red: 232/255, green: 225/255, blue: 210/255, alpha: 1))) // Beige Background
+        .background(Color(UIColor(red: 232/255, green: 225/255, blue: 210/255, alpha: 1)))
     }
 }

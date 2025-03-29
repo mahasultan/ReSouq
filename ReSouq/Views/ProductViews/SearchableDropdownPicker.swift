@@ -6,7 +6,7 @@
 import SwiftUI
 
 struct SearchableDropdownPicker: View {
-    var title: String
+    var title: String? = nil
     @Binding var selection: String
     var options: [(label: String, value: String)]
     @State private var isExpanded = false
@@ -26,10 +26,12 @@ struct SearchableDropdownPicker: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
-            Text(title)
-                .font(.custom("ReemKufi-Bold", size: 18))
-                .foregroundColor(buttonColor)
-                .padding(.leading, 15)
+            if let title = title {
+                   Text(title)
+                       .font(.custom("ReemKufi-Bold", size: 18))
+                       .foregroundColor(buttonColor)
+                       .padding(.leading, 15)
+            }
 
             Button(action: {
                 withAnimation {
