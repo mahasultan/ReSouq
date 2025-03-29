@@ -287,7 +287,17 @@ class ProductViewModel: ObservableObject {
         }
     }
 
-    func getProducts(categoryID: String? = nil, searchQuery: String? = nil, categories: [Category]) -> [Product] {
+    func getProducts(
+        categoryID: String? = nil,
+        searchQuery: String? = nil,
+        categories: [Category],
+        condition: String? = nil,
+        size: String? = nil,
+        gender: String? = nil,
+        minPrice: Double? = nil,
+        maxPrice: Double? = nil,
+        sortBy: String? = nil 
+    ) -> [Product] {
         var filteredProducts = products
 
         if let categoryID = categoryID {
@@ -298,6 +308,53 @@ class ProductViewModel: ObservableObject {
             filteredProducts = filteredProducts.filter { product in
                 product.categoryID == categoryID || subcategoryIDs.contains(product.categoryID)
             }
+        }
+
+        if let searchQuery = searchQuery?.lowercased(), !searchQuery.isEmpty {
+            filteredProducts = filteredProducts.filter { product in
+                let nameMatch = product.name.lowercased().contains(searchQuery)
+                let genderMatch = product.gender.lowercased().contains(searchQuery) ?? false
+                let conditionMatch = product.condition.lowercased().contains(searchQuery) ?? false
+                let sizeMatch = product.size?.lowercased().contains(searchQuery) ?? false
+                let categoryName = categories.first(where: { $0.id == product.categoryID })?.name.lowercased() ?? ""
+                let categoryMatch = categoryName.contains(searchQuery)
+
+                return nameMatch || genderMatch || conditionMatch || sizeMatch || categoryMatch
+            }
+        }
+        
+        if let sort = sortBy {
+            switch sort {
+            case "Price: Low → High":
+                filteredProducts = filteredProducts.sorted { $0.price < $1.price }
+            case "Price: High → Low":
+                filteredProducts = filteredProducts.sorted { $0.price > $1.price }
+            case "Newest":
+                filteredProducts = filteredProducts.sorted { $0.createdAt > $1.createdAt }
+            default:
+                break
+            }
+        }
+
+
+        if let condition = condition {
+            filteredProducts = filteredProducts.filter { $0.condition == condition }
+        }
+
+        if let size = size {
+            filteredProducts = filteredProducts.filter { $0.size == size }
+        }
+
+        if let gender = gender {
+            filteredProducts = filteredProducts.filter { $0.gender == gender }
+        }
+
+        if let min = minPrice {
+            filteredProducts = filteredProducts.filter { $0.price >= min }
+        }
+
+        if let max = maxPrice {
+            filteredProducts = filteredProducts.filter { $0.price <= max }
         }
 
         return filteredProducts
