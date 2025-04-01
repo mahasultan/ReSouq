@@ -46,8 +46,6 @@ class CartViewModel: ObservableObject {
                 do {
                     self.cart = try snapshot.data(as: Cart.self)
                     
-
-                    
                     print("Cart loaded successfully")
                 } catch {
                     print("Firestore error decoding cart: \(error.localizedDescription)")

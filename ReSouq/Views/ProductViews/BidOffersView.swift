@@ -6,6 +6,8 @@ struct BidOffersView: View {
     var product: Product
     @StateObject private var bidViewModel = BidViewModel()
     @State private var showSuccess = false
+    @EnvironmentObject var cartViewModel: CartViewModel
+
 
     private let buttonColor = Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1))
     private let backgroundColor = Color(UIColor(red: 232/255, green: 225/255, blue: 210/255, alpha: 1))
@@ -15,7 +17,7 @@ struct BidOffersView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
 
-                // 🖼️ Product Image & Info
+                // Product Image & Info
                 if let imageUrl = product.imageUrls.first, let url = URL(string: imageUrl) {
                     WebImage(url: url)
                         .resizable()
@@ -36,7 +38,7 @@ struct BidOffersView: View {
 
                 Divider()
 
-                // 🔥 Active Offers
+                //  Active Offers
                 Text("Offers")
                     .font(.custom("ReemKufi-Bold", size: 22))
 
@@ -64,12 +66,14 @@ struct BidOffersView: View {
                                         showSuccess = true
                                     }
                                 }
+
+
                             }) {
                                 Text("Accept")
                                     .font(.system(size: 14, weight: .medium))
                                     .padding(.horizontal, 12)
                                     .padding(.vertical, 6)
-                                    .background(bidViewModel.pastBids.isEmpty ? Color.green : Color.gray)
+                                    .background(bidViewModel.pastBids.isEmpty ? buttonColor : Color.gray)
                                     .foregroundColor(.white)
                                     .cornerRadius(8)
                             }
@@ -83,18 +87,18 @@ struct BidOffersView: View {
                     }
                 }
 
-                // ✅ Confirmation
+                // Confirmation
                 if showSuccess {
-                    Text("✅ Offer accepted. Product added to buyer’s cart.")
-                        .foregroundColor(.green)
+                    Text("Offer accepted. Product added to buyer’s cart.")
+                        .foregroundColor(buttonColor)
                         .font(.system(size: 16, weight: .medium))
                 }
 
-                // 📜 Past Offers
+                // Past Offers
                 if !bidViewModel.pastBids.isEmpty {
                     Divider().padding(.vertical)
 
-                    Text("Past Offers")
+                    Text("accepted Offer")
                         .font(.custom("ReemKufi-Bold", size: 20))
 
                     ForEach(bidViewModel.pastBids, id: \.id) { bid in

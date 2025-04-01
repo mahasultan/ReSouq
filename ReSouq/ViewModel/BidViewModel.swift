@@ -45,7 +45,7 @@ class BidViewModel: ObservableObject {
     
     func acceptBid(for product: Product, bidderID: String, bidAmount: Double, completion: @escaping (Bool) -> Void) {
         guard let productID = product.id else {
-            print("❌ Invalid product ID")
+            print("invalid product ID")
             completion(false)
             return
         }
@@ -61,18 +61,18 @@ class BidViewModel: ObservableObject {
             "currentBid": bidAmount
         ]) { error in
             if let error = error {
-                print("❌ Failed to update product: \(error.localizedDescription)")
+                print(" Failed to update product: \(error.localizedDescription)")
                 completion(false)
             } else {
-                print("✅ Product updated with accepted offer.")
+                print(" Product updated with accepted offer.")
 
                 // 2. Mark bid as accepted
                 bidRef.updateData(["status": "accepted"]) { error in
                     if let error = error {
-                        print("❌ Failed to update bid status: \(error.localizedDescription)")
+                        print("Failed to update bid status: \(error.localizedDescription)")
                         completion(false)
                     } else {
-                        print("✅ Bid marked as accepted.")
+                        print("Bid marked as accepted.")
 
                         // 3. Add to buyer's cart
                         self.addToBuyerCart(product: product, bidderID: bidderID, updatedPrice: bidAmount, completion: completion)
@@ -87,7 +87,7 @@ class BidViewModel: ObservableObject {
         guard let productID = product.productID,
               let bidAmount = Double(amount),
               bidAmount > 0 else {
-            print("⚠️ Invalid bid input")
+            print("Invalid bid input")
             completion(false)
             return
         }
@@ -105,10 +105,10 @@ class BidViewModel: ObservableObject {
             .document(bidderID) // Each user can only place 1 bid; overwrite if needed
             .setData(bidData) { error in
                 if let error = error {
-                    print("❌ Failed to submit bid: \(error.localizedDescription)")
+                    print("Failed to submit bid: \(error.localizedDescription)")
                     completion(false)
                 } else {
-                    print("✅ Bid submitted successfully!")
+                    print(" Bid submitted successfully!")
                     completion(true)
                 }
             }
@@ -116,41 +116,70 @@ class BidViewModel: ObservableObject {
     
 
     private func addToBuyerCart(product: Product, bidderID: String, updatedPrice: Double, completion: @escaping (Bool) -> Void) {
-        guard let productID = product.id else {
+        guard let productID = product.productID, !productID.isEmpty else {
+            print("Missing productID")
             completion(false)
             return
         }
 
         let db = Firestore.firestore()
-        let cartRef = db.collection("users").document(bidderID).collection("cart")
+        let cartRef = db.collection("carts").document(bidderID)
 
-        let productData: [String: Any] = [
-            "id": productID,
-            "product": [
-                "id": product.id ?? "",
-                "productID": product.productID ?? "",
-                "name": product.name,
-                "price": updatedPrice,
-                "description": product.description,
-                "imageUrls": product.imageUrls,
-                "sellerID": product.sellerID,
-                "categoryID": product.categoryID,
-                "gender": product.gender,
-                "condition": product.condition,
-                "size": product.size ?? "",
-                "isSold": true,
-                "currentBid": updatedPrice
-            ]
-        ]
+        cartRef.getDocument { snapshot, error in
+            var updatedProducts: [[String: Any]] = []
 
-        cartRef.document(productID).setData(productData) { error in
-            if let error = error {
-                print("❌ Failed to add to cart: \(error.localizedDescription)")
-                completion(false)
-            } else {
-                print("✅ Product added to buyer's cart.")
+            if let data = snapshot?.data(), let existingProducts = data["products"] as? [[String: Any]] {
+                updatedProducts = existingProducts
+            }
+
+            // Check if product already exists
+            let alreadyExists = updatedProducts.contains {
+                guard let productDict = $0["product"] as? [String: Any] else { return false }
+                return productDict["productID"] as? String == productID
+            }
+
+            if alreadyExists {
+                print("Product already in cart")
                 completion(true)
+                return
+            }
+
+            let newItem: [String: Any] = [
+                "id": UUID().uuidString,
+                "product": [
+                    "id": product.id ?? "",
+                    "productID": product.productID ?? "",
+                    "name": product.name,
+                    "price": updatedPrice,
+                    "description": product.description,
+                    "imageUrls": product.imageUrls,
+                    "sellerID": product.sellerID,
+                    "categoryID": product.categoryID,
+                    "gender": product.gender,
+                    "condition": product.condition,
+                    "size": product.size ?? "",
+                    "isSold": true,
+                    "currentBid": updatedPrice
+                ]
+            ]
+
+            updatedProducts.append(newItem)
+
+            let cartData: [String: Any] = [
+                "userID": bidderID,
+                "products": updatedProducts
+            ]
+
+            cartRef.setData(cartData, merge: true) { error in
+                if let error = error {
+                    print("Failed to update buyer's cart: \(error.localizedDescription)")
+                    completion(false)
+                } else {
+                    print("Product successfully added to buyer's cart (/carts/\(bidderID))")
+                    completion(true)
+                }
             }
         }
     }
+
 }
