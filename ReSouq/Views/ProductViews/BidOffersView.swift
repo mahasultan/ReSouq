@@ -89,7 +89,7 @@ struct BidOffersView: View {
 
                 // Confirmation
                 if showSuccess {
-                    Text("Offer accepted. Product added to buyer’s cart.")
+                    Text("Offer accepted!!")
                         .foregroundColor(buttonColor)
                         .font(.system(size: 16, weight: .medium))
                 }

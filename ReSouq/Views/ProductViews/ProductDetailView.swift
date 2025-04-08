@@ -194,18 +194,47 @@ struct ProductDetailView: View {
     }
 
     private var biddingSection: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("Place Your Offer")
-                .font(.custom("ReemKufi-Bold", size: 20))
+        VStack(alignment: .leading, spacing: 16) {
+            Text("Choose Your Offer")
+                .font(.system(size: 20, weight: .medium))
                 .foregroundColor(buttonColor)
 
-            TextField("Enter your offer (QR)", text: $userBidInput)
+            // Suggested price buttons side by side
+            let options = bidViewModel.allowedBidOptions(for: product)
+
+            HStack(spacing: 12) {
+                let buttonWidth: CGFloat = 100  // Adjust this to your design
+
+                ForEach(options, id: \.self) { option in
+                    Button(action: {
+                        userBidInput = String(Int(option))
+                    }) {
+                        Text("QR \(Int(option))")
+                            .frame(width: buttonWidth, height: 40)
+                            .background(userBidInput == String(Int(option)) ? buttonColor : Color.white)
+                            .foregroundColor(userBidInput == String(Int(option)) ? .white : buttonColor)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(buttonColor, lineWidth: 1.5)
+                            )
+                            .cornerRadius(12)
+                    }
+                }
+            }
+
+
+            // Optional manual input
+            TextField("Or enter your own offer (QR)", text: $userBidInput)
                 .keyboardType(.decimalPad)
                 .padding()
                 .background(Color.white)
                 .cornerRadius(10)
-                .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.gray.opacity(0.5), lineWidth: 1))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(Color.gray.opacity(0.5), lineWidth: 1)
+                )
 
+            // Submit Button
             Button(action: {
                 if let userID = authViewModel.userID {
                     bidViewModel.submitBid(for: product, amount: userBidInput, bidderID: userID) { success in
@@ -216,17 +245,17 @@ struct ProductDetailView: View {
                 }
             }) {
                 Text("Submit Offer")
-                    .font(.custom("ReemKufi-Bold", size: 18))
+                    .font(.system(size: 18))
                     .frame(maxWidth: .infinity)
                     .padding()
                     .background(buttonColor)
                     .foregroundColor(.white)
-                    .cornerRadius(10)
+                    .cornerRadius(12)
             }
         }
-        .padding(.horizontal)
-        .padding(.top)
+        .padding()
     }
+
 
     private var actionButtons: some View {
         HStack {
