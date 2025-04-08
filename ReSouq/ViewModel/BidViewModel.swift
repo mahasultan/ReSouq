@@ -114,6 +114,25 @@ class BidViewModel: ObservableObject {
             }
     }
     
+    func allowedBidOptions(for product: Product) -> [Double] {
+        let basePrice = product.price
+        let reductions: [Double]
+
+        switch product.condition {
+        case "New":
+            reductions = [0.95, 0.94, 0.93] // 5%, 6%, 7%
+        case "Used - Like New":
+            reductions = [0.92, 0.91, 0.90] // 8%, 9%, 10%
+        case "Used - Good":
+            reductions = [0.89, 0.88, 0.87] // 11%, 12%, 13%
+        case "Used - Acceptable":
+            reductions = [0.86, 0.85, 0.84] // 14%, 15%, 16%
+        default:
+            reductions = [0.95, 0.94, 0.93] // fallback to New
+        }
+
+        return reductions.map { Double(round(basePrice * $0)) }
+    }
 
     private func addToBuyerCart(product: Product, bidderID: String, updatedPrice: Double, completion: @escaping (Bool) -> Void) {
         guard let productID = product.productID, !productID.isEmpty else {
