@@ -13,7 +13,7 @@ struct Order: Identifiable, Codable {
     var totalPrice: Double
     var orderDate: Date
     var shippingAddress: String?
-
+    var isRated: Bool? = false
 
     init(userID: String, products: [CartItem], totalPrice: Double, shippingAddress: String?) {
         self.userID = userID

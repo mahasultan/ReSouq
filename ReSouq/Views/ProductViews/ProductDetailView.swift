@@ -1,5 +1,6 @@
 import SwiftUI
 import SDWebImageSwiftUI
+import FirebaseFirestore
 
 struct ProductDetailView: View {
     @State var product: Product
@@ -8,12 +9,16 @@ struct ProductDetailView: View {
     @EnvironmentObject var cartViewModel: CartViewModel
     @EnvironmentObject var productViewModel: ProductViewModel
     @EnvironmentObject var categoryViewModel: CategoryViewModel
+    @EnvironmentObject var navigationManager: NavigationManager
     @StateObject private var bidViewModel = BidViewModel()
 
     @State private var isEditing = false
     @State private var selectedImageIndex = 0
     @State private var showSuccessMessage = false
     @State private var userBidInput: String = ""
+
+    @State private var sellerName: String = ""
+    @State private var showSellerProfile = false
 
     private let buttonColor = Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1))
     private let textColor = Color.black
@@ -98,43 +103,45 @@ struct ProductDetailView: View {
             if categoryViewModel.categories.isEmpty {
                 categoryViewModel.fetchCategories()
             }
-        }
-    }
 
-    struct DetailRow: View {
-        var title: String
-        var value: String
-
-        private let textColor = Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1))
-
-        var body: some View {
-            HStack {
-                Text("\(title):")
-                    .font(.custom("ReemKufi-Bold", size: 18))
-                    .foregroundColor(textColor)
-
-                Spacer()
-
-                Text(value)
-                    .font(.system(size: 18))
-                    .foregroundColor(.black)
+            Firestore.firestore().collection("users").document(product.sellerID).getDocument { snapshot, error in
+                if let data = snapshot?.data(), let name = data["fullName"] as? String {
+                    sellerName = name
+                } else {
+                    sellerName = "Seller"
+                }
             }
-            .padding(.vertical, 5)
         }
     }
 
-    func addToRecentlyViewed(product: Product) {
-        var recentlyViewed = UserDefaults.standard.array(forKey: "recentlyViewed") as? [String] ?? []
+    private var productInfoSection: some View {
+        VStack(spacing: 8) {
+            Text(product.name)
+                .font(.custom("ReemKufi-Bold", size: 26))
+                .foregroundColor(.black)
 
-        if let productID = product.id, !recentlyViewed.contains(productID) {
-            recentlyViewed.append(productID)
+            Button(action: {
+                if product.sellerID == authViewModel.userID {
+                    navigationManager.currentPage = "Profile"
+                    presentationMode.wrappedValue.dismiss()
+                } else {
+                    showSellerProfile = true
+                }
+            }) {
+                Text("Sold by \(product.sellerID == authViewModel.userID ? "YOU" : sellerName)")
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundColor(buttonColor)
+                    .underline()
+            }
+
+            NavigationLink(destination: UserProfileView(userID: product.sellerID), isActive: $showSellerProfile) {
+                EmptyView()
+            }
+
+            Text("QR \(product.price, specifier: "%.2f")")
+                .font(.custom("ReemKufi-Bold", size: 22))
+                .foregroundColor(buttonColor)
         }
-
-        if recentlyViewed.count > 10 {
-            recentlyViewed.removeFirst()
-        }
-
-        UserDefaults.standard.set(recentlyViewed, forKey: "recentlyViewed")
     }
 
     private var imageCarousel: some View {
@@ -150,17 +157,6 @@ struct ProductDetailView: View {
         }
         .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
         .frame(height: 320)
-    }
-
-    private var productInfoSection: some View {
-        VStack(spacing: 8) {
-            Text(product.name)
-                .font(.custom("ReemKufi-Bold", size: 26))
-                .foregroundColor(.black)
-            Text("QR \(product.price, specifier: "%.2f")")
-                .font(.custom("ReemKufi-Bold", size: 22))
-                .foregroundColor(buttonColor)
-        }
     }
 
     private var productAttributes: some View {
@@ -199,12 +195,10 @@ struct ProductDetailView: View {
                 .font(.system(size: 20, weight: .medium))
                 .foregroundColor(buttonColor)
 
-            // Suggested price buttons side by side
             let options = bidViewModel.allowedBidOptions(for: product)
 
             HStack(spacing: 12) {
-                let buttonWidth: CGFloat = 100  // Adjust this to your design
-
+                let buttonWidth: CGFloat = 100
                 ForEach(options, id: \.self) { option in
                     Button(action: {
                         userBidInput = String(Int(option))
@@ -222,8 +216,6 @@ struct ProductDetailView: View {
                 }
             }
 
-
-            // Optional manual input
             TextField("Or enter your own offer (QR)", text: $userBidInput)
                 .keyboardType(.decimalPad)
                 .padding()
@@ -234,7 +226,6 @@ struct ProductDetailView: View {
                         .stroke(Color.gray.opacity(0.5), lineWidth: 1)
                 )
 
-            // Submit Button
             Button(action: {
                 if let userID = authViewModel.userID {
                     bidViewModel.submitBid(for: product, amount: userBidInput, bidderID: userID) { success in
@@ -255,7 +246,6 @@ struct ProductDetailView: View {
         }
         .padding()
     }
-
 
     private var actionButtons: some View {
         HStack {
@@ -335,5 +325,41 @@ struct ProductDetailView: View {
             }
         }
         .padding(.horizontal)
+    }
+
+    struct DetailRow: View {
+        var title: String
+        var value: String
+
+        private let textColor = Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1))
+
+        var body: some View {
+            HStack {
+                Text("\(title):")
+                    .font(.custom("ReemKufi-Bold", size: 18))
+                    .foregroundColor(textColor)
+
+                Spacer()
+
+                Text(value)
+                    .font(.system(size: 18))
+                    .foregroundColor(.black)
+            }
+            .padding(.vertical, 5)
+        }
+    }
+
+    func addToRecentlyViewed(product: Product) {
+        var recentlyViewed = UserDefaults.standard.array(forKey: "recentlyViewed") as? [String] ?? []
+
+        if let productID = product.id, !recentlyViewed.contains(productID) {
+            recentlyViewed.append(productID)
+        }
+
+        if recentlyViewed.count > 10 {
+            recentlyViewed.removeFirst()
+        }
+
+        UserDefaults.standard.set(recentlyViewed, forKey: "recentlyViewed")
     }
 }

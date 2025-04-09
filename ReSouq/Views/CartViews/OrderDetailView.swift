@@ -1,92 +1,122 @@
 import SwiftUI
 
 struct OrderDetailView: View {
-    var order: Order
+    @State var order: Order
     @EnvironmentObject var orderViewModel: OrderViewModel
+    @State private var showRatingSheet = false
 
     var body: some View {
-        HStack {
-            TopBarView(showLogoutButton: false, showAddButton: false)
-        }
+        VStack(spacing: 0) {
+            HStack {
+                TopBarView(showLogoutButton: false, showAddButton: false)
+            }
 
-        VStack {
-            Text("Order Details")
-                .font(.custom("ReemKufi-Bold", size: 30))
-                .foregroundColor(Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1)))
-                .padding(.leading, 15)
-
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Order ID: \(order.id ?? "N/A")")
-                    .bold()
-                    .font(.headline)
-                Text("Date: \(order.orderDate.formatted(date: .abbreviated, time: .omitted))")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                Text("Total: QR \(String(format: "%.2f", order.totalPrice))")
-                    .bold()
-                    .font(.headline)
+            VStack {
+                Text("Order Details")
+                    .font(.custom("ReemKufi-Bold", size: 30))
                     .foregroundColor(Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1)))
-
-                Divider().background(Color.gray.opacity(0.5))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.leading, 15)
 
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Shipping Address")
+                    Text("Order ID: \(order.id ?? "N/A")")
+                        .bold()
                         .font(.headline)
-                        .foregroundColor(.black)
-                    Text(order.shippingAddress ?? "No shipping address provided")
+                    Text("Date: \(order.orderDate.formatted(date: .abbreviated, time: .omitted))")
                         .font(.subheadline)
-                        .foregroundColor(.gray)
-                        .padding(.bottom, 5)
+                        .foregroundColor(.secondary)
+                    Text("Total: QR \(String(format: "%.2f", order.totalPrice))")
+                        .bold()
+                        .font(.headline)
+                        .foregroundColor(Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1)))
+
+                    Divider().background(Color.gray.opacity(0.5))
+
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Shipping Address")
+                            .font(.headline)
+                            .foregroundColor(.black)
+                        Text(order.shippingAddress ?? "No shipping address provided")
+                            .font(.subheadline)
+                            .foregroundColor(.gray)
+                            .padding(.bottom, 5)
+                    }
+                    .padding()
+                    .background(RoundedRectangle(cornerRadius: 12).fill(Color.white))
+
+                    Divider().background(Color.gray.opacity(0.5))
+
+                    Text("Items in Order")
+                        .font(.headline)
+                        .padding(.top, 5)
                 }
                 .padding()
                 .background(RoundedRectangle(cornerRadius: 12).fill(Color.white))
 
-                Divider().background(Color.gray.opacity(0.5))
+                ScrollView {
+                    VStack(spacing: 12) {
+                        ForEach(order.products, id: \.id) { item in
+                            HStack(spacing: 12) {
+                                if let imageURL = item.product.imageUrls.first,
+                                   let url = URL(string: imageURL) {
+                                    AsyncImage(url: url) { image in
+                                        image.resizable()
+                                    } placeholder: {
+                                        Image(systemName: "photo")
+                                            .resizable()
+                                            .scaledToFit()
+                                            .frame(width: 50, height: 50)
+                                            .foregroundColor(.gray)
+                                    }
+                                    .frame(width: 50, height: 50)
+                                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                                }
 
-                Text("Items in Order")
-                    .font(.headline)
-                    .padding(.top, 5)
-            }
-            .padding()
-            .background(RoundedRectangle(cornerRadius: 12).fill(Color.white))
-
-            ScrollView {
-                VStack(spacing: 12) {
-                    ForEach(order.products, id: \.id) { item in
-                        HStack(spacing: 12) {
-                            if let imageURL = item.product.imageUrls.first, let url = URL(string: imageURL) {
-                                AsyncImage(url: url) { image in
-                                    image.resizable()
-                                } placeholder: {
-                                    Image(systemName: "photo")
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 50, height: 50)
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(item.product.name)
+                                        .font(.headline)
+                                    Text("QR \(String(format: "%.2f", item.product.price))")
+                                        .font(.subheadline)
                                         .foregroundColor(.gray)
                                 }
-                                .frame(width: 50, height: 50)
-                                .clipShape(RoundedRectangle(cornerRadius: 8))
+                                Spacer()
                             }
-
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text(item.product.name)
-                                    .font(.headline)
-                                Text("QR \(String(format: "%.2f", item.product.price))")
-                                    .font(.subheadline)
-                                    .foregroundColor(.gray)
-                            }
-                            Spacer()
+                            .padding()
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(Color(UIColor(red: 232/255, green: 225/255, blue: 210/255, alpha: 1)))
+                            )
                         }
+                    }
+                    .padding(.horizontal)
+                }
+
+                if order.isRated ?? false {
+                    Text("You already rated this order")
+                        .foregroundColor(.gray)
                         .padding()
-                        .background(RoundedRectangle(cornerRadius: 12).fill(Color(UIColor(red: 232/255, green: 225/255, blue: 210/255, alpha: 1))))
+                } else {
+                    Button(action: {
+                        showRatingSheet = true
+                    }) {
+                        Text("Rate Seller")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                            .background(Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1)))
+                            .cornerRadius(12)
+                    }
+                    .padding()
+                    .sheet(isPresented: $showRatingSheet) {
+                        RatingView(order: $order)
                     }
                 }
-                .padding(.horizontal)
-            }
 
-            Spacer()
+                Spacer()
+            }
+            .padding()
         }
-        .padding()
         .navigationBarBackButtonHidden(true)
     }
 }

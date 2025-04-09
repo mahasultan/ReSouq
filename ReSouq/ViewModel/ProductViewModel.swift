@@ -4,23 +4,73 @@ import Foundation
 import SwiftUI
 import FirebaseAuth
 
+struct SellerRatingSummary {
+    var average: Double
+    var total: Int
+}
+
 class ProductViewModel: ObservableObject {
     @Published var products: [Product] = []
+    @Published var sellerRatings: [SellerRating] = []
+    @Published var sellerRatingSummaries: [String: SellerRatingSummary] = [:]
     @Published var isSubmitting = false
     @Published var errorMessage: String?
     @Published var likedProducts: [Product] = []
 
-
     private let db = Firestore.firestore()
 
-    // Upload multiple images
+    // MARK: - Top Seller Logic
+
+    func isTopSeller(sellerID: String) -> Bool {
+        if let summary = sellerRatingSummaries[sellerID] {
+            return summary.average >= 4.8
+        }
+        return false
+    }
+
+    func fetchSellerRatings() {
+        db.collection("sellerRatings").getDocuments { snapshot, error in
+            if let error = error {
+                print("Error fetching seller ratings: \(error.localizedDescription)")
+                return
+            }
+
+            DispatchQueue.main.async {
+                self.sellerRatings = snapshot?.documents.compactMap {
+                    try? $0.data(as: SellerRating.self)
+                } ?? []
+
+                var ratingDict: [String: [Int]] = [:]
+                for rating in self.sellerRatings {
+                    ratingDict[rating.sellerID, default: []].append(rating.rating)
+                }
+
+                var summaries: [String: SellerRatingSummary] = [:]
+                for (sellerID, ratings) in ratingDict {
+                    let avg = Double(ratings.reduce(0, +)) / Double(ratings.count)
+                    summaries[sellerID] = SellerRatingSummary(average: avg, total: ratings.count)
+                }
+
+                self.sellerRatingSummaries = summaries
+                print("Summarized ratings for \(summaries.count) sellers")
+            }
+        }
+    }
+
+    func getTopSellerProducts(from productList: [Product]) -> [Product] {
+        productList.filter {
+            ($0.isSold ?? false) == false && isTopSeller(sellerID: $0.sellerID)
+        }
+    }
+
+    // MARK: - Image Upload
+
     func uploadImages(_ images: [UIImage], completion: @escaping ([String]?) -> Void) {
         var imageUrls: [String] = []
         let dispatchGroup = DispatchGroup()
 
         for image in images {
             dispatchGroup.enter()
-            
             guard let imageData = image.jpegData(compressionQuality: 0.8) else {
                 dispatchGroup.leave()
                 continue
@@ -50,7 +100,8 @@ class ProductViewModel: ObservableObject {
         }
     }
 
-    // Save product with multiple images
+    // MARK: - Save Product
+
     func saveProduct(
         userID: String,
         name: String,
@@ -73,10 +124,10 @@ class ProductViewModel: ObservableObject {
                 return
             }
 
-            let newDocRef = self.db.collection("products").document() // Create a Firestore reference
+            let newDocRef = self.db.collection("products").document()
             let newProduct = Product(
-                id: newDocRef.documentID,  // Assign Firestore ID
-                productID: newDocRef.documentID,  // Ensure Firestore ID is saved
+                id: newDocRef.documentID,
+                productID: newDocRef.documentID,
                 name: name,
                 price: price,
                 description: description,
@@ -90,8 +141,6 @@ class ProductViewModel: ObservableObject {
                 currentBid: price
             )
 
-            print("Saving product to Firestore with ID: \(newDocRef.documentID)")
-
             do {
                 try newDocRef.setData(from: newProduct) { error in
                     DispatchQueue.main.async {
@@ -100,7 +149,6 @@ class ProductViewModel: ObservableObject {
                             self.errorMessage = "Failed to save product: \(error.localizedDescription)"
                             completion(false)
                         } else {
-                            print("Product saved with ID: \(newDocRef.documentID)")
                             completion(true)
                         }
                     }
@@ -113,6 +161,7 @@ class ProductViewModel: ObservableObject {
         }
     }
 
+    // MARK: - Update Product
 
     func updateProduct(
         productID: String,
@@ -129,7 +178,6 @@ class ProductViewModel: ObservableObject {
     ) {
         isSubmitting = true
 
-        // Upload new images if selected, otherwise keep existing ones
         if images.isEmpty {
             saveUpdatedProduct(
                 productID: productID,
@@ -168,12 +216,6 @@ class ProductViewModel: ObservableObject {
             }
         }
     }
-    
-    
-    
-
-    
-  
 
     private func saveUpdatedProduct(
         productID: String,
@@ -211,6 +253,8 @@ class ProductViewModel: ObservableObject {
         }
     }
 
+    // MARK: - Liked Products
+
     func fetchLikedProducts() {
         guard let userID = Auth.auth().currentUser?.uid else { return }
 
@@ -224,7 +268,6 @@ class ProductViewModel: ObservableObject {
                 self.likedProducts = snapshot?.documents.compactMap { document in
                     var product = try? document.data(as: Product.self)
 
-                    // Fetch the latest 'isSold' status from Firestore
                     if let productID = product?.productID {
                         self.db.collection("products").document(productID).getDocument { productSnapshot, error in
                             if let productData = productSnapshot?.data(),
@@ -232,7 +275,6 @@ class ProductViewModel: ObservableObject {
                                 DispatchQueue.main.async {
                                     if let index = self.likedProducts.firstIndex(where: { $0.productID == productID }) {
                                         self.likedProducts[index].isSold = isSold
-                                        print("Updated isSold for liked product \(productID): \(isSold)")
                                     }
                                 }
                             }
@@ -244,7 +286,6 @@ class ProductViewModel: ObservableObject {
             }
         }
     }
-
 
     func toggleLike(product: Product) {
         guard let userID = Auth.auth().currentUser?.uid, let productID = product.productID else { return }
@@ -272,6 +313,9 @@ class ProductViewModel: ObservableObject {
             }
         }
     }
+
+    // MARK: - General Product Fetch
+
     func fetchProducts() {
         db.collection("products").getDocuments { snapshot, error in
             if let error = error {
@@ -282,14 +326,9 @@ class ProductViewModel: ObservableObject {
             DispatchQueue.main.async {
                 self.products = snapshot?.documents.compactMap { document in
                     var product = try? document.data(as: Product.self)
-                    product?.productID = document.documentID // Ensure Firestore ID is set
+                    product?.productID = document.documentID
                     return product
                 } ?? []
-
-                print("Products fetched successfully. Total: \(self.products.count)")
-                for product in self.products {
-                    print("Product: \(product.name), ID: \(product.productID ?? "MISSING")")
-                }
             }
         }
     }
@@ -303,7 +342,7 @@ class ProductViewModel: ObservableObject {
         gender: String? = nil,
         minPrice: Double? = nil,
         maxPrice: Double? = nil,
-        sortBy: String? = nil 
+        sortBy: String? = nil
     ) -> [Product] {
         var filteredProducts = products
 
@@ -320,8 +359,8 @@ class ProductViewModel: ObservableObject {
         if let searchQuery = searchQuery?.lowercased(), !searchQuery.isEmpty {
             filteredProducts = filteredProducts.filter { product in
                 let nameMatch = product.name.lowercased().contains(searchQuery)
-                let genderMatch = product.gender.lowercased().contains(searchQuery) ?? false
-                let conditionMatch = product.condition.lowercased().contains(searchQuery) ?? false
+                let genderMatch = product.gender.lowercased().contains(searchQuery)
+                let conditionMatch = product.condition.lowercased().contains(searchQuery)
                 let sizeMatch = product.size?.lowercased().contains(searchQuery) ?? false
                 let categoryName = categories.first(where: { $0.id == product.categoryID })?.name.lowercased() ?? ""
                 let categoryMatch = categoryName.contains(searchQuery)
@@ -329,7 +368,7 @@ class ProductViewModel: ObservableObject {
                 return nameMatch || genderMatch || conditionMatch || sizeMatch || categoryMatch
             }
         }
-        
+
         if let sort = sortBy {
             switch sort {
             case "Price: Low → High":
@@ -342,7 +381,6 @@ class ProductViewModel: ObservableObject {
                 break
             }
         }
-
 
         if let condition = condition {
             filteredProducts = filteredProducts.filter { $0.condition == condition }
@@ -370,12 +408,11 @@ class ProductViewModel: ObservableObject {
     var sortedProducts: [Product] {
         products
             .sorted {
-                // Show unsold products first, then sort by creation date
                 let isSoldA = $0.isSold ?? false
                 let isSoldB = $1.isSold ?? false
 
                 if isSoldA != isSoldB {
-                    return !isSoldA && isSoldB // Unsold before sold
+                    return !isSoldA && isSoldB
                 } else {
                     return ($0.createdAt ?? Date.distantPast) > ($1.createdAt ?? Date.distantPast)
                 }
@@ -383,8 +420,4 @@ class ProductViewModel: ObservableObject {
             .prefix(10)
             .map { $0 }
     }
-
-
-
-
 }
