@@ -4,9 +4,15 @@ import Foundation
 import SwiftUI
 import FirebaseAuth
 
+struct SellerRatingSummary {
+    var average: Double
+    var total: Int
+}
+
 class ProductViewModel: ObservableObject {
     @Published var products: [Product] = []
     @Published var sellerRatings: [SellerRating] = []
+    @Published var sellerRatingSummaries: [String: SellerRatingSummary] = [:]
     @Published var isSubmitting = false
     @Published var errorMessage: String?
     @Published var likedProducts: [Product] = []
@@ -14,6 +20,13 @@ class ProductViewModel: ObservableObject {
     private let db = Firestore.firestore()
 
     // MARK: - Top Seller Logic
+
+    func isTopSeller(sellerID: String) -> Bool {
+        if let summary = sellerRatingSummaries[sellerID] {
+            return summary.average >= 4.8
+        }
+        return false
+    }
 
     func fetchSellerRatings() {
         db.collection("sellerRatings").getDocuments { snapshot, error in
@@ -26,25 +39,27 @@ class ProductViewModel: ObservableObject {
                 self.sellerRatings = snapshot?.documents.compactMap {
                     try? $0.data(as: SellerRating.self)
                 } ?? []
-                print("Fetched \(self.sellerRatings.count) seller ratings")
+
+                var ratingDict: [String: [Int]] = [:]
+                for rating in self.sellerRatings {
+                    ratingDict[rating.sellerID, default: []].append(rating.rating)
+                }
+
+                var summaries: [String: SellerRatingSummary] = [:]
+                for (sellerID, ratings) in ratingDict {
+                    let avg = Double(ratings.reduce(0, +)) / Double(ratings.count)
+                    summaries[sellerID] = SellerRatingSummary(average: avg, total: ratings.count)
+                }
+
+                self.sellerRatingSummaries = summaries
+                print("Summarized ratings for \(summaries.count) sellers")
             }
         }
     }
 
     func getTopSellerProducts(from productList: [Product]) -> [Product] {
-        var ratingDict: [String: [Int]] = [:]
-
-        for rating in sellerRatings {
-            ratingDict[rating.sellerID, default: []].append(rating.rating)
-        }
-
-        let topSellerIDs = ratingDict.compactMap { sellerID, ratings in
-            let average = Double(ratings.reduce(0, +)) / Double(ratings.count)
-            return average >= 4.8 ? sellerID : nil
-        }
-
-        return productList.filter {
-            ($0.isSold ?? false) == false && topSellerIDs.contains($0.sellerID)
+        productList.filter {
+            ($0.isSold ?? false) == false && isTopSeller(sellerID: $0.sellerID)
         }
     }
 
