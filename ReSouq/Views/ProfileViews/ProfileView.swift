@@ -186,6 +186,7 @@ struct ProfileView: View {
 
 struct ProductCardView: View {
     let product: Product
+    var showOffers: Bool = true
 
     private let buttonColor = Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1))
     private let backgroundColor = Color(UIColor(red: 232/255, green: 225/255, blue: 210/255, alpha: 1))
@@ -220,7 +221,8 @@ struct ProductCardView: View {
                 }
             }
 
-            if let productID = product.productID {
+            // Only show offers if flag is true
+            if showOffers, let productID = product.productID {
                 NavigationLink(destination: BidOffersView(product: product)) {
                     Text("Offers")
                         .font(.system(size: 14, weight: .medium))
@@ -232,7 +234,7 @@ struct ProductCardView: View {
                 }
             }
         }
-        .frame(width: 200)
+        .frame(width: 150)
         .padding()
         .background(backgroundColor)
         .cornerRadius(10)
