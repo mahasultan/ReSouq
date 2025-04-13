@@ -9,6 +9,7 @@ import FirebaseFirestore
 
 struct SellerRating: Identifiable, Codable {
     @DocumentID var id: String?
+    var productID: String    
     var orderID: String
     var sellerID: String
     var buyerID: String

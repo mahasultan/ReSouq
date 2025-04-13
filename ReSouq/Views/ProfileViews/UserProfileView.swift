@@ -43,7 +43,7 @@ struct UserProfileView: View {
                                         .font(.custom("ReemKufi-Bold", size: 18))
                                         .foregroundColor(buttonColor)
 
-                                    Text("Orders Sold: \(viewModel.totalRatings)")
+                                    Text("Products Sold: \(viewModel.totalProductsSold)")
                                         .font(.subheadline)
                                         .foregroundColor(.gray)
                                 }

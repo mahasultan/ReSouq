@@ -10,6 +10,8 @@ class UserProfileViewModel: ObservableObject {
     @Published var totalRatings: Int = 0
     @Published var reviews: [SellerRating] = []
     @Published var listings: [Product] = []
+    @Published var totalProductsSold: Int = 0
+
 
     private let db = Firestore.firestore()
 
@@ -17,6 +19,7 @@ class UserProfileViewModel: ObservableObject {
         fetchUserDetails(userID: userID)
         fetchSellerRatings(sellerID: userID)
         fetchSellerListings(sellerID: userID)
+        fetchTotalProductsSold(sellerID: userID)
     }
 
     private func fetchUserDetails(userID: String) {
@@ -28,6 +31,17 @@ class UserProfileViewModel: ObservableObject {
         }
     }
 
+    private func fetchTotalProductsSold(sellerID: String) {
+        db.collection("products")
+            .whereField("sellerID", isEqualTo: sellerID)
+            .whereField("isSold", isEqualTo: true)
+            .getDocuments { snapshot, error in
+                if let documents = snapshot?.documents {
+                    self.totalProductsSold = documents.count
+                }
+            }
+    }
+    
     private func fetchSellerRatings(sellerID: String) {
         db.collection("sellerRatings")
             .whereField("sellerID", isEqualTo: sellerID)
