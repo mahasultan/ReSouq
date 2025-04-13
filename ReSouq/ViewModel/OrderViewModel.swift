@@ -85,8 +85,22 @@ class OrderViewModel: ObservableObject {
         }
     }
 
+    func fetchRatedProductIDs(for orderID: String, completion: @escaping ([String]) -> Void) {
+        let db = Firestore.firestore()
+        db.collection("sellerRatings")
+            .whereField("orderID", isEqualTo: orderID)
+            .getDocuments { snapshot, error in
+                if let error = error {
+                    print("Failed to fetch ratings: \(error.localizedDescription)")
+                    completion([])
+                    return
+                }
 
-    
+                let ratedIDs = snapshot?.documents.compactMap { $0["productID"] as? String } ?? []
+                print("Rated productIDs: \(ratedIDs)")
+                completion(ratedIDs)
+            }
+    }
     
     func confirmOrder(
         userID: String,

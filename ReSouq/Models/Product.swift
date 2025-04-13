@@ -10,6 +10,7 @@ import FirebaseFirestore
 struct Product: Identifiable, Codable {
     @DocumentID var id: String?
     var productID: String?
+    var isRated: Bool? = false
     var name: String
     var price: Double
     var description: String

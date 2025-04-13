@@ -18,6 +18,10 @@ class ProductViewModel: ObservableObject {
     @Published var likedProducts: [Product] = []
 
     private let db = Firestore.firestore()
+    
+    func totalProductsSold(for sellerID: String) -> Int {
+        return sellerRatings.filter { $0.sellerID == sellerID }.count
+    }
 
     // MARK: - Top Seller Logic
 
