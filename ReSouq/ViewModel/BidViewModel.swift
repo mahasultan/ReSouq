@@ -116,23 +116,52 @@ class BidViewModel: ObservableObject {
     
     func allowedBidOptions(for product: Product) -> [Double] {
         let basePrice = product.price
-        let reductions: [Double]
+        let now = Date()
+        let calendar = Calendar.current
 
-        switch product.condition {
-        case "New":
-            reductions = [0.95, 0.94, 0.93] // 5%, 6%, 7%
-        case "Used - Like New":
-            reductions = [0.92, 0.91, 0.90] // 8%, 9%, 10%
-        case "Used - Good":
-            reductions = [0.89, 0.88, 0.87] // 11%, 12%, 13%
-        case "Used - Acceptable":
-            reductions = [0.86, 0.85, 0.84] // 14%, 15%, 16%
-        default:
-            reductions = [0.95, 0.94, 0.93] // fallback to New
+        // Calculate weeks since creation
+        let weeksSinceCreated = calendar.dateComponents([.weekOfYear], from: product.createdAt, to: now).weekOfYear ?? 0
+
+        //  Start with 2% base discount and grow by 3% per week
+        let baseDiscount = 2 + (weeksSinceCreated * 3)
+
+        // Create 3 discount steps (e.g., 5%, 6%, 7%), capped at 50%
+        let discounts = (0..<3).map { step in
+            min(baseDiscount + step, 50)
         }
 
-        return reductions.map { Double(round(basePrice * $0)) }
+        // Calculate bid suggestions without rounding duplicates
+        var uniquePrices = Set<Double>()
+        var finalSuggestions: [Double] = []
+
+        for discount in discounts {
+            let multiplier = 1.0 - (Double(discount) / 100.0)
+            let suggestedPrice = round(basePrice * multiplier)
+
+            if !uniquePrices.contains(suggestedPrice) {
+                uniquePrices.insert(suggestedPrice)
+                finalSuggestions.append(suggestedPrice)
+            }
+        }
+
+        //  If suggestions aren't unique enough, try next discount steps
+        var nextStep = 3
+        while finalSuggestions.count < 3 && baseDiscount + nextStep <= 50 {
+            let discount = baseDiscount + nextStep
+            let multiplier = 1.0 - (Double(discount) / 100.0)
+            let suggestedPrice = round(basePrice * multiplier)
+
+            if !uniquePrices.contains(suggestedPrice) {
+                uniquePrices.insert(suggestedPrice)
+                finalSuggestions.append(suggestedPrice)
+            }
+
+            nextStep += 1
+        }
+
+        return finalSuggestions
     }
+
 
     private func addToBuyerCart(product: Product, bidderID: String, updatedPrice: Double, completion: @escaping (Bool) -> Void) {
         guard let productID = product.productID, !productID.isEmpty else {
