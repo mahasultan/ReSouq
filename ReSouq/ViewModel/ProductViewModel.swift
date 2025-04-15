@@ -331,8 +331,14 @@ class ProductViewModel: ObservableObject {
                 self.products = snapshot?.documents.compactMap { document in
                     var product = try? document.data(as: Product.self)
                     product?.productID = document.documentID
+
+                    if let pid = product?.productID {
+                        self.checkAndRevertExpiredOffer(for: pid)
+                    }
+
                     return product
                 } ?? []
+
             }
         }
     }
@@ -453,5 +459,38 @@ class ProductViewModel: ObservableObject {
 
         return sorted.map { ($0.name, $0.id) }
     }
+    
+    
+    // MARK: - Offer Expiry Check
+
+    func checkAndRevertExpiredOffer(for productID: String) {
+        let productRef = db.collection("products").document(productID)
+
+        productRef.getDocument { snapshot, error in
+            guard let data = snapshot?.data(),
+                  let offerExpiresAt = data["offerExpiresAt"] as? Timestamp,
+                  let originalPrice = data["originalPrice"] as? Double else {
+                return
+            }
+
+            if Date() > offerExpiresAt.dateValue() {
+                // Offer has expired
+                productRef.updateData([
+                    "price": originalPrice,
+                    "currentBid": FieldValue.delete(),
+                    "buyerID": FieldValue.delete(),
+                    "offerAcceptedAt": FieldValue.delete(),
+                    "offerExpiresAt": FieldValue.delete()
+                ]) { error in
+                    if let error = error {
+                        print(" Failed to revert offer: \(error.localizedDescription)")
+                    } else {
+                        print("Offer expired and product price reverted.")
+                    }
+                }
+            }
+        }
+    }
+
 
 }
