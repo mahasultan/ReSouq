@@ -5,6 +5,8 @@ struct FilterSheetView: View {
     @Binding var didApplyFilters: Bool
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var categoryViewModel: CategoryViewModel
+    @EnvironmentObject var productViewModel: ProductViewModel
+
 
     @State private var tempFilters: FilterOptions
     @State private var minPriceSlider: Double = 0
@@ -105,12 +107,13 @@ struct FilterSheetView: View {
                     get: { selectedCategoryID ?? "" },
                     set: { selectedCategoryID = $0.isEmpty ? nil : $0 }
                 ),
-                options: categoryViewModel.categories.map { ($0.name, $0.id) }
+                options: productViewModel.getSortedCategoryFrequencies(categories: categoryViewModel.categories)
             )
             .pickerStyle(.menu)
             .tint(maroon)
         }
     }
+
 
     private func genderSection() -> some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -180,9 +183,10 @@ struct FilterSheetView: View {
     }
 
     private func sortSection() -> some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .center, spacing: 8) {
             Text("Sort By")
                 .font(.custom("ReemKufi-Bold", size: 16))
+                .frame(maxWidth: .infinity, alignment: .center)
 
             Picker("Sort", selection: $tempFilters.sortBy) {
                 Text("None").tag(String?.none).foregroundColor(maroon)
@@ -192,8 +196,10 @@ struct FilterSheetView: View {
             }
             .pickerStyle(.menu)
             .tint(maroon)
+            .frame(maxWidth: .infinity, alignment: .center)
         }
     }
+
 }
 
 // MARK: - Size Grid

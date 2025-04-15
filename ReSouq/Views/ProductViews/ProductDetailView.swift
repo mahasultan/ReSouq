@@ -67,9 +67,57 @@ struct ProductDetailView: View {
                             biddingSection
                         }
 
+
                         Spacer()
 
                         actionButtons
+                        // Similar Items Section
+                        if !productViewModel.getSimilarItems(for: product).isEmpty {
+                            VStack(alignment: .leading, spacing: 10) {
+                                Text("Similar Items")
+                                    .font(.custom("ReemKufi-Bold", size: 20))
+                                    .foregroundColor(buttonColor)
+                                    .padding(.horizontal)
+
+                                ScrollView(.horizontal, showsIndicators: false) {
+                                    HStack(spacing: 15) {
+                                        ForEach(productViewModel.getSimilarItems(for: product)) { item in
+                                            ProductItem(product: item)
+                                                .onTapGesture {
+                                                    self.product = item
+                                                    selectedImageIndex = 0
+                                                }
+                                        }
+                                    }
+                                    .padding(.horizontal)
+                                }
+                            }
+                            .padding(.top)
+                        }
+
+                        // More from This Seller Section
+                        if !productViewModel.getItemsFromSameSeller(for: product).isEmpty {
+                            VStack(alignment: .leading, spacing: 10) {
+                                Text("More From This Seller")
+                                    .font(.custom("ReemKufi-Bold", size: 20))
+                                    .foregroundColor(buttonColor)
+                                    .padding(.horizontal)
+
+                                ScrollView(.horizontal, showsIndicators: false) {
+                                    HStack(spacing: 15) {
+                                        ForEach(productViewModel.getItemsFromSameSeller(for: product)) { item in
+                                            ProductItem(product: item)
+                                                .onTapGesture {
+                                                    self.product = item
+                                                    selectedImageIndex = 0
+                                                }
+                                        }
+                                    }
+                                    .padding(.horizontal)
+                                }
+                            }
+                            .padding(.top)
+                        }
                     }
                     .padding()
                 }

@@ -424,4 +424,34 @@ class ProductViewModel: ObservableObject {
             .prefix(10)
             .map { $0 }
     }
+    
+    func getSimilarItems(for product: Product) -> [Product] {
+        return products.filter {
+            $0.categoryID == product.categoryID &&
+            $0.id != product.id &&
+            !($0.isSold ?? false)
+        }.prefix(5).map { $0 }
+    }
+
+    func getItemsFromSameSeller(for product: Product) -> [Product] {
+        return products.filter {
+            $0.sellerID == product.sellerID &&
+            $0.id != product.id &&
+            !($0.isSold ?? false)
+        }.prefix(5).map { $0 }
+    }
+    func getSortedCategoryFrequencies(categories: [Category]) -> [(label: String, value: String)] {
+        var frequencyDict: [String: Int] = [:]
+
+        for product in products {
+            frequencyDict[product.categoryID, default: 0] += 1
+        }
+
+        let sorted = categories.sorted {
+            (frequencyDict[$0.id] ?? 0) > (frequencyDict[$1.id] ?? 0)
+        }
+
+        return sorted.map { ($0.name, $0.id) }
+    }
+
 }

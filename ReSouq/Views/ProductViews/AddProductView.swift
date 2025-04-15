@@ -6,6 +6,8 @@ struct AddProductView: View {
     @StateObject var categoryViewModel = CategoryViewModel()
     @StateObject var productVM = ProductViewModel()
     @EnvironmentObject var navigationManager: NavigationManager
+    @EnvironmentObject var productViewModel: ProductViewModel
+
 
     @State private var name = ""
     @State private var price = ""
@@ -113,10 +115,11 @@ struct AddProductView: View {
                                 .padding(.horizontal)
 
                                 SearchableDropdownPicker(
-                                    title: "Select Category",
+                                    title: "Category",
                                     selection: $selectedCategoryID,
-                                    options: categoryViewModel.categories.map { ($0.name, $0.id) }
+                                    options: productViewModel.getSortedCategoryFrequencies(categories: categoryViewModel.categories)
                                 )
+
                                 CustomDropdownPicker(title: "Select Gender", selection: $selectedGender, options: genderOptions.map { ($0, $0) })
                                 CustomDropdownPicker(title: "Select Condition", selection: $selectedCondition, options: conditionOptions.map { ($0, $0) })
 
