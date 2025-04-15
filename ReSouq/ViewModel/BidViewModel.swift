@@ -43,9 +43,9 @@ class BidViewModel: ObservableObject {
     }
 
     
-    func acceptBid(for product: Product, bidderID: String, bidAmount: Double, completion: @escaping (Bool) -> Void) {
+    func acceptBid(for product: Product, bidderID: String, bidAmount: Double, expiryHours: Double, completion: @escaping (Bool) -> Void){
         guard let productID = product.id else {
-            print("invalid product ID")
+            print("Invalid product ID")
             completion(false)
             return
         }
@@ -54,28 +54,37 @@ class BidViewModel: ObservableObject {
         let productRef = db.collection("products").document(productID)
         let bidRef = db.collection("products").document(productID).collection("bids").document(bidderID)
 
-        // 1. Update product data first
+        let acceptedAt = Date()
+        let minutes = Int(expiryHours * 60)
+        let expiresAt = Calendar.current.date(byAdding: .minute, value: minutes, to: acceptedAt) ?? acceptedAt
+
+
+        // 1. Update product data
         productRef.updateData([
             "price": bidAmount,
             "buyerID": bidderID,
-            "currentBid": bidAmount
+            "currentBid": bidAmount,
+            "offerAcceptedAt": Timestamp(date: acceptedAt),
+            "offerExpiresAt": Timestamp(date: expiresAt),
+            "originalPrice": product.price // store original in case it's not stored
         ]) { error in
             if let error = error {
-                print(" Failed to update product: \(error.localizedDescription)")
+                print("Failed to update product: \(error.localizedDescription)")
                 completion(false)
             } else {
-                print(" Product updated with accepted offer.")
-
-                // 2. Mark bid as accepted
-                bidRef.updateData(["status": "accepted"]) { error in
+                // 2. Mark bid as accepted and save time
+                bidRef.updateData([
+                    "status": "accepted",
+                    "acceptedAt": Timestamp(date: acceptedAt),
+                    "expiryDurationHours": expiryHours,
+                    "expiresAt": Timestamp(date: expiresAt)
+                ]) { error in
                     if let error = error {
                         print("Failed to update bid status: \(error.localizedDescription)")
                         completion(false)
                     } else {
-                        print("Bid marked as accepted.")
-
-                        // 3. Add to buyer's cart
-                        self.addToBuyerCart(product: product, bidderID: bidderID, updatedPrice: bidAmount, completion: completion)
+                        print("Bid marked as accepted for \(expiryHours) hours.")
+                        completion(true)
                     }
                 }
             }
@@ -116,89 +125,51 @@ class BidViewModel: ObservableObject {
     
     func allowedBidOptions(for product: Product) -> [Double] {
         let basePrice = product.price
-        let reductions: [Double]
+        let now = Date()
+        let calendar = Calendar.current
 
-        switch product.condition {
-        case "New":
-            reductions = [0.95, 0.94, 0.93] // 5%, 6%, 7%
-        case "Used - Like New":
-            reductions = [0.92, 0.91, 0.90] // 8%, 9%, 10%
-        case "Used - Good":
-            reductions = [0.89, 0.88, 0.87] // 11%, 12%, 13%
-        case "Used - Acceptable":
-            reductions = [0.86, 0.85, 0.84] // 14%, 15%, 16%
-        default:
-            reductions = [0.95, 0.94, 0.93] // fallback to New
+        // Calculate weeks since creation
+        let weeksSinceCreated = calendar.dateComponents([.weekOfYear], from: product.createdAt, to: now).weekOfYear ?? 0
+
+        //  Start with 2% base discount and grow by 3% per week
+        let baseDiscount = 2 + (weeksSinceCreated * 3)
+
+        // Create 3 discount steps (e.g., 5%, 6%, 7%), capped at 50%
+        let discounts = (0..<3).map { step in
+            min(baseDiscount + step, 50)
         }
 
-        return reductions.map { Double(round(basePrice * $0)) }
+        // Calculate bid suggestions without rounding duplicates
+        var uniquePrices = Set<Double>()
+        var finalSuggestions: [Double] = []
+
+        for discount in discounts {
+            let multiplier = 1.0 - (Double(discount) / 100.0)
+            let suggestedPrice = round(basePrice * multiplier)
+
+            if !uniquePrices.contains(suggestedPrice) {
+                uniquePrices.insert(suggestedPrice)
+                finalSuggestions.append(suggestedPrice)
+            }
+        }
+
+        //  If suggestions aren't unique enough, try next discount steps
+        var nextStep = 3
+        while finalSuggestions.count < 3 && baseDiscount + nextStep <= 50 {
+            let discount = baseDiscount + nextStep
+            let multiplier = 1.0 - (Double(discount) / 100.0)
+            let suggestedPrice = round(basePrice * multiplier)
+
+            if !uniquePrices.contains(suggestedPrice) {
+                uniquePrices.insert(suggestedPrice)
+                finalSuggestions.append(suggestedPrice)
+            }
+
+            nextStep += 1
+        }
+
+        return finalSuggestions
     }
 
-    private func addToBuyerCart(product: Product, bidderID: String, updatedPrice: Double, completion: @escaping (Bool) -> Void) {
-        guard let productID = product.productID, !productID.isEmpty else {
-            print("Missing productID")
-            completion(false)
-            return
-        }
-
-        let db = Firestore.firestore()
-        let cartRef = db.collection("carts").document(bidderID)
-
-        cartRef.getDocument { snapshot, error in
-            var updatedProducts: [[String: Any]] = []
-
-            if let data = snapshot?.data(), let existingProducts = data["products"] as? [[String: Any]] {
-                updatedProducts = existingProducts
-            }
-
-            // Check if product already exists
-            let alreadyExists = updatedProducts.contains {
-                guard let productDict = $0["product"] as? [String: Any] else { return false }
-                return productDict["productID"] as? String == productID
-            }
-
-            if alreadyExists {
-                print("Product already in cart")
-                completion(true)
-                return
-            }
-
-            let newItem: [String: Any] = [
-                "id": UUID().uuidString,
-                "product": [
-                    "id": product.id ?? "",
-                    "productID": product.productID ?? "",
-                    "name": product.name,
-                    "price": updatedPrice,
-                    "description": product.description,
-                    "imageUrls": product.imageUrls,
-                    "sellerID": product.sellerID,
-                    "categoryID": product.categoryID,
-                    "gender": product.gender,
-                    "condition": product.condition,
-                    "size": product.size ?? "",
-                    "isSold": true,
-                    "currentBid": updatedPrice
-                ]
-            ]
-
-            updatedProducts.append(newItem)
-
-            let cartData: [String: Any] = [
-                "userID": bidderID,
-                "products": updatedProducts
-            ]
-
-            cartRef.setData(cartData, merge: true) { error in
-                if let error = error {
-                    print("Failed to update buyer's cart: \(error.localizedDescription)")
-                    completion(false)
-                } else {
-                    print("Product successfully added to buyer's cart (/carts/\(bidderID))")
-                    completion(true)
-                }
-            }
-        }
-    }
 
 }

@@ -6,12 +6,19 @@ struct BidOffersView: View {
     var product: Product
     @StateObject private var bidViewModel = BidViewModel()
     @State private var showSuccess = false
+    @State private var selectedExpiryHours: Double = 24 // default: 1 day
     @EnvironmentObject var cartViewModel: CartViewModel
-
 
     private let buttonColor = Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1))
     private let backgroundColor = Color(UIColor(red: 232/255, green: 225/255, blue: 210/255, alpha: 1))
     private let textColor = Color.black
+
+    private let expiryOptions: [(label: String, hours: Double)] = [
+        ("1 Hour", 1),
+        ("12 Hours", 12),
+        ("1 Day", 24),
+        ("2 Days", 48)
+    ]
 
     var body: some View {
         ScrollView {
@@ -38,7 +45,22 @@ struct BidOffersView: View {
 
                 Divider()
 
-                //  Active Offers
+                // Offer Duration Picker
+                Text("Select Offer Duration")
+                    .font(.custom("ReemKufi-Bold", size: 18))
+                    .foregroundColor(.gray)
+
+                Picker("Offer Duration", selection: $selectedExpiryHours) {
+                    ForEach(expiryOptions, id: \.hours) { option in
+                        Text(option.label).tag(option.hours)
+                    }
+                }
+
+                .pickerStyle(SegmentedPickerStyle())
+
+                Divider()
+
+                // Active Offers
                 Text("Offers")
                     .font(.custom("ReemKufi-Bold", size: 22))
 
@@ -61,13 +83,11 @@ struct BidOffersView: View {
                             Spacer()
 
                             Button(action: {
-                                bidViewModel.acceptBid(for: product, bidderID: bid.id, bidAmount: bid.amount) { success in
+                                bidViewModel.acceptBid(for: product, bidderID: bid.id, bidAmount: bid.amount, expiryHours: selectedExpiryHours)  { success in
                                     if success {
                                         showSuccess = true
                                     }
                                 }
-
-
                             }) {
                                 Text("Accept")
                                     .font(.system(size: 14, weight: .medium))
@@ -78,8 +98,6 @@ struct BidOffersView: View {
                                     .cornerRadius(8)
                             }
                             .disabled(!bidViewModel.pastBids.isEmpty)
-
-                            
                         }
                         .padding()
                         .background(Color(.systemGray6))
@@ -92,13 +110,14 @@ struct BidOffersView: View {
                     Text("Offer accepted!!")
                         .foregroundColor(buttonColor)
                         .font(.system(size: 16, weight: .medium))
+                        .padding(.top, 8)
                 }
 
                 // Past Offers
                 if !bidViewModel.pastBids.isEmpty {
                     Divider().padding(.vertical)
 
-                    Text("accepted Offer")
+                    Text("Accepted Offer")
                         .font(.custom("ReemKufi-Bold", size: 20))
 
                     ForEach(bidViewModel.pastBids, id: \.id) { bid in
