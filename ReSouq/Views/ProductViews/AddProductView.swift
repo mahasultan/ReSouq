@@ -19,6 +19,8 @@ struct AddProductView: View {
     @State private var isImagePickerPresented = false
     @State private var selectedSize = ""
     @State private var showSuccessMessage = false
+    @State private var showSizeChartPopup = false
+    
 
     private let genderOptions = ["Female", "Male", "Unisex"]
     private let conditionOptions = ["New", "Used - Like New", "Used - Good", "Used - Acceptable"]
@@ -140,7 +142,7 @@ struct AddProductView: View {
                                     }
                                 } else if categoryType(for: selectedCategoryID) == "Shoe" {
                                     VStack(alignment: .leading, spacing: 8) {
-                                        Text("Select Size")
+                                        Text("Select Size (EU)")
                                             .font(.custom("ReemKufi-Bold", size: 18))
                                             .foregroundColor(buttonColor)
                                             .padding(.leading)
@@ -162,6 +164,17 @@ struct AddProductView: View {
                                             }
                                         }
                                         .padding(.horizontal)
+                                        Button(action: {
+                                                   showSizeChartPopup = true
+                                               }) {
+                                                   Text("Click for Size Chart Conversion")
+                                                       .font(.custom("ReemKufi-Bold", size: 16))
+                                                       .foregroundColor(buttonColor)
+                                                       .underline() 
+                                                       .padding(.top, 10)
+                                               }
+                                               .padding(.horizontal)
+                                            
                                     }
                                 }
                             }
@@ -191,6 +204,35 @@ struct AddProductView: View {
                         .padding(.horizontal)
                     }
                 }
+                
+                if showSizeChartPopup {
+                                    Color.black.opacity(0.4)
+                                        .ignoresSafeArea()
+                                        .onTapGesture {
+                                            showSizeChartPopup = false
+                                        }
+
+                                    VStack {
+                                        Image("SizeChart")
+                                            .resizable()
+                                            .scaledToFit()
+                                            .frame(maxWidth: 300)
+                                            .cornerRadius(12)
+                                            
+                                        Button("Close") {
+                                                    showSizeChartPopup = false
+                                                }
+                                                .foregroundColor(.white)
+                                                .padding()
+                                                .background(Color(UIColor(red: 105/255, green: 22/255, blue: 22/255, alpha: 1)))  // Maroon color
+                                                .cornerRadius(8)
+                                    }
+                                    .background(Color.white)
+                                    .cornerRadius(12)
+                                    .shadow(radius: 10)
+                                    .padding(5)
+                                }
+                            
 
                 if showSuccessMessage {
                     VStack {
@@ -215,11 +257,14 @@ struct AddProductView: View {
                     .zIndex(1)
                 }
             }
+            
             .background(Color.white.ignoresSafeArea())
             .onAppear {
                 categoryViewModel.fetchCategories()
             }
+            
         }
+        
     }
 
     private func addProduct() {
